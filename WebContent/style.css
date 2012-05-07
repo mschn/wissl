@@ -126,7 +126,7 @@ body {
 	cursor: pointer;
 	background-repeat: no-repeat;
 	background-position: 2px 50%;
-	background-color: #eee;
+	background-color: #e0e0e0;
 	user-select: none;
 	-khtml-user-select: none;
 	-o-user-select: none;
@@ -499,12 +499,13 @@ span#next {
 }
 
 #navbar a.selected-nav {
+	color: white;
 	background-color: #777;
 	box-shadow: 0 1px 4px 2px #606060;
 }
 
 #navbar a:hover {
-	color: #ddd;
+	color: white;
 	background-color: rgb(120, 140, 170);
 }
 
@@ -943,7 +944,7 @@ label .dialog-text-input {
 }
 
 #users li:hover {
-	background-color: rgb(180, 190, 235);
+	background-color: rgb(200, 210, 245);
 }
 
 #users span {
@@ -1011,7 +1012,7 @@ span.users-connected {
 	padding: 0;
 	margin: 0;
 	border-left: 4px solid #bbb;
-	background: #f6f6f6;
+	background: #e8e8e8;
 }
 
 #user-playlist li {
@@ -1021,7 +1022,7 @@ span.users-connected {
 }
 
 #user-playlist li:hover {
-	background-color: rgb(180, 190, 235);
+	background-color: rgb(200, 210, 245);
 }
 
 #user-playlist span {
@@ -1058,7 +1059,7 @@ span.users-connected {
 	padding: 0;
 	margin: 0 10px 10px 0;
 	border: 1px solid #ddd;
-	background: #f6f6f6;
+	background: #e8e8e8;
 	width: 400px;
 }
 
