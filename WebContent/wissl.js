@@ -88,12 +88,35 @@ var wsl = {
 				},
 				dataType : "json",
 				success : function () {
+					// will never be a success
+				},
+				error : function (xhr, textStatus, errorThrown) {
+					wsl.ajaxError("Logout failure", xhr);
+					wsl.unlockUI();
+				}
+			});
+		}, function () {
+		});
+	},
+
+	shutdown : function () {
+		var msg = 'Do you really want to shutdown the server?<br>';
+		msg += 'You will not be able to login util you restart the server manually!';
+		wsl.confirmDialog('Shutdown server', msg, function () {
+			wsl.lockUI();
+			$.ajax({
+				url : "wissl/shutdown",
+				type : 'POST',
+				headers : {
+					'sessionId' : wsl.sessionId
+				},
+				success : function () {
 					player.stop();
 					wsl.unlockUI();
 					History.pushState(null, document.title, '?logout');
 				},
 				error : function (xhr, textStatus, errorThrown) {
-					wsl.ajaxError("Logout failure", xhr);
+					wsl.ajaxError("Shutdown failure", xhr);
 					wsl.unlockUI();
 				}
 			});
@@ -282,6 +305,7 @@ var wsl = {
 			content += '<h3>Other</h3>';
 			cb = 'window.open(\'/wissl/logs?&sessionId=' + wsl.sessionId + '\',\'_blank\')';
 			content += '<p><span class="button" onclick="' + cb + '">Server logs</span></p>';
+			content += '<p><span class="button" onclick="wsl.shutdown()">Shutdown server</p>';
 
 			wsl.showContent({
 				admin : content

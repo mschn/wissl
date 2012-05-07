@@ -1439,4 +1439,20 @@ public class REST {
 				.entity(stream) //
 				.build();
 	}
+
+	/**
+	 * Shutdown the server and the JVM
+	 * @throws SecurityError
+	 */
+	@POST
+	@Path("shutdown")
+	public void shutdown() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		Bootstrap.shutdown();
+		log(s, l1);
+		System.exit(0);
+	}
 }

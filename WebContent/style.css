@@ -1082,6 +1082,10 @@ span.users-connected {
 	background-color: rgb(180, 190, 235);
 }
 
+#admin p {
+	padding: 3px 0;
+}
+
 #admin span.button {
 	margin-left: 10px;
 }

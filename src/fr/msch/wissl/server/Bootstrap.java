@@ -98,7 +98,11 @@ public class Bootstrap extends ResteasyBootstrap {
 	@Override
 	public void contextDestroyed(ServletContextEvent event) {
 		super.contextDestroyed(event);
+		shutdown();
+		Logger.info("Server Context destroyed");
+	}
 
+	public static void shutdown() {
 		Library.stop();
 		Session.stop();
 
@@ -110,7 +114,5 @@ public class Bootstrap extends ResteasyBootstrap {
 		} catch (SQLException e) {
 			Logger.error("Failed to close DB", e);
 		}
-
-		Logger.info("Server Context destroyed");
 	}
 }
