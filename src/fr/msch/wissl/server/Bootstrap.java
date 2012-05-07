@@ -93,28 +93,6 @@ public class Bootstrap extends ResteasyBootstrap {
 				throw new Error("Failed to insert admin into DB", e);
 			}
 		}
-
-		User alex = null;
-		try {
-			alex = DB.get().getUser("alex");
-		} catch (SQLException e1) {
-			Logger.error("Failed to get alex user", e1);
-		}
-		if (alex == null) {
-			// TODO remove this
-			alex = new User();
-			alex.auth = 2;
-			alex.username = "alex";
-			alex.password = "alex".getBytes();
-			try {
-				alex.hashPassword();
-			} catch (SecurityError e) {
-			}
-			try {
-				DB.get().addUser(alex);
-			} catch (SQLException e) {
-			}
-		}
 	}
 
 	@Override
