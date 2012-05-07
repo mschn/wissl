@@ -33,26 +33,19 @@ Wissl runs by default on port 8080, which can be tuned by editing the file
 Dependencies
 ------------
 
-* RESTEasy - LGPL
-  [http://www.jboss.org/resteasy]
-* H2 - MPL
-  [http://www.h2database.com/]
-* c3p0 - LGPL
-  [http://sourceforge.net/projects/c3p0/]
-* Winstone - LGPL
-  [http://code.google.com/p/winstone/]
-* Jaudiotagger - LGPL
-  [http://www.jthink.net/jaudiotagger/]
-* SoundManager2 - BSD
-  [http://www.schillmania.com/projects/soundmanager2/]
-* jQuery - MIT
-  [http://jquery.com/]
-* History.js - BSD
-  [https://github.com/balupton/History.js/]
+* RESTEasy - LGPL - http://www.jboss.org/resteasy
+* H2 - MPL - http://www.h2database.com/
+* c3p0 - LGPL - http://sourceforge.net/projects/c3p0/
+* Winstone - LGPL - http://code.google.com/p/winstone/
+* Jaudiotagger - LGPL - http://www.jthink.net/jaudiotagger/
+* SoundManager2 - BSD - http://www.schillmania.com/projects/soundmanager2/
+* jQuery - MIT - http://jquery.com/
+* History.js - BSD -https://github.com/balupton/History.js/
 
 License
 -------
 Wissl is Copyright (c) 2012, Mathieu Schnoor.
+
 It is licensed under the GNU General Public License (v3),
 a copy of which can be found in the LICENSE file or at
 this address: http://www.gnu.org/licenses/gpl.html
