@@ -1,0 +1,22 @@
+- maintenance
+  - playlist reorganization
+  - use StringBuilder not StringBuffer
+
+- new feature
+  + metadata edition
+  + name
+  + icon
+  + i18n
+  - SSL launcher
+  - random playlist
+  + original icons
+  - android application
+  + search
+  + volume
+  - mono playback
+  + Web Only config
+    - no more swing or cli or whatever
+    - first time login: force new password, directories
+  - performance test with curl
+  + welcome page (do not default to /?artists/)
+

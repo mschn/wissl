@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <context-param>
+    <param-name>resteasy.scan.providers</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.scan.resources</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.resources</param-name>
+    <param-value>fr.msch.wissl.server.REST</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.servlet.mapping.prefix</param-name>
+    <param-value>/wissl</param-value>
+  </context-param>
+  <listener>
+    <listener-class>fr.msch.wissl.server.Bootstrap</listener-class>
+  </listener>
+  <servlet>
+    <servlet-name>Resteasy</servlet-name>
+    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>fr.msch.wissl.server.Application</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>H2Console</servlet-name>
+    <servlet-class>org.h2.server.web.WebServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Resteasy</servlet-name>
+    <url-pattern>/wissl/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>H2Console</servlet-name>
+    <url-pattern>/h2/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>d.html</welcome-file>
+  </welcome-file-list>
+</web-app>

@@ -1,0 +1,109 @@
+<!DOCTYPE project>
+<project name="wissl" default="launcher" basedir=".">
+
+	<property name="projectRoot" value="${basedir}" />
+	<property name="build.dir" value="${projectRoot}/build" />
+	<property name="dist.dir" value="${projectRoot}/dist" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="lib.dir" value="${projectRoot}/lib" />
+	<property name="war.root" value="${projectRoot}/WebContent" />
+	<property name="webinf" value="${war.root}/WEB-INF" />
+	<property name="webinf.lib.dir" value="${war.root}/WEB-INF/lib" />
+	<property name="webinf.classes.dir" value="${war.root}/WEB-INF/classes" />
+	<property name="src.dir" value="${projectRoot}/src" />
+
+	<tstamp>
+		<format property="timestamp" pattern="yyyy/MM/dd HH:mm:ss" locale="en,UK" />
+	</tstamp>
+
+	<target name="jslint" description="Run Javascript sources against JSlint">
+	  <java jar="${lib.dir}/jslint4java-2.0.2.jar" fork="true">
+		<arg value="${war.root}/wissl.js" />
+		<arg value="${war.root}/player.js" />
+	  </java>
+	</target>
+
+	<target name="prepare" description="Create dir for class files">
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${webinf.lib.dir}" />
+		<mkdir dir="${webinf.classes.dir}" />
+	</target>
+
+	<target name="clean" description="Delete generated files">
+		<delete dir="${classes.dir}" />
+		<delete dir="${webinf.classes.dir}" />
+		<delete dir="${webinf.lib.dir}" />
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+		<delete file="wissl.jar" />
+	</target>
+
+	<path id="src.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="compile" depends="prepare" description="Compile Java source">
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" failonerror="true" debug="true">
+			<classpath refid="src.classpath" />
+		</javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="war" depends="compile" description="Generate WAR file">
+		<copy todir="${webinf.classes.dir}">
+			<fileset dir="${classes.dir}">
+				<include name="**" />
+				<exclude name="fr/msch/wissl/launcher/" />
+			</fileset>
+		</copy>
+
+		<copy todir="${webinf.lib.dir}" flatten="true">
+			<fileset dir="${lib.dir}/">
+				<include name="**/*.jar" />
+				<exclude name="jetty/" />
+				<exclude name="winstone/" />
+			</fileset>
+		</copy>
+
+		<war destfile="${dist.dir}/wissl.war" webxml="${webinf}/web.xml" basedir="${war.root}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${timestamp}" />
+			</manifest>
+		</war>
+	</target>
+
+	<target name="launcher" depends="war" description="Create WAR launcher">
+		<path id="launcher.cp">
+			<fileset dir="${lib.dir}/winstone">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<manifestclasspath property="launcher.jar.cp" jarfile="wissl.jar">
+			<classpath refid="launcher.cp" />
+		</manifestclasspath>
+
+		<jar destfile="wissl.jar">
+			<fileset dir="${classes.dir}">
+				<include name="**" />
+				<exclude name="fr/msch/wissl/server/" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Built-Date" value="${timestamp}" />
+				<attribute name="Main-Class" value="fr.msch.wissl.launcher.Launcher" />
+				<attribute name="Class-Path" value="${launcher.jar.cp}" />
+			</manifest>
+		</jar>
+	</target>
+
+</project>

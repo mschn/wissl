@@ -1,0 +1,193 @@
+<!-- 
+This file is part of Wissl - Copyright (C) 2012 Mathieu Schnoor
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
+<!doctype html>
+<html lang="en">
+<head>
+<title>Wissl</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+<link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+	<form id="login" onsubmit='wsl.login();return false'>
+		<fieldset>
+			<h2>Login</h2>
+			<div id="login-error"></div>
+			<p>
+				<label for="username">User</label><input name="username" type="text"
+					id="username" required="required" />
+			</p>
+			<p>
+				<label for="password">Password</label><input name="password"
+					type="password" id="password" required="required" />
+			</p>
+			<p>
+				<input id="login-submit" class='button button-ok' type='submit'
+					value="login" />
+			</p>
+		</fieldset>
+	</form>
+
+	<div id="player">
+		<div id="controls">
+			<span id="play" onclick="player.togglePlay()"></span> <span id="stop"
+				onclick="player.stop()"></span> <span id="previous"
+				onclick="player.previous()"></span> <span id="next"
+				onclick="player.next()"></span>
+		</div>
+		<div id="position"></div>
+		<div id="progress" onclick="player.seek(event)"
+			onmousemove="player.showSeek(event)" onmouseout="player.hideSeek()">
+			<span id="progress-download"></span> <span id="progress-played"></span>
+			<div id="seek-popup"></div>
+		</div>
+	</div>
+
+	<div id="playing">
+		<div id="art"></div>
+		<span id="playing-title"></span> <span id="playing-album"></span> <span
+			id="playing-artist"></span>
+	</div>
+
+	<div id="error">
+		<div id="error-message"></div>
+		<div id="close-error" onclick="wsl.closeError()"></div>
+	</div>
+
+	<div id="navbar"></div>
+
+	<div id="content">
+		<div id="artists"></div>
+		<div id="library"></div>
+		<div id="users"></div>
+		<div id="user"></div>
+		<div id="settings"></div>
+		<div id="admin"></div>
+	</div>
+
+	<div id="library-drag-selection"></div>
+
+	<div id="dialog-mask">
+		<div class="dialog" id="playlist-create-dialog">
+			<form method="post" onsubmit='wsl.createPlaylist();return false'>
+				<fieldset>
+					<h2>Create playlist</h2>
+					<p>
+						<label for="playlist-name">Name</label> <input
+							class="dialog-text-input" type="text" name="playlist-name"
+							placeholder="New playlist" id="playlist-name" required="required" />
+					</p>
+					<p class="dialog-buttons">
+						<input id="playlist-create" class='button button-ok' type="submit"
+							value="Create" /> <input id="playlist-cancel"
+							class='button button-cancel' type='button' value='Cancel'
+							onclick='wsl.cancelCreatePlaylist()' />
+					</p>
+				</fieldset>
+			</form>
+		</div>
+		<div class="dialog" id="add-to-playlist-dialog">
+			<form method="post" onsubmit='wsl.addToPlaylist();return false'
+				name='add-to-playlist-form'>
+				<fieldset>
+					<h2>Add to playlist</h2>
+					<p class="dialog-form-input"></p>
+					<p class='dialog-buttons'>
+						<input class='button button-ok' type="submit" value="Add" /> <input
+							class='button button-cancel' type='button' value='Cancel'
+							onclick='wsl.cancelAddToPlaylist()' />
+					</p>
+
+
+				</fieldset>
+			</form>
+		</div>
+		<div class="dialog" id="confirm-dialog">
+			<fieldset>
+				<h2 id='confirm-dialog-title'></h2>
+				<p id='confirm-dialog-message'></p>
+				<p class='dialog-buttons'>
+					<input class='button button-ok' id='confirm-dialog-ok'
+						type="submit" value="OK" /> <input class='button button-cancel'
+						id='confirm-dialog-cancel' type='button' value='Cancel' />
+				</p>
+			</fieldset>
+		</div>
+		<div class="dialog" id="addmusic-dialog">
+			<fieldset>
+				<h2 id='addmusic-dialog-title'>Add music folder</h2>
+				<p id='addmusic-dialog-content'></p>
+				<p class='dialog-buttons'>
+					<input class='button button-ok' id='addmusic-dialog-ok'
+						type="submit" value="OK" onclick='wsl.addMusic()' /> <input
+						class='button button-cancel' id='addmusic-dialog-cancel'
+						type='button' value='Cancel' onclick='wsl.cancelAddMusicFolder()' />
+				</p>
+			</fieldset>
+		</div>
+		<div class="dialog" id="adduser-dialog">
+			<form method="post" onsubmit='wsl.addUser();return false'>
+				<fieldset>
+					<h2>Add an User</h2>
+					<p>
+						<label for="adduser-username">Username</label> <input
+							class="dialog-text-input" type="text" name="adduser-username"
+							id="adduser-username" required="required" />
+					</p>
+					<p>
+						<label for="adduser-password">Password</label><input
+							class="dialog-text-input" name="adduser-password" type="password"
+							id="adduser-password" required="required" />
+					</p>
+					<p>
+						<label for="adduser-auth">Admin</label><input
+							class="dialog-check-input" name="adduser-auth" type="checkbox"
+							id="adduser-auth" />
+					</p>
+					<p class='dialog-buttons'>
+						<input class='button button-ok' id='adduser-dialog-ok'
+							type="submit" value="OK" /> <input class='button button-cancel'
+							id='adduser-dialog-cancel' type='button' value='Cancel'
+							onclick='wsl.cancelAddUser()' />
+					</p>
+				</fieldset>
+			</form>
+		</div>
+		<div class="dialog" id="error-dialog">
+			<p id="error-dialog-message"></p>
+			<p class='dialog-buttons'>
+				<input class='button button-ok' id='error-dialog-ok' type="submit"
+					value="OK" onclick="wsl.closeError()" />
+			</p>
+		</div>
+	</div>
+
+	<div id="uilock">
+		<p>
+			<span>Loading...</span>
+		</p>
+	</div>
+
+	<script src="static/soundmanager2.js"></script>
+	<script src="static/jquery-1.7.1.js"></script>
+	<script src="static/history-1.7.1-r2.js"></script>
+	<script src="wissl.js"></script>
+	<script src="player.js"></script>
+
+</body>
+</html>
