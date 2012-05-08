@@ -88,7 +88,9 @@ var wsl = {
 				},
 				dataType : "json",
 				success : function () {
-					// will never be a success
+					player.stop();
+					wsl.unlockUI();
+					History.pushState(null, document.title, '?logout');
 				},
 				error : function (xhr, textStatus, errorThrown) {
 					wsl.ajaxError("Logout failure", xhr);
@@ -111,9 +113,7 @@ var wsl = {
 					'sessionId' : wsl.sessionId
 				},
 				success : function () {
-					player.stop();
-					wsl.unlockUI();
-					History.pushState(null, document.title, '?logout');
+					// will never be a success
 				},
 				error : function (xhr, textStatus, errorThrown) {
 					wsl.ajaxError("Shutdown failure", xhr);
