@@ -1,5 +1,7 @@
 - maintenance
   - playlist reorganization
+  - DB schema versioning (auto clean if no match)
+  - open browser with launcher
 
 - new feature
   + metadata edition
