@@ -155,6 +155,14 @@ body {
 	background-image: url("img/add_24.png");
 }
 
+.button-logs {
+	background-image: url("img/logs_24.png");
+}
+
+.button-shutdown {
+	background-image: url("img/shutdown_24.png");
+}
+
 .button:hover {
 	color: rgb(90, 110, 255);
 	background-color: rgb(180, 190, 235);
@@ -167,7 +175,7 @@ body {
 	border: 1px solid rgb(120, 200, 120);
 }
 
-.button-cancel:hover {
+.button-cancel:hover, .button-shutdown:hover {
 	color: rgb(230, 60, 60);
 	background-color: rgb(255, 220, 220);
 	border: 1px solid rgb(255, 150, 150);
@@ -393,7 +401,7 @@ span#next {
 }
 
 .navbar-playing {
-	background: 2px 6px no-repeat url('img/playing_16.png');
+	background: 2px 6px no-repeat url('img/play_16.png');
 }
 
 .navbar-playlists {
@@ -409,7 +417,7 @@ span#next {
 }
 
 .navbar-artists {
-	background: 2px 6px no-repeat url('img/artists_16.png');
+	background: 2px 6px no-repeat url('img/library_16.png');
 }
 
 .navbar-no-metadata {
@@ -417,7 +425,7 @@ span#next {
 }
 
 .navbar-artist {
-	background: 20px 6px no-repeat url('img/artist_16.png');
+	background: 20px 6px no-repeat url('img/user_16.png');
 }
 
 .navbar-album {
@@ -473,11 +481,11 @@ span#next {
 }
 
 .navbar-cancel-select {
-	background: 8px 8px no-repeat url('img/cancel_16.png');
+	background: 8px 8px no-repeat url('img/clear_16.png');
 }
 
 .navbar-play {
-	background: 8px 8px no-repeat url('img/playing_16.png')
+	background: 8px 8px no-repeat url('img/play_16.png')
 }
 
 #navbar .context-action a {

@@ -304,8 +304,8 @@ var wsl = {
 
 			content += '<h3>Other</h3>';
 			cb = 'window.open(\'/wissl/logs?&sessionId=' + wsl.sessionId + '\',\'_blank\')';
-			content += '<p><span class="button" onclick="' + cb + '">Server logs</span></p>';
-			content += '<p><span class="button" onclick="wsl.shutdown()">Shutdown server</p>';
+			content += '<p><span class="button button-logs" onclick="' + cb + '">Server logs</span></p>';
+			content += '<p><span class="button button-shutdown" onclick="wsl.shutdown()">Shutdown server</p>';
 
 			wsl.showContent({
 				admin : content
