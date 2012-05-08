@@ -7,8 +7,8 @@ without uploading it to a third-party.
 The server side component is a Java application that indexes music files and
 exposes it using HTTP/REST/JSON.
 
-The Wissl server runs by default in an embedded mode that contains an HTML5
-web client that can play music on the server using HTML5 or Flash audio.
+The Wissl server runs by default in an embedded mode that contains a Javascript
+web application that can play music on the server using HTML5 or Flash audio.
 
 Wissl is designed with home users in mind and aims to be simple and easy to use.
 
@@ -30,17 +30,21 @@ Wissl runs by default on port 8080, which can be tuned by editing the file
 `config.ini`.
 
 
-Dependencies
-------------
+Libraries used
+--------------
 
-* RESTEasy - LGPL - http://www.jboss.org/resteasy
-* H2 - MPL - http://www.h2database.com/
-* c3p0 - LGPL - http://sourceforge.net/projects/c3p0/
-* Winstone - LGPL - http://code.google.com/p/winstone/
-* Jaudiotagger - LGPL - http://www.jthink.net/jaudiotagger/
-* SoundManager2 - BSD - http://www.schillmania.com/projects/soundmanager2/
-* jQuery - MIT - http://jquery.com/
-* History.js - BSD -https://github.com/balupton/History.js/
+* Server
+ * [RESTEasy](http://www.jboss.org/resteasy) - JAX-RS framework (LGPL)
+ * [H2](http://www.h2database.com/) - Embedded RDBMS (MPL)
+ * [c3p0](http://sourceforge.net/projects/c3p0/) - JDBC connection pool (LGPL)
+ * [Winstone](http://code.google.com/p/winstone/) - Embedded servlet container (LGPL)
+ * [Jaudiotagger](http://www.jthink.net/jaudiotagger/) - Audio tagging (LGPL)
+
+* Client
+ * [SoundManager2](http://www.schillmania.com/projects/soundmanager2/) - Sound playback (BSD)
+ * [jQuery](http://jquery.com/) - Javascript framework (MIT)
+ * [History.js](https://github.com/balupton/History.js/) - Back button support (BSD)
+ * [Faenza Icons](http://tiheum.deviantart.com/art/Faenza-Icons-173323228) - (GPL)
 
 License
 -------
