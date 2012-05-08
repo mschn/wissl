@@ -38,6 +38,7 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
 		<delete file="wissl.jar" />
+		<delete file="wissl.zip" />
 	</target>
 
 	<path id="src.classpath">
@@ -106,4 +107,14 @@
 		</jar>
 	</target>
 
+	<target name="zip" depends="launcher" description="Create distributable archive">
+	  <zip destfile="${basedir}/wissl.zip">
+		<fileset dir="${basedir}">
+		  <include name="config.ini" />
+		  <include name="dist/wissl.war" />
+		  <include name="wissl.jar" />
+		  <include name="lib/winstone/*" />
+		</fileset>
+	  </zip>
+	</target>
 </project>
