@@ -77,7 +77,7 @@ public class Session {
 	}
 
 	public String toJSON(boolean privileged) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		ret.append('{');
 		ret.append("\"last_activity\":"
 				+ (System.currentTimeMillis() - lastActivity) + ",");

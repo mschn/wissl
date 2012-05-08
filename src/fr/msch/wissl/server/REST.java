@@ -77,7 +77,7 @@ public class REST {
 	private String sessionIdGet;
 
 	private void log(Session session, long nanoStartTime) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(request.getMethod());
 		sb.append(' ');
 		sb.append(request.getRequestURI());
@@ -141,7 +141,7 @@ public class REST {
 			Session.replace(old, newSession);
 		}
 
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		ret.append("{ \"sessionId\":\"");
 		ret.append(newSession.getSessionId().toString());
 		ret.append("\", \"userId\": ");
@@ -205,7 +205,7 @@ public class REST {
 		Map<UUID, Session> sessions = Session.getSessions();
 		boolean admin = false;
 
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		ret.append("{ \"users\": [");
 		for (Iterator<User> it = users.iterator(); it.hasNext();) {
 			User u = it.next();

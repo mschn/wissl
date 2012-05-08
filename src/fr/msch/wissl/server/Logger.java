@@ -312,7 +312,7 @@ public class Logger {
 
 	private static String getFormattedString(String message, Throwable t,
 			boolean stamps, boolean trace, int traceLen) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		String prefix = "";
 
 		if (stamps) {

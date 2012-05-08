@@ -1,6 +1,5 @@
 - maintenance
   - playlist reorganization
-  - use StringBuilder not StringBuffer
 
 - new feature
   + metadata edition
