@@ -565,6 +565,11 @@ span#next {
 	background: rgb(180, 190, 235);
 }
 
+#artists li.playing div.artists-info {
+	background: rgb(180, 190, 235);
+	box-shadow: 0 0 5px 5px rgb(180, 190, 245);
+}
+
 #artists li.playing span.name {
 	background: 0 0 no-repeat url('img/play_24.png');
 	padding-left: 22px;
