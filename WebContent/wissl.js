@@ -124,7 +124,7 @@ var wsl = {
 		});
 	},
 
-	displayUsers : function () {
+	displayUsers : function (scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -163,7 +163,8 @@ var wsl = {
 					content += '</li>';
 				}
 				wsl.showContent({
-					users : content
+					users : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					users : true
@@ -178,7 +179,7 @@ var wsl = {
 
 	},
 
-	displayUser : function (uid) {
+	displayUser : function (uid, scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -230,7 +231,8 @@ var wsl = {
 				}
 
 				wsl.showContent({
-					user : content
+					user : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					user : {
@@ -247,16 +249,17 @@ var wsl = {
 		});
 	},
 
-	displaySettings : function () {
+	displaySettings : function (scroll) {
 		wsl.showContent({
-			settings : 'User settings'
+			settings : 'User settings',
+			scroll : scroll
 		});
 		wsl.refreshNavbar({
 			settings : true
 		});
 	},
 
-	displayAdmin : function () {
+	displayAdmin : function (scroll) {
 		var cb, folders, users, click;
 
 		wsl.lockUI();
@@ -308,7 +311,8 @@ var wsl = {
 			content += '<p><span class="button button-shutdown" onclick="wsl.shutdown()">Shutdown server</p>';
 
 			wsl.showContent({
-				admin : content
+				admin : content,
+				scroll : scroll
 			});
 			wsl.refreshNavbar({
 				admin : true
@@ -349,7 +353,7 @@ var wsl = {
 		});
 	},
 
-	displayArtists : function () {
+	displayArtists : function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/artists",
@@ -397,7 +401,8 @@ var wsl = {
 					artists : true
 				});
 				wsl.showContent({
-					artists : content
+					artists : content,
+					scroll : scroll
 				});
 				wsl.unlockUI();
 			},
@@ -413,7 +418,7 @@ var wsl = {
 	 * 
 	 * @param id unique artist id
 	 */
-	displayAlbums : function (id) {
+	displayAlbums : function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/albums/" + id,
@@ -459,7 +464,8 @@ var wsl = {
 				content += "</ul>";
 
 				wsl.showContent({
-					library : content
+					library : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					artist : {
@@ -481,7 +487,7 @@ var wsl = {
 	 * 
 	 * @param id unique album id
 	 */
-	displaySongs : function (id) {
+	displaySongs : function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/songs/" + id,
@@ -526,7 +532,8 @@ var wsl = {
 				content += "</ul>";
 
 				wsl.showContent({
-					library : content
+					library : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					artist : {
@@ -550,7 +557,7 @@ var wsl = {
 	/**
 	 * fetch all playlists for the logged user, display it in library
 	 */
-	displayPlaylists : function () {
+	displayPlaylists : function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/playlists",
@@ -577,7 +584,8 @@ var wsl = {
 				content += "</ul>";
 
 				wsl.showContent({
-					library : content
+					library : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					playlists : true
@@ -591,7 +599,7 @@ var wsl = {
 		});
 	},
 
-	displayPlaylist : function (pid) {
+	displayPlaylist : function (pid, scroll) {
 		var id = parseInt(pid, 10);
 		wsl.lockUI();
 		$.ajax({
@@ -641,7 +649,8 @@ var wsl = {
 				content += "</ul>";
 
 				wsl.showContent({
-					library : content
+					library : content,
+					scroll : scroll
 				});
 				wsl.refreshNavbar({
 					playlist : {
@@ -903,6 +912,8 @@ var wsl = {
 				$('#' + page).empty().fadeOut(200);
 			}
 		}
+
+		$('body').scrollTop(content.scroll);
 	},
 
 	selectionDrag : null,
@@ -1617,6 +1628,11 @@ var wsl = {
 		if (wsl.uiLock) {
 			return;
 		}
+
+		History.replaceState({
+			scroll : $('body').scrollTop()
+		}, History.getState().title, History.getState().url);
+
 		History.pushState(null, document.title, hash);
 	},
 
@@ -1624,7 +1640,7 @@ var wsl = {
 	 * load content based on the the hash, ie http://server:port/?hash
 	 */
 	loadContent : function (hash) {
-		var hist, sid, uid, match, title, auth;
+		var hist, sid, uid, match, title, auth, st, scroll;
 		sid = localStorage.getItem('sessionId');
 		if (sid) {
 			wsl.sessionId = sid;
@@ -1652,20 +1668,26 @@ var wsl = {
 			return false;
 		}
 
+		st = hist.getState();
+		scroll = 0;
+		if (st && st.data && st.data.scroll) {
+			scroll = st.data.scroll;
+		}
+
 		if (hash !== "") {
 			if (/artists\/?$/.test(hash)) {
-				wsl.displayArtists();
+				wsl.displayArtists(scroll);
 			} else if (/playlists\/?$/.test(hash)) {
-				wsl.displayPlaylists();
+				wsl.displayPlaylists(scroll);
 			} else if (/albums\/[0-9]+$/.test(hash)) {
 				match = /albums\/([0-9]+$)/.exec(hash);
-				wsl.displayAlbums(match[1]);
+				wsl.displayAlbums(match[1], scroll);
 			} else if (/songs\/[0-9]+$/.test(hash)) {
 				match = /songs\/([0-9]+$)/.exec(hash);
-				wsl.displaySongs(match[1]);
+				wsl.displaySongs(match[1], scroll);
 			} else if (/playlist\/[0-9]+$/.test(hash)) {
 				match = /playlist\/([0-9]+$)/.exec(hash);
-				wsl.displayPlaylist(match[1]);
+				wsl.displayPlaylist(match[1], scroll);
 			} else if (/playing\/?$/.test(hash)) {
 				if (player.playing) {
 					hist.replaceState(null, title, '?playlist/' + player.playing.playlist_id);
@@ -1675,14 +1697,14 @@ var wsl = {
 			} else if (/random\/?$/.test(hash)) {
 				wsl.randomPlaylist();
 			} else if (/users\/?$/.test(hash)) {
-				wsl.displayUsers();
+				wsl.displayUsers(scroll);
 			} else if (/user\/([0-9]+$)/.test(hash)) {
 				match = /user\/([0-9]+$)/.exec(hash);
-				wsl.displayUser(match[1]);
+				wsl.displayUser(match[1], scroll);
 			} else if (/settings\/?$/.test(hash)) {
-				wsl.displaySettings();
+				wsl.displaySettings(scroll);
 			} else if (/admin\/?$/.test(hash)) {
-				wsl.displayAdmin();
+				wsl.displayAdmin(scroll);
 			} else if (/logout\/?$/.test(hash)) {
 				hist.replaceState(null, title, '?');
 			} else {
@@ -1690,7 +1712,7 @@ var wsl = {
 				wsl.load("?");
 			}
 		} else {
-			wsl.displayArtists();
+			wsl.displayArtists(scroll);
 		}
 
 		wsl.selCount = 0;
