@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 html,body {
 	margin: 0;
 	font-size: .9em;
@@ -118,6 +117,7 @@ body {
 }
 
 .button {
+	text-shadow: 0 0 0 #fff;
 	color: #666;
 	font-size: 1.1em;
 	border: 1px solid #aaa;
@@ -165,7 +165,7 @@ body {
 
 .button:hover {
 	color: rgb(90, 110, 255);
-	background-color: rgb(180, 190, 235);
+	background-color: #a8bfe0;
 	border: 1px solid rgb(120, 150, 255);
 }
 
@@ -175,7 +175,7 @@ body {
 	border: 1px solid rgb(120, 200, 120);
 }
 
-.button-cancel:hover, .button-shutdown:hover {
+.button-cancel:hover,.button-shutdown:hover {
 	color: rgb(230, 60, 60);
 	background-color: rgb(255, 220, 220);
 	border: 1px solid rgb(255, 150, 150);
@@ -331,7 +331,7 @@ span#next {
 #playing a {
 	padding: 3px;
 	cursor: pointer;
-	color: #ccc;
+	color: #ddd;
 	text-shadow: 0 1px 1px #333;
 }
 
@@ -384,7 +384,7 @@ span#next {
 	background: #666;
 	overflow: hidden;
 	height: 100%;
-	border-right: 1px solid #555;
+	border-right: 1px solid #606c7d;
 	box-shadow: 0 0 8px 4px #999;
 	z-index: 350;
 }
@@ -396,8 +396,8 @@ span#next {
 	margin: 0;
 	font-size: 1.1em;
 	text-decoration: none;
-	color: #bbb;
-	text-shadow: 0px 1px 1px #333;
+	color: #ddd;
+	text-shadow: 0px 1px 1px #234;
 }
 
 .navbar-playing {
@@ -506,15 +506,15 @@ span#next {
 	cursor: pointer;
 }
 
-#navbar a.selected-nav {
-	color: white;
-	background-color: #777;
-	box-shadow: 0 1px 4px 2px #606060;
-}
-
 #navbar a:hover {
 	color: white;
+	background-color: #9aa4b3;
+}
+
+#navbar a.selected-nav {
+	color: white;
 	background-color: rgb(120, 140, 170);
+	box-shadow: 0 2px 4px 2px #606060;
 }
 
 #navbar hr {
@@ -551,18 +551,19 @@ span#next {
 }
 
 #artists li:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #d4dbe4;
 }
 
 #artists li:hover div.artists-info {
-	background-color: rgb(200, 210, 245);
-	box-shadow: 0 0 5px 5px rgb(200, 210, 245);
+	background-color: #d4dbe4;
+	box-shadow: 0 0 5px 5px #d4dbe4;
+	text-shadow: 0 1px 0px rgb(230, 240, 255);
 }
 
 #artists span.name {
 	font-size: 1.5em;
 	display: block;
-	color: rgb(60, 60, 100);
+	color: rgb(80, 80, 120);
 }
 
 #artists li:hover span.name {
@@ -570,12 +571,13 @@ span#next {
 }
 
 #artists li.playing {
-	background: rgb(180, 190, 235);
+	background: #a8bfe0;
 }
 
 #artists li.playing div.artists-info {
-	background: rgb(180, 190, 235);
-	box-shadow: 0 0 5px 5px rgb(180, 190, 245);
+	background: #a8bfe0;
+	box-shadow: 0 0 5px 5px #a8bfe0;
+	text-shadow: 0 1px 1px white;
 }
 
 #artists li.playing span.name {
@@ -688,7 +690,8 @@ span#next {
 }
 
 #library li:hover,#library li.odd:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #d4dbe4;
+	text-shadow: 0 1px 0px rgb(230, 240, 255);
 }
 
 #library a {
@@ -753,7 +756,7 @@ span#next {
 }
 
 #library .playlist-title {
-	color: black;
+	color: #444;
 	font-size: .9em;
 	cursor: pointer;
 	width: 45%;
@@ -766,7 +769,8 @@ span#next {
 }
 
 #library li.playing,#library li.playing:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #a8bfe0;
+	text-shadow: 0 1px 1px white;
 }
 
 #library .playing .playlist-title,#library .playing .name,#library .playing .title
@@ -806,7 +810,7 @@ li span.select-box-checked {
 
 #library span.name {
 	font-size: 1em;
-	color: #222;
+	color: #444;
 	text-align: left;
 	width: 100%;
 	max-width: 50%;
@@ -827,7 +831,7 @@ li span.select-box-checked {
 
 #library span.title {
 	font-size: 1em;
-	color: #222;
+	color: #444;
 	text-align: left;
 	width: 60%;
 	cursor: pointer;
@@ -957,7 +961,7 @@ label .dialog-text-input {
 }
 
 #users li:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #d4dbe4;
 }
 
 #users span {
@@ -1035,7 +1039,7 @@ span.users-connected {
 }
 
 #user-playlist li:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #d4dbe4;
 }
 
 #user-playlist span {
@@ -1088,11 +1092,11 @@ span.users-connected {
 }
 
 #admin ul li:hover {
-	background-color: rgb(200, 210, 245);
+	background-color: #d4dbe4;
 }
 
 #admin ul li.selected {
-	background-color: rgb(180, 190, 235);
+	background-color: #a8bfe0;
 }
 
 #admin p {
@@ -1158,7 +1162,7 @@ span.users-connected {
 }
 
 #addmusic-dialog-content ul li.dir-selected {
-	background-color: rgb(180, 190, 235);
+	background-color: #a8bfe0;
 }
 
 #addmusic-dialog-content ul li span.dir-name {
