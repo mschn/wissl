@@ -2,6 +2,7 @@
   - playlist reorganization
   - DB schema versioning (auto clean if no match)
   - open browser with launcher
+  - show confirm dialog on page refresh if player.playing
 
 - new feature
   + metadata edition
@@ -15,3 +16,4 @@
   + first time login: force new password, directories
   - performance test with curl
   + welcome page (do not default to /?artists/)
+  - display song download rate
