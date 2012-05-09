@@ -609,7 +609,7 @@ var wsl = {
 			},
 			dataType : "json",
 			success : function (data) {
-				var songs, content, i, song, play, li_id, liclass, art_name, alb_name, c1, c2, events;
+				var songs, content, i, song, play, li_id, liclass, art_name, alb_name, c1, c2, events, doScroll;
 				songs = data.playlist;
 				content = "<ul>";
 				for (i = 0; i < songs.length; i += 1) {
@@ -648,9 +648,11 @@ var wsl = {
 				}
 				content += "</ul>";
 
+				doScroll = (player.playing && player.playing.playlist_id === id && player.playing.position <= songs.length);
+
 				wsl.showContent({
 					library : content,
-					scroll : scroll
+					scroll : (doScroll ? undefined : scroll)
 				});
 				wsl.refreshNavbar({
 					playlist : {
@@ -659,11 +661,11 @@ var wsl = {
 					}
 				});
 
-				if (player.playing && player.playing.playlist_id === id && player.playing.position <= songs.length) {
-					$('html, body').animate({
-						scrollTop : $("#playlist-" + id + '-' + player.playing.position).offset().top - 60
-					}, 100);
+				if (doScroll) {
+					scroll = $("#playlist-" + id + '-' + player.playing.position).offset().top - 60;
+					$('body').scrollTop(scroll);
 				}
+
 				wsl.unlockUI();
 			},
 			error : function (xhr) {
@@ -913,7 +915,9 @@ var wsl = {
 			}
 		}
 
-		$('body').scrollTop(content.scroll);
+		if (content.scroll) {
+			$('body').scrollTop(content.scroll);
+		}
 	},
 
 	selectionDrag : null,
