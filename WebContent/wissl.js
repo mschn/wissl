@@ -1632,7 +1632,6 @@ var wsl = {
 		if (wsl.uiLock) {
 			return;
 		}
-
 		History.replaceState({
 			scroll : $('body').scrollTop()
 		}, History.getState().title, History.getState().url);
@@ -1725,6 +1724,7 @@ var wsl = {
 	getCurrentHash : function () {
 		var st, hash;
 		st = History.getState();
+
 		if (st.url.indexOf('?') === -1) {
 			hash = '';
 		} else {
@@ -1738,7 +1738,12 @@ var wsl = {
 $(document).ready(function () {
 
 	History.Adapter.bind(window, 'statechange', function () {
-		wsl.loadContent(wsl.getCurrentHash());
+		var h = wsl.getCurrentHash();
+		if (h === wsl.previousHash) {
+			return;
+		}
+		wsl.previousHash = h;
+		wsl.loadContent(h);
 	});
 
 	wsl.loadContent(wsl.getCurrentHash());
