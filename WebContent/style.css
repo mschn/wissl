@@ -560,6 +560,10 @@ span#next {
 	text-shadow: 0 1px 0px rgb(230, 240, 255);
 }
 
+#artists li.playing div.artists-info span {
+	color: #444;
+}
+
 #artists span.name {
 	font-size: 1.5em;
 	display: block;
@@ -741,11 +745,13 @@ span#next {
 #library .playlist-artist {
 	color: rgb(140, 100, 100);
 	width: 20%;
+	cursor: pointer;
 }
 
 #library .playlist-album {
 	color: rgb(100, 100, 140);
 	width: 30%;
+	cursor: pointer;
 }
 
 #library .playlist-no-metadata {
@@ -773,9 +779,12 @@ span#next {
 	text-shadow: 0 1px 1px white;
 }
 
+#library li.playing span {
+	color: #444;
+}
+
 #library .playing .playlist-title,#library .playing .name,#library .playing .title
 	{
-	font-style: italic;
 	padding-left: 24px;
 	background: 0 4px no-repeat url('img/play_24.png') transparent;
 }

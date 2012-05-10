@@ -640,8 +640,8 @@ var wsl = {
 					content += '<li class="' + liclass + '" ' + li_id + '>';
 					content += '<span class="song-id">' + song.id + '</span>';
 					content += '<span ' + events + ' class="select-box">&nbsp</span>';
-					content += '<a onclick="wsl.load(\'?albums/' + song.artist_id + '\')"class="' + c1 + '">' + art_name + '</a>';
-					content += '<a onclick="wsl.load(\'?songs/' + song.album_id + '\')"class="' + c2 + '">' + alb_name + '</a>';
+					content += '<span onclick="wsl.load(\'?albums/' + song.artist_id + '\')"class="' + c1 + '">' + art_name + '</span>';
+					content += '<span onclick="wsl.load(\'?songs/' + song.album_id + '\')"class="' + c2 + '">' + alb_name + '</span>';
 					content += '<span class="playlist-span playlist-title" ' + play + '>' + song.title + '</span>';
 					content += '<span class="playlist-span playlist-duration">' + wsl.formatSeconds(song.duration) + '</span></li>';
 					content += '</li>';
