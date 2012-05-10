@@ -116,7 +116,7 @@ var player = {
 					onplay : function () {
 					},
 					whileplaying : function () {
-						var width, w1, w2, d1, d2;
+						var width, w1, w2, d1, d2, t, kbps;
 
 						player.song.duration = player.sound.durationEstimate / 1000;
 						width = $("#progress").width();
@@ -127,6 +127,22 @@ var player = {
 						$("#progress-played").width(w1);
 						$("#progress-download").width(w2);
 						$("#position").html('<strong>' + d1 + "</strong> / " + d2);
+
+						if (player.sound.bytesLoaded !== player.sound.bytesTotal) {
+							t = new Date().getTime();
+							if (!player.sound.t) {
+								player.sound.t = t;
+								player.sound.bytesAtT = player.sound.bytesLoaded;
+							}
+							if (t - player.sound.t > 1000) {
+								kbps = Math.ceil((player.sound.bytesLoaded - player.sound.bytesAtT) / 1024);
+								$('#download-rate').empty().html(kbps + 'Kbps').show();
+								player.sound.t = t;
+								player.sound.bytesAtT = player.sound.bytesLoaded;
+							}
+						} else {
+							$('#download-rate').hide();
+						}
 					}
 				});
 			},
