@@ -909,9 +909,9 @@ var wsl = {
 		for (i = 0; i < pages.length; i += 1) {
 			page = pages[i];
 			if (content[page]) {
-				$('#' + page).fadeIn(200).empty().append(content[page]);
+				$('#' + page).show().empty().append(content[page]);
 			} else {
-				$('#' + page).empty().fadeOut(200);
+				$('#' + page).empty().hide();
 			}
 		}
 
