@@ -663,7 +663,7 @@ var wsl = {
 
 				if (doScroll) {
 					scroll = $("#playlist-" + id + '-' + player.playing.position).offset().top - 60;
-					$('body').scrollTop(scroll);
+					$('body, html').scrollTop(scroll);
 				}
 
 				wsl.unlockUI();
@@ -916,7 +916,7 @@ var wsl = {
 		}
 
 		if (content.scroll) {
-			$('body').scrollTop(content.scroll);
+			$('html, body').scrollTop(content.scroll);
 		}
 	},
 
@@ -1633,7 +1633,7 @@ var wsl = {
 			return;
 		}
 		History.replaceState({
-			scroll : $('body').scrollTop()
+			scroll : Math.max($('body').scrollTop(), $('html').scrollTop())
 		}, History.getState().title, History.getState().url);
 
 		History.pushState(null, document.title, hash);
