@@ -15,11 +15,14 @@
  */
 package fr.msch.wissl.launcher;
 
+import java.awt.Desktop;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -33,6 +36,7 @@ import javax.swing.UIManager;
 
 import net.winstone.Server;
 import net.winstone.boot.BootStrap;
+import fr.msch.wissl.common.Config;
 
 /**
  * 
@@ -63,6 +67,7 @@ public class Launcher {
 		File warFile = new File(baseDir + "dist" + File.separator + "wissl.war");
 		File configFile = new File(baseDir + "config.ini");
 		int port = 8080;
+		boolean verbose = false;
 
 		for (int i = 0; i < args.length; i++) {
 			String str = args[i];
@@ -92,6 +97,8 @@ public class Launcher {
 						port = -1;
 					}
 				}
+			} else if ("-v".equals(str)) {
+				verbose = true;
 			} else {
 				if (!"-h".equals(str)) {
 					System.out.println("Unknown option: " + str);
@@ -105,6 +112,7 @@ public class Launcher {
 						+ configFile.getAbsolutePath() + "]");
 				System.out.println("-p PORT  HTTP listening port [=" + port
 						+ "]");
+				System.out.println("-v       Verbose stdout");
 
 				System.exit(0);
 			}
@@ -120,7 +128,37 @@ public class Launcher {
 			error("Invalid port number");
 		}
 
+		PrintStream sysout = System.out;
+		if (!verbose) {
+			try {
+				PrintStream ps = new PrintStream(File.createTempFile("wissl",
+						".stdout"));
+				System.setOut(ps);
+				//System.setErr(ps);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		startServer(warFile, configFile, port);
+
+		URI uri = null;
+		try {
+			uri = new URI("http://localhost:" + Config.getHttpPort());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		if (headless) {
+			sysout.println("Server started: " + uri.toString());
+		} else {
+			try {
+				Desktop.getDesktop().browse(uri);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	static Server startServer(File warFile, File configFile, int port) {
