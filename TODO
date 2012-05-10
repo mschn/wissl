@@ -1,8 +1,8 @@
 - maintenance
   - playlist reorganization
   - DB schema versioning (auto clean if no match)
-  - open browser with launcher
   - show confirm dialog on page refresh if player.playing
+  - rotate log files / show only last file with API
 
 - new feature
   + metadata edition
