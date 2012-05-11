@@ -32,7 +32,10 @@ var wsl = {
 	login : function() {
 		$('#login-error').hide();
 		var username = $('#username').val(), password = $('#password').val();
+		wsl.doLogin(username, password);
+	},
 
+	doLogin : function(username, password) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/login",
@@ -1347,6 +1350,48 @@ var wsl = {
 		});
 	},
 
+	addFirstUser : function() {
+		var user, pw, pwConfirm, auth = 1;
+
+		$('#firstuser-error').hide();
+
+		user = $('#firstuser-username').val();
+		pw = $('#firstuser-password').val();
+		pwConfirm = $('#firstuser-password-confirm').val();
+
+		if (pw !== pwConfirm) {
+			$('#firstuser-error').empty().html('Passwords do not match').show();
+			return;
+		}
+
+		wsl.lockUI();
+		$.ajax({
+			url : '/wissl/user/add',
+			type : 'POST',
+			dataType : 'json',
+			data : {
+				username : user,
+				password : pw,
+				auth : auth
+			},
+			success : function(data) {
+				wsl.unlockUI();
+				$('#firstuser').hide();
+				wsl.doLogin(user, pw);
+			},
+			error : function(xhr) {
+				var msg = 'Failed to create user', e;
+				e = $.parseJSON(xhr.responseText);
+				if (e.message) {
+					msg += ': ' + e.message;
+				}
+				wsl.unlockUI();
+				$('#firstuser-error').empty().html(msg).show();
+				console.log(xhr);
+			}
+		});
+	},
+
 	removeUser : function() {
 		var sel = [];
 		$('#admin-users-list .selected .users-admin-id').each(function(index) {
@@ -1678,8 +1723,26 @@ var wsl = {
 		}
 
 		if (!sid) {
-			$('#login').show();
-			wsl.unlockUI();
+			$.ajax({
+				url : '/wissl/hasusers',
+				type : 'GET',
+				dataType : "json",
+				success : function(data) {
+					wsl.unlockUI();
+
+					if (data.hasusers === false) {
+						$('#firstuser-error').hide();
+						$('#firstuser').show();
+					} else {
+						$('#login').show();
+					}
+				},
+				error : function(xhr) {
+					wsl.unlockUI();
+					wsl.ajaxError('Failed to contact the server', xhr);
+				}
+			});
+
 			return;
 		}
 
@@ -1769,7 +1832,7 @@ $(document).ready(function() {
 
 	window.onbeforeunload = function(e) {
 		if (player.playing) {
-			var msg = 'You are currently playing music. Leaving this page will stop it.'
+			var msg = 'You are currently playing music. Leaving this page will stop it.';
 			e.returnValue = msg;
 		}
 	};

@@ -233,6 +233,22 @@ public class REST {
 	}
 
 	/**
+	 * Check whether the system already has users registered,
+	 * or if the client should now create a new admin user
+	 * @return a JSON object indicating whether the system has users:
+	 * <pre>
+	 * { "hasusers" : true }
+	 * </pre>
+	 * @throws SQLException
+	 */
+	@GET
+	@Path("hasusers")
+	public String hasUsers() throws SQLException {
+		boolean hasUsers = DB.get().hasUsers();
+		return "{\"hasusers\":" + hasUsers + "}";
+	}
+
+	/**
 	 * Get info for one user: user info, session info, playlists, stats
 	 * 
 	 * @param userId
@@ -316,19 +332,37 @@ public class REST {
 			throws SQLException, SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
-
-		User prev = DB.get().getUser(username);
-		if (prev != null) {
-			throw new IllegalArgumentException("User " + username
-					+ " already exists");
-		}
 
 		if (username.trim().length() == 0) {
 			throw new IllegalArgumentException("Empty user name");
 		}
 		if (password.trim().length() < 4) {
 			throw new IllegalArgumentException("Password too short");
+		}
+
+		if (sid == null || sid.trim().length() == 0 && auth == 1) {
+			// no user is present, accept the first admin creation
+			// without any authentication !
+			if (!DB.get().hasUsers()) {
+				User u = new User();
+				u.auth = auth;
+				u.username = username;
+				u.password = password.getBytes();
+				u.hashPassword();
+
+				DB.get().addUser(u);
+				Logger.info("Added first user: " + username + " from "
+						+ request.getRemoteAddr());
+				return;
+			}
+		}
+
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		User prev = DB.get().getUser(username);
+		if (prev != null) {
+			throw new IllegalArgumentException("User " + username
+					+ " already exists");
 		}
 		if (auth != 1 && auth != 2) {
 			throw new IllegalArgumentException("Invalid authorization level:"

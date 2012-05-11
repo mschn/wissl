@@ -23,7 +23,6 @@ import javax.servlet.ServletContextEvent;
 import org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap;
 
 import fr.msch.wissl.common.Config;
-import fr.msch.wissl.server.exception.SecurityError;
 
 /**
  * 
@@ -66,37 +65,8 @@ public class Bootstrap extends ResteasyBootstrap {
 			Logger.error("Failed to create DB", t);
 			throw new Error("Failed to create DB", t);
 		}
-		addAdminUser();
 		Session.start();
 		Library.create();
-	}
-
-	private void addAdminUser() {
-
-		User admin = null;
-		try {
-			admin = DB.get().getUser("admin");
-		} catch (SQLException e1) {
-			Logger.error("Failed to get admin user", e1);
-		}
-		if (admin == null) {
-			admin = new User();
-			admin.auth = 1;
-			admin.username = "admin";
-			admin.password = Config.defaultAdminPw;
-			try {
-				admin.hashPassword();
-			} catch (SecurityError e) {
-				Logger.error("Could not create admin user", e);
-				throw new Error("Could not create admin user", e);
-			}
-			try {
-				DB.get().addUser(admin);
-			} catch (SQLException e) {
-				Logger.error("Failed to insert admin into DB", e);
-				throw new Error("Failed to insert admin into DB", e);
-			}
-		}
 	}
 
 	@Override

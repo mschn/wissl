@@ -446,6 +446,28 @@ public class H2DB extends DB {
 	}
 
 	@Override
+	public boolean hasUsers() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT * FROM user");
+			ResultSet rs = st.executeQuery();
+
+			if (rs.next()) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
 	public void removeUser(int uid) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;

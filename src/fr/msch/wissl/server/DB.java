@@ -85,6 +85,12 @@ public abstract class DB {
 	public abstract User getUser(String username) throws SQLException;
 
 	/**
+	 * @return true if there is at least one user in DB
+	 * @throws SQLException
+	 */
+	public abstract boolean hasUsers() throws SQLException;
+
+	/**
 	 * @param user_id unique user id in db
 	 * @return corresponding user, or null
 	 * @throws SQLException

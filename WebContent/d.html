@@ -24,21 +24,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body>
-	<form id="login" onsubmit='wsl.login();return false'>
+	<form id="login" class="login" onsubmit='wsl.login();return false'>
 		<fieldset>
 			<h2>Login</h2>
-			<div id="login-error"></div>
+			<div id="login-error" class="login-error"></div>
 			<p>
-				<label for="username">User</label><input name="username" type="text"
-					id="username" required="required" />
+				<label for="username">User</label><input class="textfield"
+					name="username" type="text" id="username" required="required" />
 			</p>
 			<p>
-				<label for="password">Password</label><input name="password"
-					type="password" id="password" required="required" />
+				<label for="password">Password</label><input class="textfield"
+					name="password" type="password" id="password" required="required" />
 			</p>
 			<p>
 				<input id="login-submit" class='button button-ok' type='submit'
 					value="login" />
+			</p>
+		</fieldset>
+	</form>
+
+	<form id="firstuser" class="login"
+		onsubmit='wsl.addFirstUser();return false'>
+		<fieldset>
+			<h2>Create your account</h2>
+			<div class="login-error" id="firstuser-error"></div>
+			<p>
+				<label for="firstuser-username">User</label><input class="textfield"
+					name="firstuser-username" type="text" id="firstuser-username"
+					required="required" />
+			</p>
+			<p>
+				<label for="firstuser-password">Password</label><input
+					class="textfield" name="firstuser-password" type="password"
+					id="firstuser-password" required="required" />
+			</p>
+			<p>
+				<label for="firstuser-password-confirm">Confirm</label><input
+					class="textfield" name="firstuser-password-confirm" type="password"
+					id="firstuser-password-confirm" required="required" />
+			</p>
+			<p>
+				<input id="firstuser-submit" class='button button-ok' type='submit'
+					value="continue" />
 			</p>
 		</fieldset>
 	</form>
@@ -178,10 +205,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div class="dialog" id="about-dialog">
 			<h2>Wissl</h2>
-			<p id="about-dialog-subtitle">Web Interface and Sound Streaming
+			<p id="about-dialog-subtitle">Web Interface for Sound Streaming
 				Library</p>
-			<div id="about-dialog-info">
-			</div>
+			<div id="about-dialog-info"></div>
 			<div>
 				<p>Copyright (c) 2012 Mathieu Schnoor</p>
 				<p>
