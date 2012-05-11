@@ -33,22 +33,22 @@ var player = {
 
 	playing : null,
 
-	play : function (playing) {
+	play : function(playing) {
 		if (!playing) {
 			return;
 		}
 		if (player.playing && player.playing.playlist_id !== playing.playlist_id) {
 			var msg = 'A song is currently playing from another playlist.<br>Continue?';
-			wsl.confirmDialog('New playlist', msg, function () {
+			wsl.confirmDialog('New playlist', msg, function() {
 				player.internalPlay(playing);
-			}, function () {
+			}, function() {
 			});
 		} else {
 			player.internalPlay(playing);
 		}
 	},
 
-	internalPlay : function (playing) {
+	internalPlay : function(playing) {
 		player.playing = playing;
 
 		$.ajax({
@@ -57,7 +57,7 @@ var player = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function (data) {
+			success : function(data) {
 				var song, artist, album, art;
 				song = data.song;
 				artist = data.artist;
@@ -110,12 +110,12 @@ var player = {
 					url : "/wissl/song/" + song.id + "/stream?sessionId=" + wsl.sessionId,
 					type : data.song.format,
 					autoPlay : true,
-					onfinish : function () {
+					onfinish : function() {
 						player.next();
 					},
-					onplay : function () {
+					onplay : function() {
 					},
-					whileplaying : function () {
+					whileplaying : function() {
 						var width, w1, w2, d1, d2, t, kbps;
 
 						player.song.duration = player.sound.durationEstimate / 1000;
@@ -146,13 +146,13 @@ var player = {
 					}
 				});
 			},
-			error : function (xhr) {
+			error : function(xhr) {
 				wsl.ajaxError("failed to get song " + playing.song_id, xhr);
 			}
 		});
 	},
 
-	togglePlay : function () {
+	togglePlay : function() {
 		if (player.sound) {
 			player.sound.togglePause();
 			if (player.sound.paused) {
@@ -163,7 +163,7 @@ var player = {
 		}
 	},
 
-	showSeek : function (event) {
+	showSeek : function(event) {
 		if (player.sound) {
 			var progress, x, w, time, elt;
 			progress = $("#progress");
@@ -177,11 +177,11 @@ var player = {
 		}
 	},
 
-	hideSeek : function () {
+	hideSeek : function() {
 		$('#seek-popup').hide();
 	},
 
-	seek : function (event) {
+	seek : function(event) {
 		if (player.sound) {
 			var x, w;
 			x = event.clientX - $("#progress").offset().left;
@@ -190,7 +190,7 @@ var player = {
 		}
 	},
 
-	destroySound : function () {
+	destroySound : function() {
 		if (player.sound) {
 			player.sound.destruct();
 			player.sound = null;
@@ -200,7 +200,7 @@ var player = {
 		}
 	},
 
-	stop : function () {
+	stop : function() {
 		if (player.sound) {
 			$('#player').fadeOut(300);
 			player.destroySound();
@@ -217,7 +217,7 @@ var player = {
 		}
 	},
 
-	previous : function () {
+	previous : function() {
 		if (player.playing) {
 			player.sound.destruct();
 			var p = player.playing;
@@ -227,7 +227,7 @@ var player = {
 					"sessionId" : wsl.sessionId
 				},
 				dataType : "json",
-				success : function (data) {
+				success : function(data) {
 					if (data && data.id) {
 						player.play({
 							song_id : data.id,
@@ -239,14 +239,14 @@ var player = {
 						player.stop();
 					}
 				},
-				error : function (xhr) {
+				error : function(xhr) {
 					wsl.ajaxError("Failed to get previous song in playlist", xhr);
 				}
 			});
 		}
 	},
 
-	next : function () {
+	next : function() {
 		if (player.playing) {
 			player.sound.destruct();
 			var p = player.playing;
@@ -256,7 +256,7 @@ var player = {
 					"sessionId" : wsl.sessionId
 				},
 				dataType : "json",
-				success : function (data) {
+				success : function(data) {
 					if (data && data.id) {
 						player.play({
 							song_id : data.id,
@@ -268,7 +268,7 @@ var player = {
 						player.stop();
 					}
 				},
-				error : function (xhr) {
+				error : function(xhr) {
 					wsl.ajaxError("Failed to get next song in playlist", xhr);
 				}
 			});
@@ -276,9 +276,9 @@ var player = {
 	}
 };
 
-soundManager.onready(function () {
+soundManager.onready(function() {
 	player.hasSound = true;
 });
-soundManager.ontimeout(function () {
+soundManager.ontimeout(function() {
 	wsl.error("Failed to start soundmanager2");
 });
