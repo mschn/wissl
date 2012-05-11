@@ -300,6 +300,15 @@ public class Logger {
 			// debug is disabled
 			return;
 		}
+
+		if (l.equals(Level.WARN) && !this.debug) {
+			// do not print stack trace on WARN if not in DEBUG mode
+			if (t != null) {
+				message += " (" + t.getMessage() + ")";
+				t = null;
+			}
+		}
+
 		if (vis.isStdout()) {
 			System.out.println(getFormattedString(message, t, false,
 					this.trace, this.traceLen));

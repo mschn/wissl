@@ -30,8 +30,7 @@ import fr.msch.wissl.server.Logger;
 public class JsonMapper {
 
 	public static Response getResponse(Throwable t, int status) {
-		Logger.error("HTTP " + status + " (" + t.getMessage() + ")");
-		Logger.debug("HTTP " + status, t);
+		Logger.warn("HTTP " + status, t);
 		return Response.status(status). //
 				type("application/json"). //
 				entity(JsonMapper.getStackTrace(t, status)). //

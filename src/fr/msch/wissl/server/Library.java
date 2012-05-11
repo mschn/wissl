@@ -271,10 +271,9 @@ public class Library {
 										songs.add(s);
 										addSongCount++;
 									} catch (IOException e) {
-										Logger.warn("Failed to read music file "
-												+ f.getValue()
-														.getAbsolutePath()
-												+ " (" + e.getMessage() + ")");
+										Logger.warn(
+												"Failed to read music file "
+														+ f.getValue(), e);
 										failedSongCount++;
 									}
 								}

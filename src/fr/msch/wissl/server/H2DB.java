@@ -77,8 +77,7 @@ public class H2DB extends DB {
 		try {
 			version = getSchemaVersion();
 		} catch (SQLException e) {
-			Logger.warn("Failed to get Schema version");
-			Logger.debug("", e);
+			Logger.warn("Failed to get Schema version", e);
 		}
 
 		boolean createNewDb = false;
