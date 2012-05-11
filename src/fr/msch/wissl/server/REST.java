@@ -1144,7 +1144,7 @@ public class REST {
 				.header("Content-Length", f.length() - startRange) //
 				.header("Accept-Ranges", "bytes") //
 				.header("Content-Range", contentRange) //
-				.header("Cache-Control", "max-age=3600, must-revalidate") //
+				.header("Cache-Control", "max-age=86400, must-revalidate") //
 				.entity(stream) //
 				.build();
 	}
@@ -1188,7 +1188,7 @@ public class REST {
 				.type("image/jpeg") //
 				.header("Content-Length", f.length()) //
 				.header("Accept-Ranges", "bytes") //
-				.header("Cache-Control", "max-age=3600, public") //
+				.header("Cache-Control", "max-age=86400, public") //
 				.entity(stream) //
 				.build();
 	}
