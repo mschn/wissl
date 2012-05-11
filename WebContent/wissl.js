@@ -1724,7 +1724,7 @@ var wsl = {
 				hist.replaceState(null, title, '?');
 			} else {
 				wsl.error("Page not found: ?" + hash);
-				wsl.load("?");
+				hist.replaceState(null, title, '?');
 			}
 		} else {
 			wsl.displayArtists(scroll);
