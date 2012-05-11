@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -46,11 +48,7 @@ import fr.msch.wissl.common.Config;
  */
 public class Launcher {
 
-	private static boolean headless = GraphicsEnvironment.isHeadless();
-
 	public static void main(String[] args) {
-		setLF();
-
 		String jarPath = null;
 		try {
 			// that's obviously ugly. if you know better email me :)
@@ -100,24 +98,43 @@ public class Launcher {
 			} else if ("-v".equals(str)) {
 				verbose = true;
 			} else {
-				if (!"-h".equals(str)) {
-					System.out.println("Unknown option: " + str);
-				}
-				System.out.println("Usage: java "
-						+ Launcher.class.getCanonicalName() + " [opts]");
-				System.out.println("Options:");
-				System.out.println("-w WAR   WAR file path [="
-						+ warFile.getAbsolutePath() + "]");
-				System.out.println("-c CONF  Configuration file path [="
-						+ configFile.getAbsolutePath() + "]");
-				System.out.println("-p PORT  HTTP listening port [=" + port
-						+ "]");
-				System.out.println("-v       Verbose stdout");
+				if (str.startsWith("-D")) {
+					Pattern pat = Pattern.compile("^-D([^=]+)(?:=(.+))?");
+					Matcher mat = pat.matcher(str);
+					if (mat.matches()) {
+						if (mat.groupCount() > 0) {
+							String key = mat.group(1);
+							String val = mat.group(2);
+							if (val == null) {
+								System.setProperty(key, "");
+							} else {
+								System.setProperty(key, val);
+							}
+						} else {
+							error("Invalid argument: " + str);
+						}
+					}
 
-				System.exit(0);
+				} else {
+					if (!"-h".equals(str)) {
+						System.out.println("Unknown option: " + str);
+					}
+					System.out.println("Usage: java "
+							+ Launcher.class.getCanonicalName() + " [opts]");
+					System.out.println("Options:");
+					System.out.println("-w WAR   WAR file path [="
+							+ warFile.getAbsolutePath() + "]");
+					System.out.println("-c CONF  Configuration file path [="
+							+ configFile.getAbsolutePath() + "]");
+					System.out.println("-p PORT  HTTP listening port [=" + port
+							+ "]");
+					System.out.println("-v       Verbose stdout");
+					System.out.println("-Dx=y    JVM system property");
+
+					System.exit(0);
+				}
 			}
 		}
-
 		System.setProperty("wsl.config", configFile.getAbsolutePath());
 
 		if (!warFile.exists()) {
@@ -140,6 +157,7 @@ public class Launcher {
 			}
 		}
 
+		setLF();
 		startServer(warFile, configFile, port);
 
 		URI uri = null;
@@ -150,7 +168,7 @@ public class Launcher {
 			System.exit(1);
 		}
 
-		if (headless) {
+		if (GraphicsEnvironment.isHeadless()) {
 			sysout.println("Server started: " + uri.toString());
 		} else {
 			try {
@@ -173,7 +191,7 @@ public class Launcher {
 	}
 
 	private static void setLF() {
-		if (headless)
+		if (GraphicsEnvironment.isHeadless())
 			return;
 
 		try {
@@ -228,10 +246,11 @@ public class Launcher {
 	}
 
 	static void error(String msg) {
-		if (headless) {
+		if (GraphicsEnvironment.isHeadless()) {
 			System.out.println(msg);
 			System.exit(1);
 		} else {
+			setLF();
 			JOptionPane.showMessageDialog(null, msg, "wissl",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
