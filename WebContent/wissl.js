@@ -29,13 +29,13 @@ var wsl = {
 	// number of currently selected elements
 	selCount : 0,
 
-	login : function() {
+	login : function () {
 		$('#login-error').hide();
 		var username = $('#username').val(), password = $('#password').val();
 		wsl.doLogin(username, password);
 	},
 
-	doLogin : function(username, password) {
+	doLogin : function (username, password) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/login",
@@ -45,7 +45,7 @@ var wsl = {
 				"password" : password
 			},
 			dataType : "json",
-			success : function(session) {
+			success : function (session) {
 				var uid, auth;
 				uid = parseInt(session.userId, 10);
 				auth = parseInt(session.auth, 10);
@@ -63,15 +63,15 @@ var wsl = {
 				wsl.loadContent(wsl.getCurrentHash());
 				wsl.unlockUI();
 			},
-			error : function(xhr, textStatus, errorThrown) {
+			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Login failure", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	logout : function() {
-		wsl.confirmDialog('Logout', 'Do you really want to leave?', function() {
+	logout : function () {
+		wsl.confirmDialog('Logout', 'Do you really want to leave?', function () {
 			var sid = wsl.sessionId;
 
 			localStorage.removeItem('sessionId');
@@ -90,24 +90,24 @@ var wsl = {
 					"sessionId" : sid
 				},
 				dataType : "json",
-				success : function() {
+				success : function () {
 					player.stop();
 					wsl.unlockUI();
 					History.pushState(null, document.title, '?logout');
 				},
-				error : function(xhr, textStatus, errorThrown) {
+				error : function (xhr, textStatus, errorThrown) {
 					wsl.ajaxError("Logout failure", xhr);
 					wsl.unlockUI();
 				}
 			});
-		}, function() {
+		}, function () {
 		});
 	},
 
-	shutdown : function() {
+	shutdown : function () {
 		var msg = 'Do you really want to shutdown the server?<br>';
 		msg += 'You will not be able to login util you restart the server manually!';
-		wsl.confirmDialog('Shutdown server', msg, function() {
+		wsl.confirmDialog('Shutdown server', msg, function () {
 			wsl.lockUI();
 			$.ajax({
 				url : "wissl/shutdown",
@@ -115,19 +115,19 @@ var wsl = {
 				headers : {
 					'sessionId' : wsl.sessionId
 				},
-				success : function() {
+				success : function () {
 					// will never be a success
 				},
-				error : function(xhr, textStatus, errorThrown) {
+				error : function (xhr, textStatus, errorThrown) {
 					wsl.ajaxError("Shutdown failure", xhr);
 					wsl.unlockUI();
 				}
 			});
-		}, function() {
+		}, function () {
 		});
 	},
 
-	displayUsers : function(scroll) {
+	displayUsers : function (scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -136,7 +136,7 @@ var wsl = {
 				sessionId : wsl.sessionId
 			},
 			dataType : 'json',
-			success : function(data) {
+			success : function (data) {
 				var content = '<ul>', user, uid, i, j, liclass, sess;
 				for (i = 0; i < data.users.length; i += 1) {
 					user = data.users[i];
@@ -174,7 +174,7 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr, st, err) {
+			error : function (xhr, st, err) {
 				wsl.ajaxError("Failed to get users", xhr);
 				wsl.unlockUI();
 			}
@@ -182,7 +182,7 @@ var wsl = {
 
 	},
 
-	displayUser : function(uid, scroll) {
+	displayUser : function (uid, scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -191,7 +191,7 @@ var wsl = {
 				sessionId : wsl.sessionId
 			},
 			dataType : 'json',
-			success : function(data) {
+			success : function (data) {
 				var content = '', t1, t2, i, pl, song;
 
 				content += '<p><span class="user-name">' + data.user.username + '</span>';
@@ -245,14 +245,14 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr, st, err) {
+			error : function (xhr, st, err) {
 				wsl.ajaxError("Failed to get user " + uid, xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displaySettings : function(scroll) {
+	displaySettings : function (scroll) {
 		wsl.showContent({
 			settings : 'User settings',
 			scroll : scroll
@@ -262,12 +262,12 @@ var wsl = {
 		});
 	},
 
-	displayAdmin : function(scroll) {
+	displayAdmin : function (scroll) {
 		var cb, folders, users, click;
 
 		wsl.lockUI();
 
-		cb = function() {
+		cb = function () {
 			var i, content;
 
 			if (!users || !folders) {
@@ -329,11 +329,11 @@ var wsl = {
 				'sessionId' : wsl.sessionId
 			},
 			dataType : 'json',
-			success : function(data) {
+			success : function (data) {
 				folders = data.folders;
 				cb();
 			},
-			error : function(xhr, textStatus, errorThrown) {
+			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to display admin", xhr);
 				wsl.unlockUI();
 			}
@@ -345,18 +345,18 @@ var wsl = {
 				'sessionId' : wsl.sessionId
 			},
 			dataType : 'json',
-			success : function(data) {
+			success : function (data) {
 				users = data.users;
 				cb();
 			},
-			error : function(xhr, textStatus, errorThrown) {
+			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to get artists", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displayArtists : function(scroll) {
+	displayArtists : function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/artists",
@@ -364,7 +364,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var ar, content, i, j, artist, name, clazz, liclass, onclick, artworks;
 				ar = data.artists;
 				content = '<ul>';
@@ -409,14 +409,14 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr, textStatus, errorThrown) {
+			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to get artists", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displayAlbums : function(id, scroll) {
+	displayAlbums : function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/albums/" + id,
@@ -424,7 +424,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var artist, albums, content, album, i, name, clazz, liclass, events;
 				artist = data.artist;
 				albums = data.albums;
@@ -473,14 +473,14 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr, textStatus, errorThrown) {
+			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to get albums for " + id, xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displaySongs : function(id, scroll) {
+	displaySongs : function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/songs/" + id,
@@ -488,7 +488,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var artist, album, songs, content, i, song, liclass, events;
 				artist = data.artist;
 				album = data.album;
@@ -540,14 +540,14 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to get songs for " + id, xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displayPlaylists : function(scroll) {
+	displayPlaylists : function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/playlists",
@@ -555,7 +555,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var playlists = data.playlists, content = "<ul>", i, playlist, events;
 				for (i = 0; i < playlists.length; i += 1) {
 					playlist = playlists[i];
@@ -582,14 +582,14 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to get playlists", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	displayPlaylist : function(pid, scroll) {
+	displayPlaylist : function (pid, scroll) {
 		var id = parseInt(pid, 10);
 		wsl.lockUI();
 		$.ajax({
@@ -598,7 +598,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var songs, content, i, song, play, li_id, liclass, art_name, alb_name, c1, c2, events, doScroll;
 				songs = data.playlist;
 				content = "<ul>";
@@ -658,15 +658,15 @@ var wsl = {
 
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to get playlists", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	randomPlaylist : function() {
-		var cb = function() {
+	randomPlaylist : function () {
+		var cb = function () {
 			wsl.lockUI();
 			$.ajax({
 				url : "/wissl/playlist/random",
@@ -679,7 +679,7 @@ var wsl = {
 					name : 'Random',
 					number : 20
 				},
-				success : function(data) {
+				success : function (data) {
 					player.play({
 						song_id : data.first_song,
 						playlist_id : data.playlist.id,
@@ -688,7 +688,7 @@ var wsl = {
 					});
 					History.replaceState(null, document.title, '?playlist/' + data.playlist.id);
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.ajaxError("Failed to get playlists", xhr);
 					wsl.unlockUI();
 				}
@@ -696,9 +696,9 @@ var wsl = {
 		};
 
 		if (player.playing && player.playing.playlist_name === 'Random') {
-			wsl.confirmDialog('', 'Reshuffle Random playlist?', function() {
+			wsl.confirmDialog('', 'Reshuffle Random playlist?', function () {
 				cb();
-			}, function() {
+			}, function () {
 				History.replaceState(null, document.title, '?playing/');
 			});
 		} else {
@@ -706,14 +706,14 @@ var wsl = {
 		}
 	},
 
-	nothingPlaying : function() {
+	nothingPlaying : function () {
 		wsl.showContent({
 			library : "<span class='empty-library'>Nothing is currently playing!</span>"
 		});
 		wsl.refreshNavbar({});
 	},
 
-	play : function(song_id, playlist_id, playlist_name, position, event) {
+	play : function (song_id, playlist_id, playlist_name, position, event) {
 		event.stopPropagation();
 		player.play({
 			song_id : song_id,
@@ -723,9 +723,9 @@ var wsl = {
 		});
 	},
 
-	deleteSelectedSongs : function(playlist_id) {
+	deleteSelectedSongs : function (playlist_id) {
 		var ids = [];
-		$('.selected .song-id').each(function(index) {
+		$('.selected .song-id').each(function (index) {
 			ids[index] = parseInt(this.innerHTML, 10);
 		});
 		if (ids.length === 0) {
@@ -743,11 +743,11 @@ var wsl = {
 			data : {
 				"song_ids" : ids
 			},
-			success : function(data) {
+			success : function (data) {
 				wsl.displayPlaylist(playlist_id);
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to remove songs", xhr);
 				wsl.unlockUI();
 			}
@@ -755,9 +755,9 @@ var wsl = {
 		wsl.clearSelection();
 	},
 
-	deletePlaylist : function(playlist_id) {
+	deletePlaylist : function (playlist_id) {
 		var ids = [];
-		$('.selected .playlist-id').each(function(index) {
+		$('.selected .playlist-id').each(function (index) {
 			ids[index] = parseInt(this.innerHTML, 10);
 		});
 		if (ids.length === 0) {
@@ -775,11 +775,11 @@ var wsl = {
 			data : {
 				"playlist_ids" : ids
 			},
-			success : function(data) {
+			success : function (data) {
 				wsl.displayPlaylists();
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to remove playlists", xhr);
 				wsl.unlockUI();
 			}
@@ -787,7 +787,7 @@ var wsl = {
 		wsl.clearSelection();
 	},
 
-	refreshNavbar : function(arg) {
+	refreshNavbar : function (arg) {
 		var navbar = '', clazz, style, cb, name;
 		navbar += '<hr/>';
 
@@ -894,7 +894,7 @@ var wsl = {
 		$("#navbar").empty().append(navbar);
 	},
 
-	showContent : function(content) {
+	showContent : function (content) {
 		var pages, i, page;
 
 		pages = [ 'artists', 'library', 'users', 'user', 'settings', 'admin' ];
@@ -915,10 +915,10 @@ var wsl = {
 
 	selectionDrag : null,
 
-	mouseDown : function(e, event) {
+	mouseDown : function (e, event) {
 		var mouseup, mousemove;
 
-		mousemove = function(event) {
+		mousemove = function (event) {
 			var y, y2, elt, top, height;
 
 			top = $('.selectable').first().offset().top;
@@ -942,13 +942,13 @@ var wsl = {
 			elt.show();
 		};
 
-		mouseup = function(event) {
+		mouseup = function (event) {
 			var sel = [], i;
 
 			$('#library-drag-selection').hide();
 			$(document).off('mousemove', mousemove);
 
-			$('.selectable').each(function() {
+			$('.selectable').each(function () {
 				var elt, offset, y, h, my, my2;
 				elt = $(this);
 				offset = elt.offset();
@@ -984,20 +984,20 @@ var wsl = {
 		$(document).on('mousemove', mousemove);
 	},
 
-	clearSelection : function() {
-		$('.selected').each(function(i) {
+	clearSelection : function () {
+		$('.selected').each(function (i) {
 			wsl.deselect(this);
 		});
 	},
 
-	selectAll : function() {
+	selectAll : function () {
 		wsl.selCount = 0;
-		$('.selectable').each(function(i) {
+		$('.selectable').each(function (i) {
 			wsl.select(this);
 		});
 	},
 
-	select : function(e) {
+	select : function (e) {
 		wsl.selCount += 1;
 		$(e).addClass('selected');
 		$(e).find('.select-box').addClass('select-box-checked');
@@ -1007,7 +1007,7 @@ var wsl = {
 		}
 	},
 
-	deselect : function(e) {
+	deselect : function (e) {
 		wsl.selCount = Math.max(0, wsl.selCount - 1);
 		$(e).removeClass('selected');
 		$(e).find('.select-box').removeClass('select-box-checked');
@@ -1017,7 +1017,7 @@ var wsl = {
 		}
 	},
 
-	toggleSelection : function(e) {
+	toggleSelection : function (e) {
 		if ($(e).hasClass('selected')) {
 			wsl.deselect(e);
 		} else {
@@ -1025,7 +1025,7 @@ var wsl = {
 		}
 	},
 
-	playAlbum : function(album_id, song_id, position) {
+	playAlbum : function (album_id, song_id, position) {
 		// wsl.select(this.parentNode);wsl.playNow()
 		wsl.lockUI();
 		$.ajax({
@@ -1040,7 +1040,7 @@ var wsl = {
 				album_ids : [ album_id ],
 				clear : true
 			},
-			success : function(data) {
+			success : function (data) {
 				var playlist = data.playlist;
 				player.play({
 					song_id : song_id,
@@ -1050,7 +1050,7 @@ var wsl = {
 				});
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to add album to quick playlist", xhr);
 				wsl.unlockUI();
 			}
@@ -1058,12 +1058,12 @@ var wsl = {
 
 	},
 
-	playNow : function() {
+	playNow : function () {
 		var song_ids = [], album_ids = [];
-		$('.selected .song-id').each(function(index) {
+		$('.selected .song-id').each(function (index) {
 			song_ids[index] = parseInt(this.innerHTML, 10);
 		});
-		$('.selected .album-id').each(function(index) {
+		$('.selected .album-id').each(function (index) {
 			album_ids[index] = parseInt(this.innerHTML, 10);
 		});
 
@@ -1085,7 +1085,7 @@ var wsl = {
 				album_ids : album_ids,
 				clear : true
 			},
-			success : function(data) {
+			success : function (data) {
 				var playlist = data.playlist;
 				wsl.clearSelection();
 
@@ -1100,7 +1100,7 @@ var wsl = {
 						'sessionId' : wsl.sessionId
 					},
 					dataType : 'json',
-					success : function(data) {
+					success : function (data) {
 						player.play({
 							song_id : data.id,
 							playlist_id : playlist.id,
@@ -1109,20 +1109,20 @@ var wsl = {
 						});
 						wsl.unlockUI();
 					},
-					error : function(xhr) {
+					error : function (xhr) {
 						wsl.ajaxError("Failed to get first song in Quick Playlist");
 						wsl.unlockUI();
 					}
 				});
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to add songs to Quick Playlist", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	showAddToPlaylist : function(e) {
+	showAddToPlaylist : function (e) {
 		wsl.showDialog('add-to-playlist-dialog');
 		wsl.lockUI();
 		$.ajax({
@@ -1131,7 +1131,7 @@ var wsl = {
 				"sessionId" : wsl.sessionId
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				var radioItems = "", i, p, inputName, labelClass, labelText;
 				for (i = 0; i < data.playlists.length; i += 1) {
 					p = data.playlists[i];
@@ -1153,25 +1153,25 @@ var wsl = {
 				$('#add-to-playlist-dialog .dialog-form-input').html(radioItems);
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to get playlists", xhr);
 				wsl.unlockUI();
 			}
 		});
 	},
 
-	cancelAddToPlaylist : function() {
+	cancelAddToPlaylist : function () {
 		$('#dialog-mask').hide();
 		$('#add-to-playlist-dialog').hide();
 	},
 
-	addToPlaylist : function() {
+	addToPlaylist : function () {
 		var song_ids = [], album_ids = [], playlist_id, playlist_name;
 
-		$('.selected .song-id').each(function(index) {
+		$('.selected .song-id').each(function (index) {
 			song_ids[index] = parseInt(this.innerHTML, 10);
 		});
-		$('.selected .album-id').each(function(index) {
+		$('.selected .album-id').each(function (index) {
 			album_ids[index] = parseInt(this.innerHTML, 10);
 		});
 
@@ -1198,10 +1198,10 @@ var wsl = {
 					"song_ids" : song_ids,
 					"album_ids" : album_ids
 				},
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.ajaxError("Failed to add songs to playlist", xhr);
 					wsl.unlockUI();
 				}
@@ -1221,10 +1221,10 @@ var wsl = {
 					"song_ids" : song_ids,
 					"album_ids" : album_ids
 				},
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.ajaxError("Failed to add songs to playlist", xhr);
 					wsl.unlockUI();
 				}
@@ -1234,11 +1234,11 @@ var wsl = {
 		wsl.cancelAddToPlaylist();
 	},
 
-	showCreatePlaylist : function() {
+	showCreatePlaylist : function () {
 		wsl.showDialog('playlist-create-dialog');
 	},
 
-	createPlaylist : function(name) {
+	createPlaylist : function (name) {
 		var playlistName = $('#playlist-name').val();
 
 		wsl.lockUI();
@@ -1252,12 +1252,12 @@ var wsl = {
 				"name" : playlistName
 			},
 			dataType : "json",
-			success : function(data) {
+			success : function (data) {
 				wsl.displayPlaylists();
 				wsl.cancelCreatePlaylist();
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.ajaxError("Failed to create playlist", xhr);
 				wsl.cancelCreatePlaylist();
 				wsl.unlockUI();
@@ -1265,13 +1265,13 @@ var wsl = {
 		});
 	},
 
-	cancelCreatePlaylist : function() {
+	cancelCreatePlaylist : function () {
 		$('#dialog-mask').hide();
 		$('#playlist-name').val('');
 		$('#playlist-create-dialog').hide();
 	},
 
-	confirmDialog : function(title, message, okCallback, cancelCallback) {
+	confirmDialog : function (title, message, okCallback, cancelCallback) {
 		var dialog, winW, winH, w, h;
 		dialog = $('#confirm-dialog');
 		winW = $(window).width();
@@ -1288,14 +1288,14 @@ var wsl = {
 		dialog.show();
 		$('#dialog-mask').show();
 
-		$('#confirm-dialog-ok').on('click', function() {
+		$('#confirm-dialog-ok').on('click', function () {
 			$('#dialog-mask').hide();
 			$('#confirm-dialog').hide();
 			okCallback();
 			$('#confirm-dialog-ok').off();
 			$('#confirm-dialog-cancel').off();
 		});
-		$('#confirm-dialog-cancel').on('click', function() {
+		$('#confirm-dialog-cancel').on('click', function () {
 			$('#dialog-mask').hide();
 			$('#confirm-dialog').hide();
 			cancelCallback();
@@ -1304,18 +1304,18 @@ var wsl = {
 		});
 	},
 
-	showAddUser : function() {
+	showAddUser : function () {
 		wsl.showDialog('adduser-dialog');
 	},
 
-	cancelAddUser : function() {
+	cancelAddUser : function () {
 		$('#adduser-username').val('');
 		$('#adduser-password').val('');
 		$('#dialog-mask').hide();
 		$('#adduser-dialog').hide();
 	},
 
-	addUser : function() {
+	addUser : function () {
 		var user, pw, auth = 2;
 
 		user = $('#adduser-username').val();
@@ -1337,12 +1337,12 @@ var wsl = {
 				password : pw,
 				auth : auth
 			},
-			success : function(data) {
+			success : function (data) {
 				wsl.unlockUI();
 				wsl.cancelAddUser();
 				wsl.displayAdmin();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.unlockUI();
 				wsl.cancelAddUser();
 				wsl.ajaxError("Failed to add user", xhr);
@@ -1350,7 +1350,7 @@ var wsl = {
 		});
 	},
 
-	addFirstUser : function() {
+	addFirstUser : function () {
 		var user, pw, pwConfirm, auth = 1;
 
 		$('#firstuser-error').hide();
@@ -1374,12 +1374,12 @@ var wsl = {
 				password : pw,
 				auth : auth
 			},
-			success : function(data) {
+			success : function (data) {
 				wsl.unlockUI();
 				$('#firstuser').hide();
 				wsl.doLogin(user, pw);
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				var msg = 'Failed to create user', e;
 				e = $.parseJSON(xhr.responseText);
 				if (e.message) {
@@ -1392,9 +1392,9 @@ var wsl = {
 		});
 	},
 
-	removeUser : function() {
+	removeUser : function () {
 		var sel = [];
-		$('#admin-users-list .selected .users-admin-id').each(function(index) {
+		$('#admin-users-list .selected .users-admin-id').each(function (index) {
 			sel.push(this.innerHTML);
 		});
 
@@ -1409,11 +1409,11 @@ var wsl = {
 				data : {
 					user_ids : sel
 				},
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 					wsl.displayAdmin();
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.unlockUI();
 					wsl.ajaxError("Failed to remove user", xhr);
 				}
@@ -1421,12 +1421,12 @@ var wsl = {
 		}
 	},
 
-	showAddMusicFolder : function() {
+	showAddMusicFolder : function () {
 		wsl.showDialog('addmusic-dialog');
 		wsl.updateAddMusicFolderListing();
 	},
 
-	updateAddMusicFolderListing : function(dir) {
+	updateAddMusicFolderListing : function (dir) {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/folders/listing',
@@ -1438,7 +1438,7 @@ var wsl = {
 			data : {
 				directory : dir
 			},
-			success : function(data) {
+			success : function (data) {
 				var content = '', i, d, name, cb;
 
 				content += '<div id="addmusic-dialog-bar">';
@@ -1476,7 +1476,7 @@ var wsl = {
 				$('#addmusic-dialog-content').empty().append(content);
 				wsl.unlockUI();
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.unlockUI();
 				wsl.cancelAddMusicFolder();
 				wsl.ajaxError("Failed to get directory listing", xhr);
@@ -1484,7 +1484,7 @@ var wsl = {
 		});
 	},
 
-	selectOrOpenMusicFolder : function(elt, dir) {
+	selectOrOpenMusicFolder : function (elt, dir) {
 		if ($(elt).hasClass('dir-selected')) {
 			wsl.updateAddMusicFolderListing(dir);
 		} else {
@@ -1493,7 +1493,7 @@ var wsl = {
 		}
 	},
 
-	addMusic : function() {
+	addMusic : function () {
 		var sel, dir;
 
 		sel = $('#addmusic-dialog-content .dir-selected .dir-name');
@@ -1508,12 +1508,12 @@ var wsl = {
 				data : {
 					directory : dir
 				},
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 					wsl.cancelAddMusicFolder();
 					wsl.displayAdmin();
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.unlockUI();
 					wsl.cancelAddMusicFolder();
 					wsl.ajaxError("Failed to add music directory", xhr);
@@ -1522,9 +1522,9 @@ var wsl = {
 		}
 	},
 
-	removeMusicFolder : function() {
+	removeMusicFolder : function () {
 		var sel = [];
-		$('#admin-music-folders .selected .admin-music-folder-directory').each(function(index) {
+		$('#admin-music-folders .selected .admin-music-folder-directory').each(function (index) {
 			sel.push(this.innerHTML);
 		});
 
@@ -1539,11 +1539,11 @@ var wsl = {
 				data : {
 					directory : sel
 				},
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 					wsl.displayAdmin();
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.unlockUI();
 					wsl.ajaxError("Failed to remove music directory", xhr);
 				}
@@ -1551,13 +1551,13 @@ var wsl = {
 		}
 	},
 
-	cancelAddMusicFolder : function() {
+	cancelAddMusicFolder : function () {
 		$('#dialog-mask').hide();
 		$('#addmusic-dialog').hide();
 	},
 
 	// error during ajax request to server
-	ajaxError : function(message, xhr) {
+	ajaxError : function (message, xhr) {
 		var errorMsg, status, e;
 		errorMsg = message;
 		status = xhr.status;
@@ -1583,14 +1583,14 @@ var wsl = {
 	},
 
 	// display an non fatal error
-	error : function(message) {
+	error : function (message) {
 		wsl.unlockUI();
 		$("#error-dialog-message").html(message);
 		wsl.showDialog('error-dialog');
 	},
 
 	// fatal error, get back to login page
-	fatalError : function(message) {
+	fatalError : function (message) {
 		player.stop();
 		wsl.sessionId = null;
 		wsl.userId = null;
@@ -1605,12 +1605,12 @@ var wsl = {
 	},
 
 	// close the error box in ui
-	closeError : function() {
+	closeError : function () {
 		$('#dialog-mask').hide();
 		$("#error-dialog").hide();
 	},
 
-	formatSeconds : function(seconds, alt) {
+	formatSeconds : function (seconds, alt) {
 		var hou, min, sec, ret;
 
 		hou = Math.floor(seconds / 3600);
@@ -1630,7 +1630,7 @@ var wsl = {
 		return ret;
 	},
 
-	showAbout : function() {
+	showAbout : function () {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/info',
@@ -1638,7 +1638,7 @@ var wsl = {
 			headers : {
 				sessionId : wsl.sessionId
 			},
-			success : function(data) {
+			success : function (data) {
 				var content = '<table>';
 				content += '<tr><td class="left">Version</td><td class="right">' + data.version + '</td></tr>';
 				content += '<tr><td class="left">Build</td><td class="right">' + data.build + '</td></tr>';
@@ -1651,7 +1651,7 @@ var wsl = {
 				wsl.unlockUI();
 				wsl.showDialog('about-dialog');
 			},
-			error : function(xhr) {
+			error : function (xhr) {
 				wsl.unlockUI();
 				wsl.closeAbout();
 				wsl.ajaxError("Failed to get server info", xhr);
@@ -1660,7 +1660,7 @@ var wsl = {
 
 	},
 
-	closeAbout : function() {
+	closeAbout : function () {
 		$('#dialog-mask').hide();
 		$("#about-dialog").hide();
 	},
@@ -1668,18 +1668,18 @@ var wsl = {
 	// true when a callback is running and UI should be blocked
 	uiLock : false,
 
-	lockUI : function() {
+	lockUI : function () {
 		wsl.uiLock = true;
 		$('#uilock').show();
 	},
 
-	unlockUI : function() {
+	unlockUI : function () {
 		$('#uilock').hide();
 		wsl.uiLock = false;
 		$('#navbar').show();
 	},
 
-	showDialog : function(id) {
+	showDialog : function (id) {
 		var dialog, winW, winH, w, h;
 		dialog = $('#' + id);
 		winW = $(window).width();
@@ -1695,7 +1695,7 @@ var wsl = {
 		dialog.show();
 	},
 
-	load : function(hash) {
+	load : function (hash) {
 		if (wsl.uiLock) {
 			return;
 		}
@@ -1706,7 +1706,7 @@ var wsl = {
 		History.pushState(null, document.title, hash);
 	},
 
-	loadContent : function(hash) {
+	loadContent : function (hash) {
 		var hist, sid, uid, match, title, auth, st, scroll;
 		sid = localStorage.getItem('sessionId');
 		if (sid) {
@@ -1727,7 +1727,7 @@ var wsl = {
 				url : '/wissl/hasusers',
 				type : 'GET',
 				dataType : "json",
-				success : function(data) {
+				success : function (data) {
 					wsl.unlockUI();
 
 					if (data.hasusers === false) {
@@ -1737,7 +1737,7 @@ var wsl = {
 						$('#login').show();
 					}
 				},
-				error : function(xhr) {
+				error : function (xhr) {
 					wsl.unlockUI();
 					wsl.ajaxError('Failed to contact the server', xhr);
 				}
@@ -1803,7 +1803,7 @@ var wsl = {
 		wsl.selCount = 0;
 	},
 
-	getCurrentHash : function() {
+	getCurrentHash : function () {
 		var st, hash;
 		st = History.getState();
 
@@ -1817,9 +1817,9 @@ var wsl = {
 
 };
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-	History.Adapter.bind(window, 'statechange', function() {
+	History.Adapter.bind(window, 'statechange', function () {
 		var h = wsl.getCurrentHash();
 		if (h === wsl.previousHash) {
 			return;
@@ -1830,7 +1830,7 @@ $(document).ready(function() {
 
 	wsl.loadContent(wsl.getCurrentHash());
 
-	window.onbeforeunload = function(e) {
+	window.onbeforeunload = function (e) {
 		if (player.playing) {
 			var msg = 'You are currently playing music. Leaving this page will stop it.';
 			e.returnValue = msg;
