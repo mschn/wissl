@@ -1733,7 +1733,39 @@ var wsl = {
 	},
 
 	showAbout : function() {
-		wsl.showDialog('about-dialog');
+		wsl.lockUI();
+		$
+				.ajax({
+					url : '/wissl/info',
+					type : 'GET',
+					headers : {
+						sessionId : wsl.sessionId
+					},
+					success : function(data) {
+						var content = '<table>';
+						content += '<tr><td class="left">Version</td><td class="right">'
+								+ data.version + '</td></tr>';
+						content += '<tr><td class="left">Build</td><td class="right">'
+								+ data.build + '</td></tr>';
+						content += '<tr><td class="left">Server</td><td class="right">'
+								+ data.server + '</td></tr>';
+						content += '<tr><td class="left">OS</td><td class="right">'
+								+ data.os + '</td></tr>';
+						content += '<tr><td class="left">Java</td><td class="right">'
+								+ data.java + '</td></tr>';
+						content += '</table>';
+
+						$('#about-dialog-info').empty().html(content);
+						wsl.unlockUI();
+						wsl.showDialog('about-dialog');
+					},
+					error : function(xhr) {
+						wsl.unlockUI();
+						wsl.closeAbout();
+						wsl.ajaxError("Failed to get server info", xhr);
+					}
+				});
+
 	},
 
 	closeAbout : function() {
