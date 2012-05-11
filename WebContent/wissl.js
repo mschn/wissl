@@ -1736,7 +1736,7 @@ var wsl = {
 		wsl.showDialog('about-dialog');
 	},
 
-	hideAbout : function() {
+	closeAbout : function() {
 		$('#dialog-mask').hide();
 		$("#about-dialog").hide();
 	},

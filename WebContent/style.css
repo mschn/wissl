@@ -1192,3 +1192,23 @@ span.users-connected {
 #addmusic-dialog-content ul li span.dir-name {
 	display: none;
 }
+
+#about-dialog div {
+	text-align: left;
+	padding-top: 20px;
+	padding-left: 30px;
+}
+
+#about-dialog div p {
+	margin: 2px 0;
+}
+
+#about-dialog h2 {
+	font-size: 1.8em;
+	margin: 5px 0 0 0;
+}
+
+#about-dialog-subtitle {
+	color: #666;
+	margin: 0;
+}
