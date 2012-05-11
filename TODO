@@ -1,6 +1,5 @@
 - maintenance
   - playlist reorganization
-  - DB schema versioning (auto clean if no match)
   - show confirm dialog on page refresh if player.playing
   - rotate log files / show only last file with API
 

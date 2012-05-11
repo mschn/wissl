@@ -16,7 +16,6 @@
 package fr.msch.wissl.server;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,6 +45,8 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  */
 public class H2DB extends DB {
 
+	private static final long SCHEMA_VERSION = 1L;
+
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
 
@@ -72,20 +73,38 @@ public class H2DB extends DB {
 			throw new SQLException("Failed to create Connection Pool ", e);
 		}
 
+		long version = -1L;
+		try {
+			version = getSchemaVersion();
+		} catch (SQLException e) {
+			Logger.warn("Failed to get Schema version");
+			Logger.debug("", e);
+		}
+
+		boolean createNewDb = false;
+
 		if (Config.isDbClean()) {
+			Logger.debug("Forcing new DB creation");
+			createNewDb = true;
+		} else if (version == -1L) {
+			Logger.debug("Previous DB not found, will create new one");
+			createNewDb = true;
+		} else if (version != SCHEMA_VERSION) {
+			Logger.debug("DB schema version changed: creating new DB");
+			createNewDb = true;
+		} else {
+			Logger.info("Attempting to recover previous DB");
+		}
+
+		if (createNewDb) {
 			try {
 				this.dropDB();
 			} catch (SQLException e) {
 				Logger.warn("Failed to clear DB", e);
 			}
-		}
-
-		if (this.createDB()) {
+			this.createDB();
 			Logger.info("Created H2 DB: " + publicUrl);
-		} else {
-			Logger.info("Recovered H2 DB: " + publicUrl);
 		}
-
 	}
 
 	@Override
@@ -121,6 +140,7 @@ public class H2DB extends DB {
 
 		try {
 			st = conn.createStatement();
+			st.addBatch("DROP TABLE IF EXISTS info");
 			st.addBatch("DROP TABLE IF EXISTS song");
 			st.addBatch("DROP TABLE IF EXISTS album");
 			st.addBatch("DROP TABLE IF EXISTS artist");
@@ -146,6 +166,7 @@ public class H2DB extends DB {
 		Connection conn = getConnection();
 		Statement st = conn.createStatement();
 
+		/*
 		DatabaseMetaData md = conn.getMetaData();
 		ResultSet rs = md.getTables(null, null, "%", null);
 		HashSet<String> hs = new HashSet<String>();
@@ -164,8 +185,16 @@ public class H2DB extends DB {
 		if (hs.size() == 0) {
 			return false;
 		}
+		*/
 
 		try {
+			st.addBatch("CREATE TABLE info (" + //
+					"schema_version LONG NOT NULL," + //
+					"song_count LONG," + //
+					"album_count LONG," + //
+					"song_duration LONG" + //
+					")");
+
 			st.addBatch("CREATE TABLE artist (" + //
 					"artist_id IDENTITY," + //
 					"artist_name VARCHAR(64) NOT NULL," + //
@@ -243,6 +272,9 @@ public class H2DB extends DB {
 
 			st.addBatch("CREATE INDEX idx_song_pos ON playlist_song(position)");
 
+			st.addBatch("INSERT INTO info (schema_version) VALUES ("
+					+ SCHEMA_VERSION + ")");
+
 			st.executeBatch();
 			return true;
 		} finally {
@@ -251,6 +283,31 @@ public class H2DB extends DB {
 			if (conn != null)
 				conn.close();
 		}
+	}
+
+	/**
+	 * @return Schema Version as stored in DB, or -1 if no record found
+	 * @throws SQLException
+	 */
+	private long getSchemaVersion() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		long ver = -1l;
+
+		try {
+			st = conn.prepareStatement("SELECT schema_version FROM info");
+			ResultSet rs = st.executeQuery();
+
+			if (rs.next()) {
+				ver = rs.getLong(1);
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ver;
 	}
 
 	@Override
