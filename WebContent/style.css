@@ -576,7 +576,7 @@ span#next {
 }
 
 #artists li.playing div.artists-info span {
-	color: #444;
+	color: white;
 }
 
 #artists span.name {
@@ -596,7 +596,7 @@ span#next {
 #artists li.playing div.artists-info {
 	background: #a8bfe0;
 	box-shadow: 0 0 5px 5px #a8bfe0;
-	text-shadow: 0 1px 1px white;
+	text-shadow: 0 1px 2px #444;
 }
 
 #artists li.playing span.name {
@@ -791,17 +791,11 @@ span#next {
 
 #library li.playing,#library li.playing:hover {
 	background-color: #a8bfe0;
-	text-shadow: 0 1px 1px white;
+	text-shadow: 0 1px 2px #444;
 }
 
 #library li.playing span {
-	color: #444;
-}
-
-#library .playing .playlist-title,#library .playing .name,#library .playing .title
-	{
-	padding-left: 24px;
-	background: 0 4px no-repeat url('img/play_24.png') transparent;
+	color: white;
 }
 
 #library span.song-id,#library span.album-id,#library span.playlist-id {
