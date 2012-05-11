@@ -20,6 +20,7 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.net.URI;
@@ -39,6 +40,7 @@ import javax.swing.UIManager;
 import net.winstone.Server;
 import net.winstone.boot.BootStrap;
 import fr.msch.wissl.common.Config;
+import fr.msch.wissl.server.Logger;
 
 /**
  * 
@@ -160,6 +162,20 @@ public class Launcher {
 		setLF();
 		startServer(warFile, configFile, port);
 
+		// read build info if running from jar
+		try {
+			InputStream is = Launcher.class
+					.getResourceAsStream("/META-INF/MANIFEST.MF");
+			if (is != null) {
+				Properties props = new Properties();
+				props.load(is);
+				String info = props.getProperty("Implementation-Version");
+				Config.setBuildInfo(info);
+			}
+		} catch (Exception e) {
+			Logger.warn("Failed to read build info. Not running from jar ?", e);
+		}
+
 		URI uri = null;
 		try {
 			uri = new URI("http://localhost:" + Config.getHttpPort());
@@ -177,6 +193,7 @@ public class Launcher {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
 	static Server startServer(File warFile, File configFile, int port) {

@@ -51,6 +51,10 @@ public class Config {
 	private File configFile = null;
 
 	private String version = null;
+	private String buildInfo = null;
+	private String serverInfo = null;
+	private String osInfo = null;
+	private String javaInfo = null;
 
 	private int httpPort = 0;
 
@@ -247,6 +251,38 @@ public class Config {
 					+ " must contain at least one element");
 		}
 		return list;
+	}
+
+	public static String getBuildInfo() {
+		return instance.buildInfo;
+	}
+
+	public static void setBuildInfo(String buildInfo) {
+		instance.buildInfo = buildInfo;
+	}
+
+	public static String getServerInfo() {
+		return instance.serverInfo;
+	}
+
+	public static void setServerInfo(String serverInfo) {
+		instance.serverInfo = serverInfo;
+	}
+
+	public static String getOsInfo() {
+		return instance.osInfo;
+	}
+
+	public static void setOsInfo(String osInfo) {
+		instance.osInfo = osInfo;
+	}
+
+	public static String getJavaInfo() {
+		return instance.javaInfo;
+	}
+
+	public static void setJavaInfo(String javaInfo) {
+		instance.javaInfo = javaInfo;
 	}
 
 	public static String getVersion() {

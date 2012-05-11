@@ -13,7 +13,8 @@
 	<property name="src.dir" value="${projectRoot}/src" />
 
 	<tstamp>
-		<format property="timestamp" pattern="yyyy/MM/dd HH:mm:ss" locale="en,UK" />
+		<format property="timestamp" pattern="yyyy/MM/dd HH:mm:ss" />
+		<format property="timestamp.buildInfo" pattern="yyMMddHHmm" />
 	</tstamp>
 
 	<target name="jslint" description="Run Javascript sources against JSlint">
@@ -103,6 +104,7 @@
 				<attribute name="Built-Date" value="${timestamp}" />
 				<attribute name="Main-Class" value="fr.msch.wissl.launcher.Launcher" />
 				<attribute name="Class-Path" value="${launcher.jar.cp}" />
+				<attribute name="Implementation-Version" value="${timestamp.buildInfo}" />
 			</manifest>
 		</jar>
 	</target>

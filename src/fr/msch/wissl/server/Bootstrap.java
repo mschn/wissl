@@ -44,15 +44,19 @@ public class Bootstrap extends ResteasyBootstrap {
 		}
 		Logger.create();
 
-		Logger.debug("Server:     " + event.getServletContext().getServerInfo());
-		Logger.debug("wissl:      " + Config.getVersion());
-		Logger.debug("OS:         " + System.getProperty("os.name") + " "
+		Config.setOsInfo(System.getProperty("os.name") + " "
 				+ System.getProperty("os.arch") + " "
 				+ System.getProperty("os.version"));
-
-		Logger.debug("Java:       " + System.getProperty("java.vm.name") + ", "
+		Config.setServerInfo(event.getServletContext().getServerInfo());
+		Config.setJavaInfo(System.getProperty("java.vm.name") + ", "
 				+ System.getProperty("java.version") + ", "
 				+ System.getProperty("java.vendor"));
+
+		Logger.debug("Server:     " + Config.getServerInfo());
+		Logger.debug("wissl:      " + Config.getVersion());
+		Logger.debug("OS:         " + Config.getOsInfo());
+
+		Logger.debug("Java:       " + Config.getJavaInfo());
 		Logger.debug("JAVA_HOME:  " + System.getProperty("java.home"));
 		Logger.debug("PWD:        " + System.getProperty("user.dir"));
 

@@ -1455,4 +1455,40 @@ public class REST {
 		log(s, l1);
 		System.exit(0);
 	}
+
+	/**
+	 * @return Various server info packed in a JSON object,ie:
+	 * <pre>
+	 * { 
+	 *   "version": "1.0",
+	 *   "build": "b32",
+	 *   "server": "Tomcat 7.0",
+	 *   "os": "Linux 3.3"
+	 *   "java": "HotSpot 1.6 Sun"
+	 * }
+	 * </pre>
+	 * @throws SecurityError
+	 */
+	@GET
+	@Path("info")
+	public String getVersion() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append('{');
+		sb.append("\"version\":" + JSONObject.quote(Config.getVersion()) + ",");
+		sb.append("\"build\":" + JSONObject.quote(Config.getBuildInfo()) + ",");
+		sb.append("\"server\":" + JSONObject.quote(Config.getServerInfo())
+				+ ",");
+		sb.append("\"os\":" + JSONObject.quote(Config.getOsInfo()) + ",");
+		sb.append("\"java\":" + JSONObject.quote(Config.getJavaInfo()));
+		sb.append('}');
+
+		nocache();
+		log(s, l1);
+
+		return sb.toString();
+	}
 }
