@@ -896,6 +896,9 @@ var wsl = {
 			}
 			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?admin\')">Admin</a>';
 		}
+		
+		navbar += "<hr/>";
+		navbar += '<a class="navbar-about" onclick="wsl.showAbout()">About</a>';
 		navbar += "<a class='navbar-logout' onclick='wsl.logout()'>Logout</a>";
 
 		$("#navbar").empty().append(navbar);
@@ -1595,6 +1598,15 @@ var wsl = {
 		return ret;
 	},
 
+	showAbout : function () {
+		wsl.showDialog('about-dialog');
+	},
+	
+	hideAbout : function () {
+		$('#dialog-mask').hide();
+		$("#about-dialog").hide();
+	},
+	
 	// true when a callback is running and UI should be blocked
 	uiLock : false,
 
