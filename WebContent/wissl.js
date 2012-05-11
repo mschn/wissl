@@ -413,12 +413,6 @@ var wsl = {
 		});
 	},
 
-	/**
-	 * fetch all albums for one artist, display it in library
-	 * 
-	 * @param id
-	 *            unique artist id
-	 */
 	displayAlbums : function(id, scroll) {
 		wsl.lockUI();
 		$.ajax({
@@ -483,12 +477,6 @@ var wsl = {
 		});
 	},
 
-	/**
-	 * fetch all songs for one album, display it in library
-	 * 
-	 * @param id
-	 *            unique album id
-	 */
 	displaySongs : function(id, scroll) {
 		wsl.lockUI();
 		$.ajax({
@@ -556,9 +544,6 @@ var wsl = {
 		});
 	},
 
-	/**
-	 * fetch all playlists for the logged user, display it in library
-	 */
 	displayPlaylists : function(scroll) {
 		wsl.lockUI();
 		$.ajax({
@@ -1665,9 +1650,6 @@ var wsl = {
 		dialog.show();
 	},
 
-	/**
-	 * called from the html document in replacement of <a href="url">
-	 */
 	load : function(hash) {
 		if (wsl.uiLock) {
 			return;
@@ -1679,9 +1661,6 @@ var wsl = {
 		History.pushState(null, document.title, hash);
 	},
 
-	/**
-	 * load content based on the the hash, ie http://server:port/?hash
-	 */
 	loadContent : function(hash) {
 		var hist, sid, uid, match, title, auth, st, scroll;
 		sid = localStorage.getItem('sessionId');
@@ -1787,5 +1766,12 @@ $(document).ready(function() {
 	});
 
 	wsl.loadContent(wsl.getCurrentHash());
+
+	window.onbeforeunload = function(e) {
+		if (player.playing) {
+			var msg = 'You are currently playing music. Leaving this page will stop it.'
+			e.returnValue = msg;
+		}
+	};
 
 });
