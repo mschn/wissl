@@ -25,7 +25,6 @@ var wsl = {
 	sessionId : null,
 	// true if logged user is administrator
 	admin : false,
-
 	// number of currently selected elements
 	selCount : 0,
 
@@ -263,14 +262,14 @@ var wsl = {
 	},
 
 	displayAdmin : function (scroll) {
-		var cb, folders = null, users = null, indexer = null;
+		var cb, folders = null, users = null;
 
 		wsl.lockUI();
 
 		cb = function () {
 			var i, content;
 
-			if (!users || !folders || !indexer) {
+			if (!users || !folders) {
 				return;
 			}
 
@@ -291,12 +290,35 @@ var wsl = {
 			content += '<div><span class="button button-add" onclick="wsl.showAddMusicFolder()">Add</span>';
 			content += '<span class="button button-cancel" onclick="wsl.removeMusicFolder()">Remove</span><div>';
 
-			if (indexer.running) {
-				content += '<p>Indexer running: ' + (indexer.percentDone * 100).toFixed(2)+ '%';
-				content += ' (' + indexer.songsDone + '/' + indexer.songsTodo + ')';
-				content += ', ' + wsl.formatSeconds(indexer.secondsLeft, true) + ' left</p>';
-			} else {
-				content += '<p>Indexer is not running</p>';
+			content += '<p id="admin-indexer-status">&nbsp;</p>';
+
+			if (!wsl.indexerStatusInterval) {
+				wsl.indexerStatusInterval = window.setInterval(function () {
+					$.ajax({
+						url : 'wissl/indexer/status',
+						headers : {
+							sessionId : wsl.sessionId
+						},
+						dataType : 'json',
+						success : function (data) {
+							var c = '';
+							if (data.running) {
+								c += 'Indexer running: ' + (data.percentDone * 100).toFixed(2) + '%';
+								c += ' (' + data.songsDone + '/' + data.songsTodo + ')';
+								c += ', ' + wsl.formatSeconds(data.secondsLeft, true) + ' left';
+							} else {
+								c += 'Indexer is not running';
+								window.clearInterval(wsl.indexerStatusInterval);
+								wsl.indexerStatusInterval = null;
+							}
+							$('#admin-indexer-status').empty().html(c);
+						},
+						error : function (xhr, textStatus, errorThrown) {
+							wsl.ajaxError("Failed to get indexer status", xhr);
+							wsl.unlockUI();
+						}
+					});
+				}, 1000);
 			}
 
 			content += '<h3>Users</h3>';
@@ -359,22 +381,6 @@ var wsl = {
 			},
 			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to get artists", xhr);
-				wsl.unlockUI();
-			}
-		});
-
-		$.ajax({
-			url : 'wissl/indexer/status',
-			headers : {
-				sessionId : wsl.sessionId
-			},
-			dataType : 'json',
-			success : function (data) {
-				indexer = data;
-				cb();
-			},
-			error : function (xhr, textStatus, errorThrown) {
-				wsl.ajaxError("Failed to get indexer status", xhr);
 				wsl.unlockUI();
 			}
 		});
@@ -1776,6 +1782,11 @@ var wsl = {
 		if (!hist.enabled) {
 			wsl.error('No history support. What browser is this?');
 			return false;
+		}
+
+		if (wsl.indexerStatusInterval) {
+			window.clearInterval(wsl.indexerStatusInterval);
+			wsl.indexerStatusInterval = null;
 		}
 
 		st = hist.getState();
