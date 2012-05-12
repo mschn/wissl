@@ -1491,6 +1491,37 @@ public class REST {
 	}
 
 	/**
+	 * @return indexer status as a json string, ie:
+	 * If not running :
+	 * <pre>
+	 * { "running": false }
+	 * </pre>
+	 * If running :
+	 * <pre>
+	 * {
+	 *   "running": true,
+	 *   "percentDone": 0.5,
+	 *   "secondsLeft": 431,
+	 *   "songsDone": 600,
+	 *   "songsTodo": 1200
+	 * }
+	 * </pre>
+	 * @throws SecurityError
+	 */
+	@GET
+	@Path("indexer/status")
+	public String getIndexerStatus() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		String ret = Library.getIndexerStatusAsJSON();
+
+		log(s, l1);
+		return ret;
+	}
+
+	/**
 	 * @return Various server info packed in a JSON object,ie:
 	 * <pre>
 	 * { 

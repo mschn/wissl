@@ -106,6 +106,17 @@ public class Library {
 	private long resizeTime = 0;
 	private long dbInsertTime = 0;
 
+	/** false when idle, true when indexing */
+	private boolean working = false;
+	/** when indexing, estimates percent done in [0,1] */
+	private float percentDone = 1.0f;
+	/** when indexing, estimates time left in seconds */
+	private long secondsLeft = -1;
+	/** total songs indexed in current run */
+	private long songsDone = 0;
+	/** total songs to index in current run */
+	private long songsTodo = 0;
+
 	/**
 	 * Create library and launch indexer thread
 	 */
@@ -140,6 +151,23 @@ public class Library {
 		instance.thread.interrupt();
 	}
 
+	/**
+	 * @return indexer status as JSON object
+	 */
+	public static String getIndexerStatusAsJSON() {
+		if (instance.working) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("{\"running\": true,");
+			sb.append("\"percentDone\":" + instance.percentDone + ",");
+			sb.append("\"secondsLeft\":" + instance.secondsLeft + ",");
+			sb.append("\"songsDone\":" + instance.songsDone + ",");
+			sb.append("\"songsTodo\":" + instance.songsTodo + "}");
+			return sb.toString();
+		} else {
+			return "{\"running\": false}";
+		}
+	}
+
 	private Library() {
 		this.songs = new ConcurrentLinkedQueue<Song>();
 		this.toRead = new ConcurrentHashMap<String, File>();
@@ -161,7 +189,7 @@ public class Library {
 			@Override
 			public void run() {
 				while (running && !kill) {
-					long t1 = System.currentTimeMillis();
+					final long t1 = System.currentTimeMillis();
 
 					final List<File> music = new ArrayList<File>();
 					for (String path : Config.getMusicPath()) {
@@ -182,6 +210,12 @@ public class Library {
 					hashes.clear();
 					toInsert.clear();
 					artworks.clear();
+
+					songsTodo = 0;
+					songsDone = 0;
+					working = true;
+					percentDone = 0.0f;
+					secondsLeft = -1;
 
 					artworkRegex = Pattern.compile(Config.getArtworkRegex());
 					artworkFilter = new FileFilter() {
@@ -345,6 +379,13 @@ public class Library {
 												+ s.filepath, e);
 										failedSongCount++;
 									}
+									songsDone++;
+									percentDone = songsDone
+											/ ((float) songsTodo);
+
+									float songsPerSec = songsDone
+											/ ((System.currentTimeMillis() - t1) / 1000f);
+									secondsLeft = (long) ((songsTodo - songsDone) / songsPerSec);
 								}
 								dbInsertTime += (System.currentTimeMillis() - f1);
 
@@ -380,15 +421,17 @@ public class Library {
 					}
 					long dbUpdateTime = (System.currentTimeMillis() - u1);
 
+					working = false;
+
 					long t2 = (System.currentTimeMillis() - t1);
-					long tot = addSongCount + skipSongCount + failedSongCount;
-					Logger.info("Processed " + tot + " files " //
+					Logger.info("Processed " + songsDone + " files " //
 							+ "(add:" + addSongCount + "," //
 							+ "skip:" + skipSongCount + "," //
 							+ "fail:" + failedSongCount + "," //
 							+ "rem:" + removed + ")");
 					Logger.info("Indexer took " + t2 + " ("
-							+ ((float) tot / ((float) t2 / 1000)) + " /s) (" //
+							+ ((float) songsDone / ((float) t2 / 1000))
+							+ " /s) (" //
 							+ "search:" + fileSearchTime + "," //
 							+ "check:" + dbCheckTime + ","//
 							+ "read:" + fileReadTime + "," //
@@ -448,6 +491,7 @@ public class Library {
 				listFiles(child, acc);
 			} else {
 				acc.add(child);
+				songsTodo++;
 			}
 		}
 	}
