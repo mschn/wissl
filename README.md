@@ -22,9 +22,9 @@ directory.
 To run, either click on the file `wissl.jar` using a file explorer,
 or run the command `java -jar wissl.jar`.
 
-Then, simply point you browser to `http://localhost:8080/` and login using
-admin:admin as default credentials. You should then be able to add music and
-create new users using the web interface.
+A web browser should open. If it does not, simply point it to `http://localhost:8080/`.
+You will be asked to create a new administrator account. When this is done,
+you can go to the 'Admin' section to add music to you library.
 
 Wissl runs by default on port 8080, which can be tuned by editing the file
 `config.ini`.
