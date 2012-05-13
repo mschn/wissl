@@ -28,6 +28,8 @@ var wsl = {
 	// number of currently selected elements
 	selCount : 0,
 
+	indexerStatusInterval : null,
+
 	login : function () {
 		$('#login-error').hide();
 		var username = $('#username').val(), password = $('#password').val();
@@ -1086,7 +1088,6 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-
 	},
 
 	playNow : function () {
@@ -1589,7 +1590,7 @@ var wsl = {
 
 	// error during ajax request to server
 	ajaxError : function (message, xhr) {
-		var errorMsg, status, e;
+		var errorMsg, status, e = null;
 		errorMsg = message;
 		status = xhr.status;
 		try {
