@@ -78,6 +78,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				onclick="player.next()"></span>
 		</div>
 		<div id="position"></div>
+		<div id="volume" onmouseover="player.showVolume()"
+			onmouseout="player.hideVolume()">
+			<span id="volume-icon" onclick="player.toggleMute()"></span>
+			<div id="volume-container" onclick="player.adjustVolume(event)">
+				<span id="volume-slider"></span> <span id="volume-slider-full"></span>
+			</div>
+		</div>
 		<div id="progress" onclick="player.seek(event)"
 			onmousemove="player.showSeek(event)" onmouseout="player.hideSeek()">
 			<span id="progress-download"></span> <span id="progress-played"></span>

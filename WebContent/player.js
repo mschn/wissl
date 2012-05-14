@@ -33,6 +33,9 @@ var player = {
 
 	playing : null,
 
+	volume : 100,
+	muted : false,
+
 	play : function (playing) {
 		if (!playing) {
 			return;
@@ -116,7 +119,32 @@ var player = {
 					onplay : function () {
 					},
 					whileplaying : function () {
-						var width, w1, w2, d1, d2, t, kbps;
+						var width, w1, w2, d1, d2, t, kbps, vol;
+
+						if (player.sound.muted !== player.mute) {
+							if (player.mute) {
+								player.sound.mute();
+							} else {
+								player.sound.unmute();
+							}
+						}
+						$('#volume-slider-full').height(player.volume * $('#volume-slider').height() / 100);
+						player.sound.setVolume(player.volume);
+						vol = $('#volume-icon');
+						vol.removeClass();
+						if (player.mute) {
+							vol.addClass('volume-mute');
+						} else {
+							if (player.volume > 75) {
+								vol.addClass('volume-high');
+							} else if (player.volume > 50) {
+								vol.addClass('volume-medium');
+							} else if (player.volume > 25) {
+								vol.addClass('volume-low');
+							} else {
+								vol.addClass('volume-zero');
+							}
+						}
 
 						player.song.duration = player.sound.durationEstimate / 1000;
 						width = $("#progress").width();
@@ -273,6 +301,30 @@ var player = {
 				}
 			});
 		}
+	},
+
+	toggleMute : function () {
+		player.mute = !player.mute;
+	},
+
+	showVolume : function () {
+		$('#volume-container').show();
+	},
+
+	hideVolume : function () {
+		$('#volume-container').hide();
+	},
+
+	adjustVolume : function (event) {
+		var y, h, vol;
+		y = event.clientY - $("#volume-slider").offset().top;
+		h = $("#volume-slider").height();
+
+		vol = (y / h) * 100;
+		vol = Math.min(100, vol);
+		vol = Math.max(0, vol);
+		player.volume = vol;
+		console.log(player.volume);
 	}
 };
 
