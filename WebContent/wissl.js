@@ -1933,6 +1933,7 @@ var wsl = {
 };
 
 $(document).ready(function () {
+	var h;
 
 	History.Adapter.bind(window, 'statechange', function () {
 		var h = wsl.getCurrentHash();
@@ -1943,7 +1944,9 @@ $(document).ready(function () {
 		wsl.loadContent(h);
 	});
 
-	wsl.loadContent(wsl.getCurrentHash());
+	h = wsl.getCurrentHash();
+	wsl.previousHash = h;
+	wsl.loadContent(h);
 
 	window.onbeforeunload = function (e) {
 		if (player.playing) {
