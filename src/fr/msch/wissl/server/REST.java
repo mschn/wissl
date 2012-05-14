@@ -571,6 +571,11 @@ public class REST {
 		}
 
 		List<Song> songs = DB.get().getRandomSongs(number);
+		if (songs.size() == 0) {
+			throw new IllegalStateException(
+					"There are currently no songs in the library");
+		}
+
 		int[] ids = new int[songs.size()];
 		for (int i = 0; i < songs.size(); i++) {
 			ids[i] = songs.get(i).id;
