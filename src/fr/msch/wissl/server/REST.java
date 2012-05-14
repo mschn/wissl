@@ -1560,10 +1560,10 @@ public class REST {
 	 */
 	@GET
 	@Path("info")
-	public String getVersion() throws SecurityError {
+	public String getInfo() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session.check(sid, request.getRemoteAddr(), false);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');
