@@ -30,6 +30,11 @@ var wsl = {
 
 	indexerStatusInterval : null,
 
+	// true when a page has already been loaded and displayed
+	// allows checking if the client directly opened this URL
+	// or followed a link here
+	pageLoaded : false,
+
 	login : function () {
 		$('#login-error').hide();
 		var username = $('#username').val(), password = $('#password').val();
@@ -1675,6 +1680,9 @@ var wsl = {
 			} else {
 				wsl.error(errorMsg);
 			}
+			if (wsl.pageLoaded === false) {
+				wsl.displayArtists();
+			}
 		}
 	},
 
@@ -1799,6 +1807,7 @@ var wsl = {
 			scroll : Math.max($('body').scrollTop(), $('html').scrollTop())
 		}, History.getState().title, History.getState().url);
 
+		wsl.pageLoaded = true;
 		History.pushState(null, document.title, hash);
 	},
 
