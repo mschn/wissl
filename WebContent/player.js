@@ -316,9 +316,10 @@ var player = {
 	},
 
 	adjustVolume : function (event) {
-		var y, h, vol;
-		y = event.clientY - $("#volume-slider").offset().top;
-		h = $("#volume-slider").height();
+		var y, h, vol, vs;
+		vs = $("#volume-slider");
+		h = vs.height();
+		y = h - event.clientY + vs.offset().top;
 
 		vol = (y / h) * 100;
 		vol = Math.min(100, vol);

@@ -359,12 +359,12 @@ span#next {
 #volume-slider-full {
 	position: absolute;
 	border-radius: 3px;
-	border: 1px solid #999;
 	width: 18px;
-	margin: 15px 12px;
+	margin: 14px 13px;
 	display: block;
 	background: #666;
 	height: 0;
+	bottom: 0px;
 }
 
 #position {
