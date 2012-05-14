@@ -382,6 +382,29 @@ public class REST {
 	}
 
 	@POST
+	@Path("user/password")
+	public void setUserPassword(@FormParam("old_password") String oldPassword,
+			@FormParam("new_password") String newPassword) throws SQLException,
+			SecurityError {
+		long l = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+
+		User user = DB.get().getUser(sess.getUserId());
+		user.password = oldPassword.getBytes();
+		if (!user.checkPassword()) {
+			throw new SecurityError("Invalid old password");
+		}
+
+		user.password = newPassword.getBytes();
+		user.hashPassword();
+		DB.get().setPassword(user);
+
+		nocache();
+		log(sess, l);
+	}
+
+	@POST
 	@Path("user/remove")
 	public void removeUsers(@FormParam("user_ids[]") int[] user_ids)
 			throws SQLException, SecurityError {
@@ -398,6 +421,7 @@ public class REST {
 			DB.get().removeUser(user_id);
 		}
 
+		nocache();
 		log(sess, l);
 	}
 

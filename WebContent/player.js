@@ -325,7 +325,6 @@ var player = {
 		vol = Math.min(100, vol);
 		vol = Math.max(0, vol);
 		player.volume = vol;
-		console.log(player.volume);
 	}
 };
 

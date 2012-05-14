@@ -80,7 +80,7 @@ body {
 	text-shadow: 2px 2px 5px #ddd;
 }
 
-.login-error {
+.error {
 	display: none;
 	border: 1px solid rgb(200, 150, 100);
 	background-color: rgb(255, 220, 210);
@@ -426,34 +426,6 @@ span#next {
 #playing #playing-title {
 	font-size: .9em;
 	font-weight: bold;
-}
-
-#error {
-	display: none;
-	border-top: 1px solid rgb(200, 100, 0);
-	background-color: rgb(255, 160, 60);
-	position: fixed;
-	bottom: 0px;
-	width: 100%;
-	z-index: 200;
-	box-shadow: 0px -2px 10px 5px #aaa;
-}
-
-#error-message {
-	margin: 20px 30px 20px 20px;
-	color: rgb(70, 40, 0);
-	font-size: 1.2em;
-	font-weight: bold;
-}
-
-#close-error {
-	background: url('img/close_24.png');
-	width: 24px;
-	height: 24px;
-	position: absolute;
-	right: 5px;
-	top: 5px;
-	cursor: pointer;
 }
 
 #navbar {
@@ -1157,6 +1129,10 @@ span.users-connected {
 #user-playlist .user-playlist-time {
 	width: 25%;
 	color: #777;
+}
+
+#settings {
+	padding-left: 5px;
 }
 
 #admin {

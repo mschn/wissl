@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<form id="login" class="login" onsubmit='wsl.login();return false'>
 		<fieldset>
 			<h2>Login</h2>
-			<div id="login-error" class="login-error"></div>
+			<div id="login-error" class="error"></div>
 			<p>
 				<label for="username">User</label><input class="textfield"
 					name="username" type="text" id="username" required="required" />
@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		onsubmit='wsl.addFirstUser();return false'>
 		<fieldset>
 			<h2>Create your account</h2>
-			<div class="login-error" id="firstuser-error"></div>
+			<div class="error" id="firstuser-error"></div>
 			<p>
 				<label for="firstuser-username">User</label><input class="textfield"
 					name="firstuser-username" type="text" id="firstuser-username"
@@ -97,11 +97,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div id="art"></div>
 		<span id="playing-title"></span> <span id="playing-album"></span> <span
 			id="playing-artist"></span>
-	</div>
-
-	<div id="error">
-		<div id="error-message"></div>
-		<div id="close-error" onclick="wsl.closeError()"></div>
 	</div>
 
 	<div id="navbar"></div>
@@ -179,6 +174,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<form method="post" onsubmit='wsl.addUser();return false'>
 				<fieldset>
 					<h2>Add an User</h2>
+					<p id="adduser-dialog-error" class="error"></p>
 					<p>
 						<label for="adduser-username">Username</label> <input
 							class="dialog-text-input" type="text" name="adduser-username"
@@ -201,6 +197,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							onclick='wsl.cancelAddUser()' />
 					</p>
 				</fieldset>
+			</form>
+		</div>
+		<div class="dialog" id="password-dialog">
+			<form method="post" onsubmit='wsl.changePassword();return false'>
+				<h2>Change password</h2>
+				<p id="password-dialog-error" class="error"></p>
+				<p>
+					<label for="password-old">Old password</label> <input
+						class="dialog-text-input" type="password" name="password-old"
+						id="password-old" required="required" />
+				</p>
+				<p>
+					<label for="password-new">New password</label><input
+						class="dialog-text-input" name="password-new" type="password"
+						id="password-new" required="required" />
+				</p>
+				<p>
+					<label for="password-confirm">Confirm password</label><input
+						class="dialog-text-input" name="password-confirm" type="password"
+						id="password-confirm" required="required" />
+				</p>
+				<p class='dialog-buttons'>
+					<input class='button button-ok' id='password-dialog-ok'
+						type="submit" value="OK" /> <input class='button button-cancel'
+						id='adduser-dialog-cancel' type='button' value='Cancel'
+						onclick='wsl.cancelChangePassword()' />
+				</p>
 			</form>
 		</div>
 		<div class="dialog" id="error-dialog">

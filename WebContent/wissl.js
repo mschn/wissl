@@ -254,13 +254,21 @@ var wsl = {
 	},
 
 	displaySettings : function (scroll) {
+		var content = '<h2>Settings</h2>';
+
+		content += '<p>';
+		content += '<span class="button button-password" onclick="wsl.showChangePassword()">Change password</span>';
+		content += '</p>';
+
 		wsl.showContent({
-			settings : 'User settings',
+			settings : content,
 			scroll : scroll
 		});
 		wsl.refreshNavbar({
 			settings : true
 		});
+		wsl.unlockUI();
+
 	},
 
 	displayAdmin : function (scroll) {
@@ -1376,8 +1384,7 @@ var wsl = {
 			},
 			error : function (xhr) {
 				wsl.unlockUI();
-				wsl.cancelAddUser();
-				wsl.ajaxError("Failed to add user", xhr);
+				wsl.ajaxError("Failed to add user", xhr, 'adduser-dialog-error');
 			}
 		});
 	},
@@ -1451,6 +1458,56 @@ var wsl = {
 				}
 			});
 		}
+	},
+
+	showChangePassword : function () {
+		wsl.showDialog('password-dialog');
+	},
+
+	cancelChangePassword : function () {
+		$('#password-old').val('');
+		$('#password-new').val('');
+		$('#password-confirm').val('');
+		$('#dialog-mask').hide();
+		$('#password-dialog').hide();
+		$('#password-dialog-error').hide();
+	},
+
+	changePassword : function () {
+		var oldPw, newPw, newPwConfirm;
+
+		$('#password-dialog-error').hide();
+
+		oldPw = $('#password-old').val();
+		newPw = $('#password-new').val();
+		newPwConfirm = $('#password-confirm').val();
+
+		if (newPw !== newPwConfirm) {
+			$('#password-dialog-error').html('Passwords do not match').show();
+			return false;
+		}
+
+		wsl.lockUI();
+		$.ajax({
+			url : '/wissl/user/password',
+			type : 'POST',
+			headers : {
+				"sessionId" : wsl.sessionId
+			},
+			dataType : 'json',
+			data : {
+				old_password : oldPw,
+				new_password : newPw
+			},
+			success : function (data) {
+				wsl.unlockUI();
+				wsl.cancelChangePassword();
+			},
+			error : function (xhr) {
+				wsl.unlockUI();
+				wsl.ajaxError("Failed to change password", xhr, 'password-dialog-error');
+			}
+		});
 	},
 
 	showAddMusicFolder : function () {
@@ -1589,7 +1646,7 @@ var wsl = {
 	},
 
 	// error during ajax request to server
-	ajaxError : function (message, xhr) {
+	ajaxError : function (message, xhr, errorElementId) {
 		var errorMsg, status, e = null;
 		errorMsg = message;
 		status = xhr.status;
@@ -1607,10 +1664,17 @@ var wsl = {
 			errorMsg = "Could not connect to server";
 		}
 		if (status === 0 || status === 401 || status === 503) {
-			wsl.fatalError(errorMsg);
+			if (errorElementId) {
+				$('#' + errorElementId).html(errorMsg).show();
+			} else {
+				wsl.fatalError(errorMsg);
+			}
 		} else {
-			wsl.error(errorMsg);
-			wsl.load('?');
+			if (errorElementId) {
+				$('#' + errorElementId).html(errorMsg).show();
+			} else {
+				wsl.error(errorMsg);
+			}
 		}
 	},
 

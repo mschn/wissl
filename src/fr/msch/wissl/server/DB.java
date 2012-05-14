@@ -78,6 +78,13 @@ public abstract class DB {
 	public abstract void addUser(User user) throws SQLException;
 
 	/**
+	 * Change password for an existing user
+	 * @param user user changing its password
+	 * @throws SQLException
+	 */
+	public abstract void setPassword(User user) throws SQLException;
+
+	/**
 	 * @param username valid username of user in db
 	 * @return corresponding user, or null
 	 * @throws SQLException

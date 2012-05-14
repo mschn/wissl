@@ -360,6 +360,26 @@ public class H2DB extends DB {
 	}
 
 	@Override
+	public void setPassword(User user) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement("UPDATE user " + //
+					"SET hash=?,salt=? WHERE user_id=?;");
+			st.setBytes(1, user.sha1);
+			st.setBytes(2, user.salt);
+			st.setInt(3, user.id);
+			st.executeUpdate();
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
 	public User getUser(String username) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
