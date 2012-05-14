@@ -129,7 +129,7 @@ var player = {
 							}
 						}
 						$('#volume-slider-full').height(player.volume * $('#volume-slider').height() / 100);
-						player.sound.setVolume(player.volume);
+						player.sound.setVolume(Math.pow(player.volume / 100, 3) * 100);
 						vol = $('#volume-icon');
 						vol.removeClass();
 						if (player.mute) {
