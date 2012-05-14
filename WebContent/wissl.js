@@ -1196,6 +1196,11 @@ var wsl = {
 				radioItems += 'id="playlist-radio-new-text"/></label></p>';
 
 				$('#add-to-playlist-dialog .dialog-form-input').html(radioItems);
+
+				$('#playlist-radio-new').on('click', function () {
+					$('#playlist-radio-new-text').focus();
+				});
+
 				wsl.unlockUI();
 			},
 			error : function (xhr) {
