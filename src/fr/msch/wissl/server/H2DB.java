@@ -45,7 +45,7 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  */
 public class H2DB extends DB {
 
-	private static final long SCHEMA_VERSION = 1L;
+	private static final long SCHEMA_VERSION = 2L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -251,7 +251,7 @@ public class H2DB extends DB {
 					"playtime INTEGER NOT NULL," + //
 					"songs INTEGER NOT NULL," + //
 					"CONSTRAINT fk_user FOREIGN KEY (user_id)" + //
-					" REFERENCES user(user_id)," + //
+					" REFERENCES user(user_id) ON DELETE CASCADE," + //
 					"CONSTRAINT pk_playlist PRIMARY KEY (playlist_id)" + //
 					")");
 
