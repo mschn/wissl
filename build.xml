@@ -21,6 +21,12 @@
 	  <java jar="${lib.dir}/jslint4java-2.0.2.jar" fork="true">
 		<arg value="${war.root}/wissl.js" />
 		<arg value="${war.root}/player.js" />
+		<arg value="${war.root}/users.js" />
+		<arg value="${war.root}/library.js" />
+		<arg value="${war.root}/playlists.js" />
+		<arg value="${war.root}/settings.js" />
+		<arg value="${war.root}/admin.js" />
+		<arg value="${war.root}/util.js" />
 	  </java>
 	</target>
 
