@@ -15,7 +15,6 @@
  */
 
 /*global $, wsl, soundManager, document */
-'use strict';
 
 soundManager.url = "static/soundmanager-swf";
 soundManager.flashVersion = 9;
@@ -24,19 +23,23 @@ soundManager.autoLoad = true;
 soundManager.useHTML5Audio = true;
 soundManager.multiShot = false;
 
-var player = {
+var player = {};
+
+(function (player) {
+	'use strict';
 
 	// set to true when soundmanager loads
-	hasSound : false,
+	player.hasSound = false;
 	// currently playing sound
-	sound : null,
+	player.sound = null;
 
-	playing : null,
+	player.playing = null;
 
-	volume : 100,
-	muted : false,
+	player.volume = 100;
 
-	play : function (playing) {
+	player.muted = false;
+
+	player.play = function (playing) {
 		if (!playing) {
 			return;
 		}
@@ -49,9 +52,9 @@ var player = {
 		} else {
 			player.internalPlay(playing);
 		}
-	},
+	};
 
-	internalPlay : function (playing) {
+	player.internalPlay = function (playing) {
 		player.playing = playing;
 
 		$.ajax({
@@ -178,9 +181,9 @@ var player = {
 				wsl.ajaxError("failed to get song " + playing.song_id, xhr);
 			}
 		});
-	},
+	};
 
-	togglePlay : function () {
+	player.togglePlay = function () {
 		if (player.sound) {
 			player.sound.togglePause();
 			if (player.sound.paused) {
@@ -189,9 +192,9 @@ var player = {
 				$('#play').addClass('pause');
 			}
 		}
-	},
+	};
 
-	showSeek : function (event) {
+	player.showSeek = function (event) {
 		if (player.sound) {
 			var progress, x, w, time, elt;
 			progress = $("#progress");
@@ -203,22 +206,22 @@ var player = {
 			elt.css('left', event.clientX);
 			elt.css('top', 30);
 		}
-	},
+	};
 
-	hideSeek : function () {
+	player.hideSeek = function () {
 		$('#seek-popup').hide();
-	},
+	};
 
-	seek : function (event) {
+	player.seek = function (event) {
 		if (player.sound) {
 			var x, w;
 			x = event.clientX - $("#progress").offset().left;
 			w = $("#progress").width();
 			player.sound.setPosition((x / w) * player.song.duration * 1000);
 		}
-	},
+	};
 
-	destroySound : function () {
+	player.destroySound = function () {
 		if (player.sound) {
 			player.sound.destruct();
 			player.sound = null;
@@ -226,9 +229,9 @@ var player = {
 		if (player.playing) {
 			player.playing = null;
 		}
-	},
+	};
 
-	stop : function () {
+	player.stop = function () {
 		if (player.sound) {
 			$('#player').fadeOut(300);
 			player.destroySound();
@@ -243,9 +246,9 @@ var player = {
 			$('#playing').hide();
 			document.title = 'wissl';
 		}
-	},
+	};
 
-	previous : function () {
+	player.previous = function () {
 		if (player.playing) {
 			player.sound.destruct();
 			var p = player.playing;
@@ -272,9 +275,9 @@ var player = {
 				}
 			});
 		}
-	},
+	};
 
-	next : function () {
+	player.next = function () {
 		if (player.playing) {
 			player.sound.destruct();
 			var p = player.playing;
@@ -301,21 +304,21 @@ var player = {
 				}
 			});
 		}
-	},
+	};
 
-	toggleMute : function () {
+	player.toggleMute = function () {
 		player.mute = !player.mute;
-	},
+	};
 
-	showVolume : function () {
+	player.showVolume = function () {
 		$('#volume-container').show();
-	},
+	};
 
-	hideVolume : function () {
+	player.hideVolume = function () {
 		$('#volume-container').hide();
-	},
+	};
 
-	adjustVolume : function (event) {
+	player.adjustVolume = function (event) {
 		var y, h, vol, vs;
 		vs = $("#volume-slider");
 		h = vs.height();
@@ -325,12 +328,15 @@ var player = {
 		vol = Math.min(100, vol);
 		vol = Math.max(0, vol);
 		player.volume = vol;
-	}
-};
+	};
+
+}(player));
 
 soundManager.onready(function () {
+	'use strict';
 	player.hasSound = true;
 });
 soundManager.ontimeout(function () {
+	'use strict';
 	wsl.error("Failed to start soundmanager2");
 });

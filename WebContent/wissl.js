@@ -15,33 +15,35 @@
  */
 
 /*global $, localStorage, player, window, document, console, History */
-'use strict';
 
-var wsl = {
+var wsl = {};
+
+(function (wsl) {
+	'use strict';
 
 	// id of logged user
-	userId : null,
+	wsl.userId = null;
 	// session id used for all ajax requests
-	sessionId : null,
+	wsl.sessionId = null;
 	// true if logged user is administrator
-	admin : false,
+	wsl.admin = false;
 	// number of currently selected elements
-	selCount : 0,
+	wsl.selCount = 0;
 
-	indexerStatusInterval : null,
+	wsl.indexerStatusInterval = null;
 
 	// true when a page has already been loaded and displayed
 	// allows checking if the client directly opened this URL
 	// or followed a link here
-	pageLoaded : false,
+	wsl.pageLoaded = false;
 
-	login : function () {
+	wsl.login = function () {
 		$('#login-error').hide();
 		var username = $('#username').val(), password = $('#password').val();
 		wsl.doLogin(username, password);
-	},
+	};
 
-	doLogin : function (username, password) {
+	wsl.doLogin = function (username, password) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/login",
@@ -74,9 +76,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	logout : function () {
+	wsl.logout = function () {
 		wsl.confirmDialog('Logout', 'Do you really want to leave?', function () {
 			var sid = wsl.sessionId;
 
@@ -108,9 +110,9 @@ var wsl = {
 			});
 		}, function () {
 		});
-	},
+	};
 
-	shutdown : function () {
+	wsl.shutdown = function () {
 		var msg = 'Do you really want to shutdown the server?<br>';
 		msg += 'You will not be able to login util you restart the server manually!';
 		wsl.confirmDialog('Shutdown server', msg, function () {
@@ -131,9 +133,9 @@ var wsl = {
 			});
 		}, function () {
 		});
-	},
+	};
 
-	displayUsers : function (scroll) {
+	wsl.displayUsers = function (scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -185,10 +187,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
+	};
 
-	},
-
-	displayUser : function (uid, scroll) {
+	wsl.displayUser = function (uid, scroll) {
 		wsl.lockUI();
 
 		$.ajax({
@@ -256,9 +257,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	displaySettings : function (scroll) {
+	wsl.displaySettings = function (scroll) {
 		var content = '<h2>Settings</h2>';
 
 		content += '<p>';
@@ -273,10 +274,9 @@ var wsl = {
 			settings : true
 		});
 		wsl.unlockUI();
+	};
 
-	},
-
-	displayAdmin : function (scroll) {
+	wsl.displayAdmin = function (scroll) {
 		var cb, folders = null, users = null;
 
 		wsl.lockUI();
@@ -399,10 +399,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
+	};
 
-	},
-
-	displayArtists : function (scroll) {
+	wsl.displayArtists = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/artists",
@@ -460,9 +459,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	displayAlbums : function (id, scroll) {
+	wsl.displayAlbums = function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/albums/" + id,
@@ -524,9 +523,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	displaySongs : function (id, scroll) {
+	wsl.displaySongs = function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/songs/" + id,
@@ -591,9 +590,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	displayPlaylists : function (scroll) {
+	wsl.displayPlaylists = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : "/wissl/playlists",
@@ -633,9 +632,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	displayPlaylist : function (pid, scroll) {
+	wsl.displayPlaylist = function (pid, scroll) {
 		var id = parseInt(pid, 10);
 		wsl.lockUI();
 		$.ajax({
@@ -709,9 +708,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	randomPlaylist : function () {
+	wsl.randomPlaylist = function () {
 		var cb = function () {
 			wsl.lockUI();
 			$.ajax({
@@ -750,16 +749,16 @@ var wsl = {
 		} else {
 			cb();
 		}
-	},
+	};
 
-	nothingPlaying : function () {
+	wsl.nothingPlaying = function () {
 		wsl.showContent({
 			library : "<span class='empty-library'>Nothing is currently playing!</span>"
 		});
 		wsl.refreshNavbar({});
-	},
+	};
 
-	play : function (song_id, playlist_id, playlist_name, position, event) {
+	wsl.play = function (song_id, playlist_id, playlist_name, position, event) {
 		event.stopPropagation();
 		player.play({
 			song_id : song_id,
@@ -767,9 +766,9 @@ var wsl = {
 			playlist_name : playlist_name,
 			position : position
 		});
-	},
+	};
 
-	deleteSelectedSongs : function (playlist_id) {
+	wsl.deleteSelectedSongs = function (playlist_id) {
 		var ids = [];
 		$('.selected .song-id').each(function (index) {
 			ids[index] = parseInt(this.innerHTML, 10);
@@ -799,9 +798,9 @@ var wsl = {
 			}
 		});
 		wsl.clearSelection();
-	},
+	};
 
-	deletePlaylist : function (playlist_id) {
+	wsl.deletePlaylist = function (playlist_id) {
 		var ids = [];
 		$('.selected .playlist-id').each(function (index) {
 			ids[index] = parseInt(this.innerHTML, 10);
@@ -831,9 +830,9 @@ var wsl = {
 			}
 		});
 		wsl.clearSelection();
-	},
+	};
 
-	refreshNavbar : function (arg) {
+	wsl.refreshNavbar = function (arg) {
 		var navbar = '', clazz, style, cb, name;
 		navbar += '<hr/>';
 
@@ -938,9 +937,9 @@ var wsl = {
 		navbar += "<a class='navbar-logout' onclick='wsl.logout()'>Logout</a>";
 
 		$("#navbar").empty().append(navbar);
-	},
+	};
 
-	showContent : function (content) {
+	wsl.showContent = function (content) {
 		var pages, i, page;
 
 		pages = [ 'artists', 'library', 'users', 'user', 'settings', 'admin' ];
@@ -957,11 +956,11 @@ var wsl = {
 		if (content.scroll) {
 			$('html, body').scrollTop(content.scroll);
 		}
-	},
+	};
 
-	selectionDrag : null,
+	wsl.selectionDrag = null;
 
-	mouseDown : function (e, event) {
+	wsl.mouseDown = function (e, event) {
 		var mouseup, mousemove;
 
 		mousemove = function (event) {
@@ -1028,22 +1027,22 @@ var wsl = {
 
 		$(document).one('mouseup', mouseup);
 		$(document).on('mousemove', mousemove);
-	},
+	};
 
-	clearSelection : function () {
+	wsl.clearSelection = function () {
 		$('.selected').each(function (i) {
 			wsl.deselect(this);
 		});
-	},
+	};
 
-	selectAll : function () {
+	wsl.selectAll = function () {
 		wsl.selCount = 0;
 		$('.selectable').each(function (i) {
 			wsl.select(this);
 		});
-	},
+	};
 
-	select : function (e) {
+	wsl.select = function (e) {
 		wsl.selCount += 1;
 		$(e).addClass('selected');
 		$(e).find('.select-box').addClass('select-box-checked');
@@ -1051,9 +1050,9 @@ var wsl = {
 		if (wsl.selCount === 1) {
 			$('.selection-disabled').removeClass('selection-disabled').addClass('selection-enabled');
 		}
-	},
+	};
 
-	deselect : function (e) {
+	wsl.deselect = function (e) {
 		wsl.selCount = Math.max(0, wsl.selCount - 1);
 		$(e).removeClass('selected');
 		$(e).find('.select-box').removeClass('select-box-checked');
@@ -1061,18 +1060,17 @@ var wsl = {
 		if (wsl.selCount === 0) {
 			$('.selection-enabled').removeClass('selection-enabled').addClass('selection-disabled');
 		}
-	},
+	};
 
-	toggleSelection : function (e) {
+	wsl.toggleSelection = function (e) {
 		if ($(e).hasClass('selected')) {
 			wsl.deselect(e);
 		} else {
 			wsl.select(e);
 		}
-	},
+	};
 
-	playAlbum : function (album_id, song_id, position) {
-		// wsl.select(this.parentNode);wsl.playNow()
+	wsl.playAlbum = function (album_id, song_id, position) {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/playlist/create-add',
@@ -1101,9 +1099,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	playNow : function () {
+	wsl.playNow = function () {
 		var song_ids = [], album_ids = [];
 		$('.selected .song-id').each(function (index) {
 			song_ids[index] = parseInt(this.innerHTML, 10);
@@ -1165,9 +1163,9 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	showAddToPlaylist : function (e) {
+	wsl.showAddToPlaylist = function (e) {
 		wsl.showDialog('add-to-playlist-dialog');
 		wsl.lockUI();
 		$.ajax({
@@ -1208,14 +1206,14 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	cancelAddToPlaylist : function () {
+	wsl.cancelAddToPlaylist = function () {
 		$('#dialog-mask').hide();
 		$('#add-to-playlist-dialog').hide();
-	},
+	};
 
-	addToPlaylist : function () {
+	wsl.addToPlaylist = function () {
 		var song_ids = [], album_ids = [], playlist_id, playlist_name;
 
 		$('.selected .song-id').each(function (index) {
@@ -1282,13 +1280,13 @@ var wsl = {
 		}
 		wsl.clearSelection();
 		wsl.cancelAddToPlaylist();
-	},
+	};
 
-	showCreatePlaylist : function () {
+	wsl.showCreatePlaylist = function () {
 		wsl.showDialog('playlist-create-dialog');
-	},
+	};
 
-	createPlaylist : function (name) {
+	wsl.createPlaylist = function (name) {
 		var playlistName = $('#playlist-name').val();
 
 		wsl.lockUI();
@@ -1313,15 +1311,15 @@ var wsl = {
 				wsl.unlockUI();
 			}
 		});
-	},
+	};
 
-	cancelCreatePlaylist : function () {
+	wsl.cancelCreatePlaylist = function () {
 		$('#dialog-mask').hide();
 		$('#playlist-name').val('');
 		$('#playlist-create-dialog').hide();
-	},
+	};
 
-	confirmDialog : function (title, message, okCallback, cancelCallback) {
+	wsl.confirmDialog = function (title, message, okCallback, cancelCallback) {
 		var dialog, winW, winH, w, h;
 		dialog = $('#confirm-dialog');
 		winW = $(window).width();
@@ -1352,20 +1350,20 @@ var wsl = {
 			$('#confirm-dialog-ok').off();
 			$('#confirm-dialog-cancel').off();
 		});
-	},
+	};
 
-	showAddUser : function () {
+	wsl.showAddUser = function () {
 		wsl.showDialog('adduser-dialog');
-	},
+	};
 
-	cancelAddUser : function () {
+	wsl.cancelAddUser = function () {
 		$('#adduser-username').val('');
 		$('#adduser-password').val('');
 		$('#dialog-mask').hide();
 		$('#adduser-dialog').hide();
-	},
+	};
 
-	addUser : function () {
+	wsl.addUser = function () {
 		var user, pw, auth = 2;
 
 		user = $('#adduser-username').val();
@@ -1397,9 +1395,9 @@ var wsl = {
 				wsl.ajaxError("Failed to add user", xhr, 'adduser-dialog-error');
 			}
 		});
-	},
+	};
 
-	addFirstUser : function () {
+	wsl.addFirstUser = function () {
 		var user, pw, pwConfirm, auth = 1;
 
 		$('#firstuser-error').hide();
@@ -1439,9 +1437,9 @@ var wsl = {
 				console.log(xhr);
 			}
 		});
-	},
+	};
 
-	removeUser : function () {
+	wsl.removeUser = function () {
 		var sel = [];
 		$('#admin-users-list .selected .users-admin-id').each(function (index) {
 			sel.push(this.innerHTML);
@@ -1468,22 +1466,22 @@ var wsl = {
 				}
 			});
 		}
-	},
+	};
 
-	showChangePassword : function () {
+	wsl.showChangePassword = function () {
 		wsl.showDialog('password-dialog');
-	},
+	};
 
-	cancelChangePassword : function () {
+	wsl.cancelChangePassword = function () {
 		$('#password-old').val('');
 		$('#password-new').val('');
 		$('#password-confirm').val('');
 		$('#dialog-mask').hide();
 		$('#password-dialog').hide();
 		$('#password-dialog-error').hide();
-	},
+	};
 
-	changePassword : function () {
+	wsl.changePassword = function () {
 		var oldPw, newPw, newPwConfirm;
 
 		$('#password-dialog-error').hide();
@@ -1518,14 +1516,14 @@ var wsl = {
 				wsl.ajaxError("Failed to change password", xhr, 'password-dialog-error');
 			}
 		});
-	},
+	};
 
-	showAddMusicFolder : function () {
+	wsl.showAddMusicFolder = function () {
 		wsl.showDialog('addmusic-dialog');
 		wsl.updateAddMusicFolderListing();
-	},
+	};
 
-	updateAddMusicFolderListing : function (dir) {
+	wsl.updateAddMusicFolderListing = function (dir) {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/folders/listing',
@@ -1581,18 +1579,18 @@ var wsl = {
 				wsl.ajaxError("Failed to get directory listing", xhr);
 			}
 		});
-	},
+	};
 
-	selectOrOpenMusicFolder : function (elt, dir) {
+	wsl.selectOrOpenMusicFolder = function (elt, dir) {
 		if ($(elt).hasClass('dir-selected')) {
 			wsl.updateAddMusicFolderListing(dir);
 		} else {
 			$('#addmusic-dialog-content ul li').removeClass('dir-selected');
 			$(elt).addClass('dir-selected');
 		}
-	},
+	};
 
-	addMusic : function () {
+	wsl.addMusic = function () {
 		var sel, dir;
 
 		sel = $('#addmusic-dialog-content .dir-selected .dir-name');
@@ -1619,9 +1617,9 @@ var wsl = {
 				}
 			});
 		}
-	},
+	};
 
-	removeMusicFolder : function () {
+	wsl.removeMusicFolder = function () {
 		var sel = [];
 		$('#admin-music-folders .selected .admin-music-folder-directory').each(function (index) {
 			sel.push(this.innerHTML);
@@ -1648,15 +1646,14 @@ var wsl = {
 				}
 			});
 		}
-	},
+	};
 
-	cancelAddMusicFolder : function () {
+	wsl.cancelAddMusicFolder = function () {
 		$('#dialog-mask').hide();
 		$('#addmusic-dialog').hide();
-	},
+	};
 
-	// error during ajax request to server
-	ajaxError : function (message, xhr, errorElementId) {
+	wsl.ajaxError = function (message, xhr, errorElementId) {
 		var errorMsg, status, e = null;
 		errorMsg = message;
 		status = xhr.status;
@@ -1689,17 +1686,17 @@ var wsl = {
 				wsl.displayArtists();
 			}
 		}
-	},
+	};
 
 	// display an non fatal error
-	error : function (message) {
+	wsl.error = function (message) {
 		wsl.unlockUI();
 		$("#error-dialog-message").html(message);
 		wsl.showDialog('error-dialog');
-	},
+	};
 
 	// fatal error, get back to login page
-	fatalError : function (message) {
+	wsl.fatalError = function (message) {
 		player.stop();
 		wsl.sessionId = null;
 		wsl.userId = null;
@@ -1711,15 +1708,15 @@ var wsl = {
 
 		$("#login").show();
 		$("#login-error").show().html(message);
-	},
+	};
 
 	// close the error box in ui
-	closeError : function () {
+	wsl.closeError = function () {
 		$('#dialog-mask').hide();
 		$("#error-dialog").hide();
-	},
+	};
 
-	formatSeconds : function (seconds, alt) {
+	wsl.formatSeconds = function (seconds, alt) {
 		var hou, min, sec, ret;
 
 		hou = Math.floor(seconds / 3600);
@@ -1737,9 +1734,9 @@ var wsl = {
 			ret += (sec < 10 ? '0' : '') + sec;
 		}
 		return ret;
-	},
+	};
 
-	showAbout : function () {
+	wsl.showAbout = function () {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/info',
@@ -1766,29 +1763,28 @@ var wsl = {
 				wsl.ajaxError("Failed to get server info", xhr);
 			}
 		});
+	};
 
-	},
-
-	closeAbout : function () {
+	wsl.closeAbout = function () {
 		$('#dialog-mask').hide();
 		$("#about-dialog").hide();
-	},
+	};
 
 	// true when a callback is running and UI should be blocked
-	uiLock : false,
+	wsl.uiLock = false;
 
-	lockUI : function () {
+	wsl.lockUI = function () {
 		wsl.uiLock = true;
 		$('#uilock').show();
-	},
+	};
 
-	unlockUI : function () {
+	wsl.unlockUI = function () {
 		$('#uilock').hide();
 		wsl.uiLock = false;
 		$('#navbar').show();
-	},
+	};
 
-	showDialog : function (id) {
+	wsl.showDialog = function (id) {
 		var dialog, winW, winH, w, h;
 		dialog = $('#' + id);
 		winW = $(window).width();
@@ -1802,9 +1798,9 @@ var wsl = {
 
 		$('#dialog-mask').show();
 		dialog.show();
-	},
+	};
 
-	load : function (hash) {
+	wsl.load = function (hash) {
 		if (wsl.uiLock) {
 			return;
 		}
@@ -1814,9 +1810,9 @@ var wsl = {
 
 		wsl.pageLoaded = true;
 		History.pushState(null, document.title, hash);
-	},
+	};
 
-	loadContent : function (hash) {
+	wsl.loadContent = function (hash) {
 		var hist, sid, uid, match, title, auth, st, scroll;
 		sid = localStorage.getItem('sessionId');
 		if (sid) {
@@ -1916,9 +1912,9 @@ var wsl = {
 		}
 
 		wsl.selCount = 0;
-	},
+	};
 
-	getCurrentHash : function () {
+	wsl.getCurrentHash = function () {
 		var st, hash;
 		st = History.getState();
 
@@ -1928,11 +1924,12 @@ var wsl = {
 			hash = st.url.substring(st.url.indexOf('?') + 1);
 		}
 		return hash;
-	}
-
-};
+	};
+}(wsl));
 
 $(document).ready(function () {
+	'use strict';
+
 	var h;
 
 	History.Adapter.bind(window, 'statechange', function () {
