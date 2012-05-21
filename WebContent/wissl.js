@@ -265,7 +265,13 @@ var wsl = wsl || {};
 		}
 
 		navbar += "<hr/>";
-		navbar += '<a class="navbar-about" onclick="wsl.showAbout()">About</a>';
+
+		clazz = 'navbar-about';
+		if (arg.about) {
+			clazz += ' selected-nav';
+		}
+		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?about\')">About</a>';
+
 		navbar += "<a class='navbar-logout' onclick='wsl.logout()'>Logout</a>";
 
 		$("#navbar").empty().append(navbar);
@@ -274,7 +280,7 @@ var wsl = wsl || {};
 	wsl.showContent = function (content) {
 		var pages, i, page;
 
-		pages = [ 'artists', 'library', 'users', 'user', 'settings', 'admin' ];
+		pages = [ 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
 
 		for (i = 0; i < pages.length; i += 1) {
 			page = pages[i];
@@ -466,7 +472,7 @@ var wsl = wsl || {};
 		});
 	};
 
-	wsl.showAbout = function () {
+	wsl.displayAbout = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
 			url : '/wissl/info',
@@ -475,21 +481,36 @@ var wsl = wsl || {};
 				sessionId : wsl.sessionId
 			},
 			success : function (data) {
-				var content = '<table>';
+				var content = '<h2>Wissl</h2>';
+				content += '<p class="subtitle">Web Interface for Sound Streaming Library</p>';
+
+				content += '<div>';
+				content += '<p>Copyright (c) 2012 Mathieu Schnoor</p>';
+				content += '<p>Distributed under the terms of the <a target="_blank"';
+				content += 'href="http://www.gnu.org/licenses/gpl.html">GNU GPL v3</a></p>';
+				content += '<p>Website: <a target="_blank" href="http://mschn.fr/wissl">http://mschn.fr/wissl</a></p>';
+				content += '</div>';
+
+				content += '<table>';
 				content += '<tr><td class="left">Version</td><td class="right">' + data.version + '</td></tr>';
 				content += '<tr><td class="left">Build</td><td class="right">' + data.build + '</td></tr>';
 				content += '<tr><td class="left">Server</td><td class="right">' + data.server + '</td></tr>';
 				content += '<tr><td class="left">OS</td><td class="right">' + data.os + '</td></tr>';
 				content += '<tr><td class="left">Java</td><td class="right">' + data.java + '</td></tr>';
 				content += '</table>';
+				content += '</ul></div>';
 
-				$('#about-dialog-info').empty().html(content);
+				wsl.showContent({
+					about : content,
+					scroll : scroll
+				});
+				wsl.refreshNavbar({
+					about : true
+				});
 				wsl.unlockUI();
-				wsl.showDialog('about-dialog');
 			},
 			error : function (xhr) {
 				wsl.unlockUI();
-				wsl.closeAbout();
 				wsl.ajaxError("Failed to get server info", xhr);
 			}
 		});
@@ -598,6 +619,8 @@ var wsl = wsl || {};
 				wsl.displaySettings(scroll);
 			} else if (/admin\/?$/.test(hash)) {
 				wsl.displayAdmin(scroll);
+			} else if (/about\/?$/.test(hash)) {
+				wsl.displayAbout(scroll);
 			} else if (/logout\/?$/.test(hash)) {
 				hist.replaceState(null, title, '?');
 			} else {

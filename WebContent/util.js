@@ -136,11 +136,6 @@ var wsl = wsl || {};
 		return ret;
 	};
 
-	wsl.closeAbout = function () {
-		$('#dialog-mask').hide();
-		$("#about-dialog").hide();
-	};
-
 	wsl.lockUI = function () {
 		wsl.uiLock = true;
 		$('#uilock').show();

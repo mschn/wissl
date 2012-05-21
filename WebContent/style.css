@@ -280,7 +280,8 @@ span#next {
 	position: absolute;
 	display: none;
 	color: #444;
-	text-shadow: 0 1px 1px white; padding : 5px;
+	text-shadow: 0 1px 1px white;
+	padding: 5px;
 	font-size: 1.3em;
 	background: #aaa;
 	border-radius: 3px;
@@ -1241,34 +1242,32 @@ span.users-connected {
 	display: none;
 }
 
-#about-dialog div {
-	padding-top: 20px;
+#about {
+	padding-left: 10px;
 }
 
-#about-dialog-info {
-	text-align: left;
+#about div {
+	padding: 20px 0;
 }
 
-#about-dialog-info td.left {
-	width: 120px;
-	text-align: right;
+#about td.left {
 	color: #888;
 }
 
-#about-dialog-info td.right {
+#about td.right {
 	padding: 0 20px;
 }
 
-#about-dialog div p {
+#about div p {
 	margin: 2px 0;
 }
 
-#about-dialog h2 {
+#about h2 {
 	font-size: 1.8em;
 	margin: 5px 0 0 0;
 }
 
-#about-dialog-subtitle {
+#about p.subtitle {
 	color: #999;
 	text-shadow: 0 1px 4px #ccc;
 	margin: 0;
