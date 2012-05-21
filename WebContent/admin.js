@@ -148,6 +148,7 @@ var wsl = wsl || {};
 
 	wsl.showAddUser = function () {
 		wsl.showDialog('adduser-dialog');
+		$('#adduser-username').focus();
 	};
 
 	wsl.cancelAddUser = function () {

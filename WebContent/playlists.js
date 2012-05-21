@@ -287,6 +287,7 @@ var wsl = wsl || {};
 
 	wsl.showCreatePlaylist = function () {
 		wsl.showDialog('playlist-create-dialog');
+		$('#playlist-name').focus();
 	};
 
 	wsl.createPlaylist = function (name) {

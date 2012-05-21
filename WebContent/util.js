@@ -44,7 +44,7 @@ var wsl = wsl || {};
 			okCallback();
 			$('#confirm-dialog-ok').off();
 			$('#confirm-dialog-cancel').off();
-		});
+		}).focus();
 		$('#confirm-dialog-cancel').on('click', function () {
 			$('#dialog-mask').hide();
 			$('#confirm-dialog').hide();
@@ -93,6 +93,7 @@ var wsl = wsl || {};
 		wsl.unlockUI();
 		$("#error-dialog-message").html(message);
 		wsl.showDialog('error-dialog');
+		$('#error-dialog-ok').focus();
 	};
 
 	wsl.fatalError = function (message) {
@@ -107,6 +108,7 @@ var wsl = wsl || {};
 
 		$("#login").show();
 		$("#login-error").show().html(message);
+		$('#username').focus();
 	};
 
 	wsl.closeError = function () {

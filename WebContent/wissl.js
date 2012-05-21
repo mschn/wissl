@@ -534,8 +534,10 @@ var wsl = wsl || {};
 					if (data.hasusers === false) {
 						$('#firstuser-error').hide();
 						$('#firstuser').show();
+						$('#firstuser-username').focus();
 					} else {
 						$('#login').show();
+						$('#username').focus();
 					}
 				},
 				error : function (xhr) {

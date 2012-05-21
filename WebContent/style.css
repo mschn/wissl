@@ -169,6 +169,11 @@ body {
 	border: 1px solid rgb(120, 150, 255);
 }
 
+.button:focus {
+	border-color: #888;
+	text-decoration: underline;
+}
+
 .button-ok:hover {
 	color: rgb(0, 140, 0);
 	background-color: rgb(200, 240, 200);
