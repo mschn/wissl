@@ -242,7 +242,6 @@ var player = {};
 			$("#playing-artist").empty();
 			$("#playing-album").empty();
 			$('.playing').removeClass('playing');
-			$('#navbar-playing').hide();
 			$('#playing').hide();
 			document.title = 'wissl';
 		}

@@ -165,12 +165,12 @@ var wsl = wsl || {};
 	};
 
 	wsl.refreshNavbar = function (arg) {
-		var navbar = '', clazz, style, cb, name;
+		var navbar = '', clazz, cb, name;
 		navbar += '<hr/>';
 
 		clazz = 'hist navbar-playing';
-		style = (player.playing) ? '' : 'style="display:none;"';
-		navbar += '<a ' + style + ' id="navbar-playing" class="' + clazz + '" onclick="wsl.load(\'?playing/\')">Playing</a>';
+		cb = 'wsl.load(\'?playing/\')';
+		navbar += '<a id="navbar-playing" class="' + clazz + '" onclick="' + cb + '">Playing</a>';
 
 		clazz = 'hist navbar-random';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?random\')">Random</a>';
