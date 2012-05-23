@@ -194,8 +194,8 @@ body {
 	width: 100%;
 	padding-left: 205px;
 	z-index: 300;
-	background: repeat-x url('img/player-grad.png');
-	border-bottom: 1px solid #aaa;
+	background: #aaa;
+	border-bottom: 1px solid #888;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -249,11 +249,12 @@ span#next {
 	margin: 7px 0 0 0;
 	overflow: hidden;
 	cursor: pointer;
-	background: #ccc;
-	border: 1px solid #999;
+	background: 0 0 repeat-x url('img/shade1.png') #888;
+	border: 1px solid #666;
 	border-radius: 3px;
 	overflow: hidden;
 	height: 16px;
+	box-shadow: 0 0 1px 1px #BBB;
 }
 
 #progress-played,#progress-download {
@@ -268,11 +269,11 @@ span#next {
 }
 
 #progress-download {
-	background: 0 0 repeat-x url('img/shade1.png') #ddd;
+	background: 0 0 repeat-x url('img/shade1.png') #666;
 }
 
 #progress-played {
-	background: 0 0 repeat-x url('img/shade2.png') #666;
+	background: 0 0 repeat-x url('img/shade2.png')  rgb(120, 140, 170);
 	overflow: hidden;
 }
 
@@ -281,9 +282,10 @@ span#next {
 	display: none;
 	color: #444;
 	text-shadow: 0 1px 1px white;
-	padding: 5px;
+	padding : 5px;
+	font-weight: bold;
 	font-size: 1.3em;
-	background: #aaa;
+	background: #bbb;
 	border-radius: 3px;
 	border: 1px solid #999;
 	box-shadow: 1px 1px 4px 1px #aaa;
@@ -345,7 +347,7 @@ span#next {
 	position: fixed;
 	top: 32px;
 	z-index: 200;
-	background: #aaa;
+	background: #bbb;
 	border-radius: 3px;
 	border: 1px solid #999;
 	box-shadow: 1px 1px 4px 1px #aaa;
@@ -354,11 +356,11 @@ span#next {
 #volume-slider {
 	position: absolute;
 	border-radius: 3px;
-	border: 1px solid #999;
+	border: 1px solid #666;
 	width: 18px;
 	margin: 15px 12px;
 	display: block;
-	background: #ccc;
+	background: #666;
 	height: 120px;
 }
 
@@ -368,7 +370,7 @@ span#next {
 	width: 18px;
 	margin: 14px 13px;
 	display: block;
-	background: #666;
+	background: 0 0 repeat-x url('img/shade2.png')  rgb(120, 140, 170);
 	height: 0;
 	bottom: 0px;
 }
