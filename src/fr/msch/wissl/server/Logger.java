@@ -18,6 +18,7 @@ package fr.msch.wissl.server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Calendar;
 
 import fr.msch.wissl.common.Config;
 
@@ -37,6 +38,9 @@ public class Logger {
 	private PrintStream out;
 	/** Path to the file to which the log is appended */
 	private String outPath;
+
+	/** incremented each time a line is appended to the log file */
+	private int linesAppended;
 
 	private final static String separator = System
 			.getProperty("line.separator");
@@ -118,38 +122,7 @@ public class Logger {
 
 		// log should append to file, trying to open a log file
 		if (this.visibility.isFile()) {
-			try {
-				// open the specified file
-				this.out = new PrintStream(new FileOutputStream(
-						new File(output), !overwrite));
-			} catch (Exception e) {
-				try {
-					// could not open the specified file, trying a
-					// temporary one instead
-					this.outPath = System.getProperty("java.io.tmpdir")
-							+ File.separator + "bifstk-"
-							+ System.currentTimeMillis() + ".log";
-					this.out = new PrintStream(new FileOutputStream(
-							this.outPath));
-
-					System.out.println("! Could not open log file '" + output
-							+ "', appending log to " + this.outPath);
-				} catch (Exception ex) {
-					// log file could not be opened, disabling file output
-					this.outPath = null;
-					this.out = null;
-					System.out.println("! Could not open log file '" + output
-							+ "'");
-					if (this.visibility.isStdout()) {
-						System.out
-								.println("Logs will be printed on STDOUT only");
-						this.visibility = Visibility.STDOUT;
-					} else {
-						System.out.println("All logs will be dropped");
-						this.visibility = Visibility.NONE;
-					}
-				}
-			}
+			openLogFile(output, overwrite);
 		}
 	}
 
@@ -179,6 +152,70 @@ public class Logger {
 		instance.message("    Logging to: " + out, Level.INFO,
 				Visibility.STDOUT);
 		instance.message("--- Log begins --------", Level.INFO, Visibility.FILE);
+	}
+
+	private void openLogFile(String output, boolean overwrite) {
+		try {
+			// open the specified file
+			this.out = new PrintStream(new FileOutputStream(new File(output),
+					!overwrite));
+		} catch (Exception e) {
+			try {
+				// could not open the specified file, trying a
+				// temporary one instead
+				this.outPath = System.getProperty("java.io.tmpdir")
+						+ File.separator + "bifstk-"
+						+ System.currentTimeMillis() + ".log";
+				this.out = new PrintStream(new FileOutputStream(this.outPath));
+
+				System.out.println("! Could not open log file '" + output
+						+ "', appending log to " + this.outPath);
+			} catch (Exception ex) {
+				// log file could not be opened, disabling file output
+				this.outPath = null;
+				this.out = null;
+				System.out
+						.println("! Could not open log file '" + output + "'");
+				if (this.visibility.isStdout()) {
+					System.out.println("Logs will be printed on STDOUT only");
+					this.visibility = Visibility.STDOUT;
+				} else {
+					System.out.println("All logs will be dropped");
+					this.visibility = Visibility.NONE;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Rotate logs after reaching a certain number of lines.
+	 * the old log file is closed and moved and a new one is created.
+	 */
+	private void rotateFile() {
+		Calendar cal = Calendar.getInstance();
+		int d = cal.get(Calendar.DAY_OF_MONTH);
+		if (this.linesAppended >= Config.getLogMaxlines()) {
+			this.linesAppended = 0;
+
+			File old = new File(this.outPath);
+			File dir = old.getParentFile();
+			File moved = new File(dir.getAbsolutePath() + File.separatorChar
+					+ old.getName() + "-"
+					+ DateHelper.getTimeStamps().replace(' ', '-'));
+			boolean ret = old.renameTo(moved);
+
+			if (!ret) {
+				this.out.println("Failed to rotate logs. Could not move old file.");
+			} else {
+				this.out.println("Log continues in another file");
+				this.out.close();
+				openLogFile(this.outPath, false);
+				this.out.println("Log has been rotated. Previous log file is "
+						+ moved.getAbsolutePath());
+			}
+		} else {
+			this.linesAppended++;
+		}
 	}
 
 	/**
@@ -279,7 +316,8 @@ public class Logger {
 		message(message, l, vis, null);
 	}
 
-	private void message(String message, Level l, Visibility vis, Throwable t) {
+	private synchronized void message(String message, Level l, Visibility vis,
+			Throwable t) {
 		switch (vis) {
 		case FILE:
 			if (!this.visibility.isFile())
@@ -314,6 +352,7 @@ public class Logger {
 					this.trace, this.traceLen));
 		}
 		if (vis.isFile()) {
+			rotateFile();
 			this.out.println(getFormattedString(message, t, true, true,
 					this.traceLen));
 		}

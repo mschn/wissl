@@ -66,6 +66,7 @@ public class Config {
 	private boolean logStdoutTrace = false;
 	private int logTraceLength = 0;
 	private String logDateFormat = null;
+	private int logMaxlines = 0;
 
 	private String dbPath = null;
 	private boolean dbClean = false;
@@ -113,6 +114,7 @@ public class Config {
 		this.logStdoutTrace = getBoolean("wsl.log.stdout.trace", props);
 		this.logTraceLength = getInt("wsl.log.trace.length", props);
 		this.logDateFormat = getString("wsl.log.date.format", props);
+		this.logMaxlines = getInt("wsl.log.maxlines", props);
 
 		this.musicPaths = getList("wsl.music.path", props, true);
 		this.musicRefreshRate = getInt("wsl.music.refresh.rate", props);
@@ -159,6 +161,7 @@ public class Config {
 		pw.println("wsl.log.debug.enabled=" + isLogStdoutDebug());
 		pw.println("wsl.log.trace.length=" + getLogTraceLength());
 		pw.println("wsl.log.date.format=" + getLogDateFormat());
+		pw.println("wsl.log.maxlines=" + getLogMaxlines());
 		pw.println();
 		pw.println("wsl.music.path="
 				+ listAsString(getMusicPath()).replace("\\", "\\\\"));
@@ -327,6 +330,10 @@ public class Config {
 
 	public static String getLogDateFormat() {
 		return instance.logDateFormat;
+	}
+
+	public static int getLogMaxlines() {
+		return instance.logMaxlines;
 	}
 
 	public static String getDbPath() {
