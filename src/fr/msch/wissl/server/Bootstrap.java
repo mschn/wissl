@@ -77,6 +77,12 @@ public class Bootstrap extends ResteasyBootstrap {
 	}
 
 	public static void shutdown() {
+		try {
+			throw new Exception("Stack dump");
+		} catch (Exception e) {
+			Logger.warn("Shutting down", e);
+		}
+
 		Library.stop();
 		Session.stop();
 
