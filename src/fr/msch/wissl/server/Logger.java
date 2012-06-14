@@ -18,7 +18,6 @@ package fr.msch.wissl.server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Calendar;
 
 import fr.msch.wissl.common.Config;
 
@@ -192,8 +191,6 @@ public class Logger {
 	 * the old log file is closed and moved and a new one is created.
 	 */
 	private void rotateFile() {
-		Calendar cal = Calendar.getInstance();
-		int d = cal.get(Calendar.DAY_OF_MONTH);
 		if (this.linesAppended >= Config.getLogMaxlines()) {
 			this.linesAppended = 0;
 
