@@ -175,30 +175,13 @@ var wsl = wsl || {};
 		clazz = 'hist navbar-random';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?random\')">Random</a>';
 
-		clazz = (arg.playlists ? 'selected-nav ' : '') + 'hist navbar-playlists';
-		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlists/\')">Playlists</a>';
-		if (arg.playlists) {
-			navbar += '<div class="context-action">';
-			navbar += '<a class="navbar-new-playlist" onclick="wsl.showCreatePlaylist()" title="Create a new playlist"></a>';
-			navbar += "<a class='selection-disabled navbar-delete-playlist' onclick='wsl.deletePlaylist()' title='Delete selected playlists'></a>";
-			navbar += "</div>";
-		}
+		navbar += '<hr/>';
 
-		if (arg.playlist) {
-			clazz = 'hist navbar-playlist indent selected-nav';
-			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlist/' + arg.playlist.id + '\')">';
-			navbar += arg.playlist.name + "</a>";
-
-			navbar += "<div class='context-action'>";
-			cb = "onclick='wsl.deleteSelectedSongs(" + arg.playlist.id + ")'";
-			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all songs'></a>";
-			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
-			navbar += "<a class='selection-disabled context-action navbar-delete-songs-playlist' " + cb + " title='Remove selected songs from playlist'></a>";
-			navbar += "</div>";
-		}
+		clazz = (arg.home ? 'selected-nav ' : '') + 'navbar-home';
+		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?\')">Home</a>';
 
 		clazz = (arg.artists ? 'selected-nav ' : '') + 'hist navbar-artists';
-		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?\')">Library</a>';
+		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?artists/\')">Library</a>';
 
 		if (arg.artist) {
 			clazz = 'hist navbar-artist indent' + (arg.album ? '' : ' selected-nav');
@@ -233,6 +216,28 @@ var wsl = wsl || {};
 			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
 			navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
 			navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+			navbar += "</div>";
+		}
+
+		clazz = (arg.playlists ? 'selected-nav ' : '') + 'navbar-playlists';
+		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlists/\')">Playlists</a>';
+		if (arg.playlists) {
+			navbar += '<div class="context-action">';
+			navbar += '<a class="navbar-new-playlist" onclick="wsl.showCreatePlaylist()" title="Create a new playlist"></a>';
+			navbar += "<a class='selection-disabled navbar-delete-playlist' onclick='wsl.deletePlaylist()' title='Delete selected playlists'></a>";
+			navbar += "</div>";
+		}
+
+		if (arg.playlist) {
+			clazz = 'hist navbar-playlist indent selected-nav';
+			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlist/' + arg.playlist.id + '\')">';
+			navbar += arg.playlist.name + "</a>";
+
+			navbar += "<div class='context-action'>";
+			cb = "onclick='wsl.deleteSelectedSongs(" + arg.playlist.id + ")'";
+			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all songs'></a>";
+			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
+			navbar += "<a class='selection-disabled context-action navbar-delete-songs-playlist' " + cb + " title='Remove selected songs from playlist'></a>";
 			navbar += "</div>";
 		}
 
@@ -280,7 +285,7 @@ var wsl = wsl || {};
 	wsl.showContent = function (content) {
 		var pages, i, page;
 
-		pages = [ 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
+		pages = [ 'home', 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
 
 		for (i = 0; i < pages.length; i += 1) {
 			page = pages[i];
@@ -623,12 +628,15 @@ var wsl = wsl || {};
 				wsl.displayAbout(scroll);
 			} else if (/logout\/?$/.test(hash)) {
 				hist.replaceState(null, title, '?');
+			} else if (hash === '?') {
+				console.log("meh");
+				wsl.displayHome();
 			} else {
 				wsl.error("Page not found: ?" + hash);
 				hist.replaceState(null, title, '?');
 			}
 		} else {
-			wsl.displayArtists(scroll);
+			wsl.displayHome();
 		}
 
 		wsl.selCount = 0;

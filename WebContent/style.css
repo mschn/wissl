@@ -484,6 +484,10 @@ span#next {
 	background: 2px 6px no-repeat url('img/library_16.png');
 }
 
+.navbar-home {
+	background: 2px 6px no-repeat url('img/home_16.png');
+}
+
 .navbar-no-metadata {
 	font-style: italic;
 }
