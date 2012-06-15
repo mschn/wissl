@@ -178,11 +178,12 @@ public abstract class DB {
 	 * Remove playlists
 	 * @param playlist_ids unique ids of the playlist
 	 * @param user_id id of the user requesting playlist removal
+	 * @return number of deleted playlists
 	 * @throws SQLException
 	 * @throws ForbiddenException 
 	 * @throws NotFoundException 
 	 */
-	public abstract void removePlaylists(int[] playlist_ids, int user_id)
+	public abstract int removePlaylists(int[] playlist_ids, int user_id)
 			throws SQLException, NotFoundException, ForbiddenException;
 
 	/**
@@ -324,5 +325,35 @@ public abstract class DB {
 	 * @throws SQLException
 	 */
 	public abstract String getSongFilePath(int song_id) throws SQLException;
+
+	/**
+	 * @return total number of songs
+	 * @throws SQLException
+	 */
+	public abstract int getSongCount() throws SQLException;
+
+	/**
+	 * @return total number of albums
+	 * @throws SQLException
+	 */
+	public abstract int getAlbumCount() throws SQLException;
+
+	/**
+	 * @return total number of artists
+	 * @throws SQLException
+	 */
+	public abstract int getArtistCount() throws SQLException;
+
+	/**
+	 * @return total number of playlists
+	 * @throws SQLException
+	 */
+	public abstract int getPlaylistCount() throws SQLException;
+
+	/**
+	 * @return total number of users
+	 * @throws SQLException
+	 */
+	public abstract int getUserCount() throws SQLException;
 
 }

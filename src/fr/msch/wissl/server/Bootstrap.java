@@ -67,6 +67,7 @@ public class Bootstrap extends ResteasyBootstrap {
 		}
 		Session.start();
 		Library.create();
+		RuntimeStats.create();
 	}
 
 	@Override

@@ -377,6 +377,8 @@ public class REST {
 
 		DB.get().addUser(u);
 
+		RuntimeStats.addUserCount(1);
+
 		nocache();
 		log(s, l);
 	}
@@ -419,6 +421,7 @@ public class REST {
 						"You cannot remove your own user.");
 			}
 			DB.get().removeUser(user_id);
+			RuntimeStats.addUserCount(-1);
 		}
 
 		nocache();
@@ -448,6 +451,7 @@ public class REST {
 		int uid = s.getUserId();
 
 		Playlist pl = DB.get().addPlaylist(uid, name);
+		RuntimeStats.addPlaylistCount(1);
 
 		nocache();
 		log(s, l);
@@ -508,6 +512,8 @@ public class REST {
 			count += DB.get().addAlbumsToPlaylist(pl.id, album_ids, uid);
 		}
 		pl = DB.get().getPlaylist(pl.id);
+
+		RuntimeStats.setPlaylistCount(DB.get().getPlaylistCount());
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ \"added\":" + count + ",");
@@ -582,6 +588,8 @@ public class REST {
 		}
 		DB.get().addSongsToPlaylist(pl.id, ids, uid);
 		pl = DB.get().getPlaylist(pl.id);
+
+		RuntimeStats.setPlaylistCount(DB.get().getPlaylistCount());
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ \"added\":" + number + ",");
@@ -815,7 +823,8 @@ public class REST {
 		if (playlist_ids == null || playlist_ids.length == 0)
 			throw new IllegalArgumentException("No playlist ids provided");
 
-		DB.get().removePlaylists(playlist_ids, uid);
+		int ret = DB.get().removePlaylists(playlist_ids, uid);
+		RuntimeStats.addPlaylistCount(-ret);
 
 		nocache();
 		log(sess, l);
@@ -1161,20 +1170,15 @@ public class REST {
 						out.write(bytes, 0, bytesRead);
 					}
 				} catch (Throwable t) {
+					return;
+				} finally {
+					RuntimeStats.addDownloaded(totalBytes);
 					try {
 						DB.get().updateDownloadedBytes(s.getUserId(),
 								totalBytes);
 					} catch (SQLException e) {
 						Logger.error("Failed to update user stats", e);
 					}
-
-					return;
-				}
-
-				try {
-					DB.get().updateDownloadedBytes(s.getUserId(), totalBytes);
-				} catch (SQLException e) {
-					Logger.error("Failed to update user stats", e);
 				}
 			}
 		};
@@ -1235,13 +1239,17 @@ public class REST {
 				InputStream in = new FileInputStream(f);
 				byte[] bytes = new byte[8192];
 				int bytesRead;
+				int totalBytes = 0;
 
 				try {
 					while ((bytesRead = in.read(bytes)) != -1) {
+						totalBytes += bytesRead;
 						out.write(bytes, 0, bytesRead);
 					}
 				} catch (Throwable t) {
 					return;
+				} finally {
+					RuntimeStats.addDownloaded(totalBytes);
 				}
 			}
 		};
@@ -1548,6 +1556,31 @@ public class REST {
 
 		log(s, l1);
 		return ret;
+	}
+
+	/**
+	 * @return simple runtime stats containing general server info, ie:
+	 * <pre>
+	 * {
+	 *   "songs": 123,
+	 *   "albums": 26,
+	 *   "artists": 5
+	 * }
+	 * </pre>
+	 */
+	@GET
+	@Path("stats")
+	public String getStats() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), false);
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("{\"stats\":" + RuntimeStats.toJSON() + "}");
+
+		nocache();
+		log(s, l1);
+		return sb.toString();
 	}
 
 	/**

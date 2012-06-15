@@ -40,12 +40,12 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  * DB Implementation using H2 server through JDBC and c3p0 connection pooling
  * 
  * 
- * @author mschnoor
+ * @author mathieu.schnoor@gmail.com
  *
  */
 public class H2DB extends DB {
 
-	private static final long SCHEMA_VERSION = 2L;
+	private static final long SCHEMA_VERSION = 3L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -165,33 +165,9 @@ public class H2DB extends DB {
 		Connection conn = getConnection();
 		Statement st = conn.createStatement();
 
-		/*
-		DatabaseMetaData md = conn.getMetaData();
-		ResultSet rs = md.getTables(null, null, "%", null);
-		HashSet<String> hs = new HashSet<String>();
-		hs.add("artist");
-		hs.add("song");
-		hs.add("album");
-		hs.add("user");
-		hs.add("playlist");
-		hs.add("playlist_song");
-
-		while (rs.next()) {
-			String n = rs.getString(3).toLowerCase();
-			hs.remove(n);
-		}
-
-		if (hs.size() == 0) {
-			return false;
-		}
-		*/
-
 		try {
 			st.addBatch("CREATE TABLE info (" + //
-					"schema_version LONG NOT NULL," + //
-					"song_count LONG," + //
-					"album_count LONG," + //
-					"song_duration LONG" + //
+					"schema_version LONG NOT NULL" + //
 					")");
 
 			st.addBatch("CREATE TABLE artist (" + //
@@ -964,7 +940,7 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public void removePlaylists(int[] playlist_ids, int user_id)
+	public int removePlaylists(int[] playlist_ids, int user_id)
 			throws SQLException, NotFoundException, ForbiddenException {
 		for (int playlist_id : playlist_ids) {
 			this.checkPlaylistUser(playlist_id, user_id);
@@ -972,6 +948,7 @@ public class H2DB extends DB {
 
 		Connection conn = getConnection();
 		PreparedStatement st = null;
+		int ret;
 		try {
 			String ids = "";
 			for (int i = 0; i < playlist_ids.length; i++) {
@@ -986,13 +963,14 @@ public class H2DB extends DB {
 				st.setInt(i + 1, playlist_ids[i]);
 			}
 
-			st.executeUpdate();
+			ret = st.executeUpdate();
 		} finally {
 			if (st != null)
 				st.close();
 			if (conn != null)
 				conn.close();
 		}
+		return ret;
 	}
 
 	@Override
@@ -1737,6 +1715,101 @@ public class H2DB extends DB {
 				throw new NotFoundException("No such playlist: " + playlist_id);
 			}
 
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public int getSongCount() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT count(*) FROM song");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+			return 0;
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public int getAlbumCount() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT count(*) FROM album");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+			return 0;
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public int getArtistCount() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT count(*) FROM artist");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+			return 0;
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public int getPlaylistCount() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT count(*) FROM playlist");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+			return 0;
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public int getUserCount() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT count(*) FROM user");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+			return 0;
 		} finally {
 			if (st != null)
 				st.close();

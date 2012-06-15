@@ -22,23 +22,52 @@ var wsl = wsl || {};
 	'use strict';
 
 	wsl.displayHome = function () {
-		var content = '';
+		wsl.lockUI();
+		$.ajax({
+			url : '/wissl/stats',
+			headers : {
+				sessionId : wsl.sessionId
+			},
+			dataType : 'json',
+			success : function (data) {
+				var content = '', st = data.stats;
 
-		content += '<div id="home-title">Wissl</div>';
-		content += '<form id="home-search-form" method="post" onsubmit="wsl.search();return false">';
-		content += '<input id="home-search-input" type="text"';
-		content += 'placeholder="song, artist, album" />';
-		content += '<input id="home-search-ok" type="submit"';
-		content += 'value="Search" class="button button-search" />';
-		content += '</form>';
+				content += '<div id="home-title">Wissl</div>';
+				content += '<form id="home-search-form" method="post" onsubmit="wsl.search();return false">';
+				content += '<input id="home-search-input" type="text"';
+				content += 'placeholder="song, artist, album" />';
+				content += '<input id="home-search-ok" type="submit"';
+				content += 'value="Search" class="button button-search" />';
+				content += '</form>';
 
-		wsl.refreshNavbar({
-			home : true
+				if (st) {
+					content += '<p class="home-stats-p">';
+					content += '<span>' + st.songs + ' songs</span>';
+					content += '<span>' + st.albums + ' albums</span>';
+					content += '<span>' + st.artists + ' artists</span>';
+					content += '<span>' + st.playlists + ' playlist' + (st.playlists > 1 ? 's' : '') + '</span>';
+					content += '<span>' + st.users + ' user' + (st.users > 1 ? 's' : '') + '</span>';
+					content += '</p><p class="home-stats-p">';
+					content += '<span>' + st.playtime + ' playtime</span>';
+					content += '<span>' + (st.downloaded / (1024 * 1024)).toFixed(2) + ' MiB downloaded</span>';
+					content += '<span>' + st.uptime + ' uptime</span>';
+					content += '</p>';
+				}
+
+				wsl.refreshNavbar({
+					home : true
+				});
+				wsl.showContent({
+					home : content
+				});
+				wsl.unlockUI();
+			},
+			error : function (xhr, textStatus, errorThrown) {
+				wsl.ajaxError("Failed to get runtime stats", xhr);
+				wsl.unlockUI();
+			}
 		});
-		wsl.showContent({
-			home : content
-		});
-		wsl.unlockUI();
+
 	};
 
 	wsl.search = function () {
