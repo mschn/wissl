@@ -163,6 +163,10 @@ body {
 	background-image: url("img/shutdown_24.png");
 }
 
+.button-search {
+	background-image: url("img/search_24.png");
+}
+
 .button:hover {
 	color: rgb(90, 110, 255);
 	background-color: #a8bfe0;
@@ -273,7 +277,7 @@ span#next {
 }
 
 #progress-played {
-	background: 0 0 repeat-x url('img/shade2.png')  rgb(120, 140, 170);
+	background: 0 0 repeat-x url('img/shade2.png') rgb(120, 140, 170);
 	overflow: hidden;
 }
 
@@ -282,7 +286,7 @@ span#next {
 	display: none;
 	color: #444;
 	text-shadow: 0 1px 1px white;
-	padding : 5px;
+	padding: 5px;
 	font-weight: bold;
 	font-size: 1.3em;
 	background: #bbb;
@@ -370,7 +374,7 @@ span#next {
 	width: 18px;
 	margin: 14px 13px;
 	display: block;
-	background: 0 0 repeat-x url('img/shade2.png')  rgb(120, 140, 170);
+	background: 0 0 repeat-x url('img/shade2.png') rgb(120, 140, 170);
 	height: 0;
 	bottom: 0px;
 }
@@ -1277,4 +1281,29 @@ span.users-connected {
 	color: #999;
 	text-shadow: 0 1px 4px #ccc;
 	margin: 0;
+}
+
+#home {
+	
+}
+
+#home-title {
+	margin-top: 25px;
+	text-align: center;
+	font-size: 2.4em;
+	text-shadow: 0 1px 4px #aaa;
+}
+
+#home-search-form {
+	margin-top: 15px;
+	text-align: center;
+}
+
+#home-search-input {
+	width: 40%;
+	border-radius: 3px;
+	border: 1px solid #999;
+	font-size: 1.2em;
+	height: 26px;
+	padding: 0 5px;
 }

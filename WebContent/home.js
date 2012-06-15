@@ -24,6 +24,14 @@ var wsl = wsl || {};
 	wsl.displayHome = function () {
 		var content = '';
 
+		content += '<div id="home-title">Wissl</div>';
+		content += '<form id="home-search-form" method="post" onsubmit="wsl.search();return false">';
+		content += '<input id="home-search-input" type="text"';
+		content += 'placeholder="song, artist, album" />';
+		content += '<input id="home-search-ok" type="submit"';
+		content += 'value="Search" class="button button-search" />';
+		content += '</form>';
+
 		wsl.refreshNavbar({
 			home : true
 		});
@@ -31,6 +39,12 @@ var wsl = wsl || {};
 			home : content
 		});
 		wsl.unlockUI();
+	};
+
+	wsl.search = function () {
+		var query;
+		query = $('#home-search-input').val();
+		console.log('searching: ' + query);
 	};
 
 }(wsl));
