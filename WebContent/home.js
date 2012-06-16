@@ -42,15 +42,15 @@ var wsl = wsl || {};
 
 				if (st) {
 					content += '<p class="home-stats-p">';
-					content += '<span>' + st.songs + ' songs</span>';
-					content += '<span>' + st.albums + ' albums</span>';
-					content += '<span>' + st.artists + ' artists</span>';
-					content += '<span>' + st.playlists + ' playlist' + (st.playlists > 1 ? 's' : '') + '</span>';
-					content += '<span>' + st.users + ' user' + (st.users > 1 ? 's' : '') + '</span>';
+					content += '<span><span>' + st.songs + '</span> songs</span>';
+					content += '<span><span>' + st.albums + '</span> albums</span>';
+					content += '<span><span>' + st.artists + '</span> artists</span>';
+					content += '<span><span>' + st.playlists + '</span> playlist' + (st.playlists > 1 ? 's' : '') + '</span>';
+					content += '<span><span>' + st.users + '</span> user' + (st.users > 1 ? 's' : '') + '</span>';
 					content += '</p><p class="home-stats-p">';
-					content += '<span>' + st.playtime + ' playtime</span>';
-					content += '<span>' + (st.downloaded / (1024 * 1024)).toFixed(2) + ' MiB downloaded</span>';
-					content += '<span>' + st.uptime + ' uptime</span>';
+					content += '<span><span>' + wsl.formatSeconds(st.playtime) + '</span> playtime</span>';
+					content += '<span><span>' + wsl.formatBytes(st.downloaded, 0) + '</span> downloaded</span>';
+					content += '<span><span>' + wsl.formatSeconds(st.uptime / 1000, true, true) + '</span> uptime</span>';
 					content += '</p>';
 				}
 

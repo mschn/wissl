@@ -116,7 +116,7 @@ var wsl = wsl || {};
 		$("#error-dialog").hide();
 	};
 
-	wsl.formatSeconds = function (seconds, alt) {
+	wsl.formatSeconds = function (seconds, alt, onlyFirst) {
 		var hou, min, sec, ret;
 
 		hou = Math.floor(seconds / 3600);
@@ -125,15 +125,37 @@ var wsl = wsl || {};
 		sec = Math.floor(seconds % 60);
 
 		if (alt) {
-			ret = (hou > 0 ? hou + 'h ' : '');
-			ret += (min > 0 ? min + 'm ' : '');
-			ret += sec + 's';
+			if (onlyFirst) {
+				if (hou > 0) {
+					return hou + 'h';
+				} else if (min > 0) {
+					return min + 'm';
+				} else {
+					return sec + 's';
+				}
+			} else {
+				ret = (hou > 0 ? hou + 'h ' : '');
+				ret += (min > 0 ? min + 'm ' : '');
+				ret += sec + 's';
+			}
 		} else {
 			ret = (hou > 0 ? hou + ':' : '');
 			ret += (min < 10 && hou > 0 ? '0' : '') + min + ':';
 			ret += (sec < 10 ? '0' : '') + sec;
 		}
 		return ret;
+	};
+
+	wsl.formatBytes = function (bytes, precision) {
+		var mb, gb;
+		mb = bytes / (1024 * 1024);
+		gb = mb / 1024;
+
+		if (gb > 1) {
+			return gb.toFixed(precision) + ' GiB';
+		} else {
+			return mb.toFixed(precision) + ' MiB';
+		}
 	};
 
 	wsl.lockUI = function () {

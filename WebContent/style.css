@@ -594,10 +594,10 @@ span#next {
 }
 
 #navbar hr {
-	background: #555;
-	height: 0px;
+	background: #666;
+	height: 5px;
 	border: 0;
-	margin: 9px 0;
+	margin: 0;
 }
 
 #content {
@@ -1303,17 +1303,22 @@ span.users-connected {
 	width: 40%;
 	border-radius: 3px;
 	border: 1px solid #999;
-	font-size: 1.2em;
-	height: 26px;
-	padding: 0 5px;
+	font-size: 1.1em;
+	padding: 5px;
 }
 
 .home-stats-p {
-	font-size: 1.2em;
 	text-align: center;
 	margin: 10px 0;
 }
 
-.home-stats-p span {
+.home-stats-p>span {
+	white-space: nowrap;
 	padding: 10px 25px;
+	color: #888;
+}
+
+.home-stats-p>span>span {
+	font-size: 1.2em;
+	color: black;
 }
