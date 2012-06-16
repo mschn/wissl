@@ -356,4 +356,10 @@ public abstract class DB {
 	 */
 	public abstract int getUserCount() throws SQLException;
 
+	/**
+	 * @return cumulated duration of all known songs
+	 * @throws SQLException
+	 */
+	public abstract long getTotalSongDuration() throws SQLException;
+
 }

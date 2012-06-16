@@ -1817,4 +1817,23 @@ public class H2DB extends DB {
 				conn.close();
 		}
 	}
+
+	@Override
+	public long getTotalSongDuration() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("SELECT sum(duration) FROM song");
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getLong(1);
+			}
+			return 0;
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
 }

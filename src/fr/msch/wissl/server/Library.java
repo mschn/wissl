@@ -428,6 +428,8 @@ public class Library {
 						RuntimeStats.setPlaylistCount(DB.get()
 								.getPlaylistCount());
 						RuntimeStats.setUserCount(DB.get().getUserCount());
+						RuntimeStats.setPlaytime(DB.get()
+								.getTotalSongDuration());
 					} catch (SQLException e) {
 						Logger.error("Failed to update runtime statistics", e);
 					}
