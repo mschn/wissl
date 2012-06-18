@@ -33,12 +33,15 @@ var wsl = wsl || {};
 				var content = '', st = data.stats;
 
 				content += '<div id="home-title">Wissl</div>';
-				content += '<form id="home-search-form" method="post" onsubmit="wsl.search();return false">';
-				content += '<input id="home-search-input" type="text"';
+
+				content += '<div id="home-search">';
+				content += '<form id="search-form" method="post" onsubmit="wsl.search();return false">';
+				content += '<input id="search-input" type="text"';
 				content += 'placeholder="song, artist, album" />';
-				content += '<input id="home-search-ok" type="submit"';
+				content += '<input id="search-ok" type="submit"';
 				content += 'value="Search" class="button button-search" />';
 				content += '</form>';
+				content += '</div>';
 
 				if (st) {
 					content += '<p class="home-stats-p">';
@@ -71,9 +74,78 @@ var wsl = wsl || {};
 	};
 
 	wsl.search = function () {
-		var query;
-		query = $('#home-search-input').val();
-		console.log('searching: ' + query);
+		var query, url;
+		query = $('#search-input').val();
+		url = '\?search/' + encodeURIComponent(query);
+
+		wsl.load(url);
+	},
+
+	wsl.displaySearch = function (query) {
+		wsl.lockUI();
+		$.ajax({
+			url : '/wissl/search/' + encodeURIComponent(query),
+			headers : {
+				sessionId : wsl.sessionId
+			},
+			dataType : 'json',
+			success : function (data) {
+
+				var content, artists, albums, songs, i;
+
+				artists = data.artists;
+				albums = data.albums;
+				songs = data.songs;
+
+				content = '';
+
+				content += '<form id="search-form" method="post" onsubmit="wsl.search();return false">';
+				content += '<input id="search-input" type="text"';
+				content += 'value="' + query + '"';
+				content += 'placeholder="song, artist, album" />';
+				content += '<input id="search-ok" type="submit"';
+				content += 'value="Search" class="button button-search" />';
+				content += '</form>';
+
+				if (artists) {
+					content += '<h2>Artists:</h2><ul>';
+
+					for (i = 0; i < artists.length; i += 1) {
+						content += '<li>' + artists[i].name + '</li>';
+					}
+					content += '</ul>';
+				}
+				if (albums) {
+					content += '<h2>Albums:</h2><ul>';
+					for (i = 0; i < albums.length; i += 1) {
+						content += '<li>' + albums[i].name + '</li>';
+					}
+					content += '</ul>';
+				}
+				if (songs) {
+					content += '<h2>Songs:</h2><ul>';
+					for (i = 0; i < songs.length; i += 1) {
+						content += '<li>' + songs[i].title + '</li>';
+					}
+					content += '</ul>';
+				}
+
+				wsl.refreshNavbar({
+					search : true
+				});
+				wsl.showContent({
+					search : content
+				});
+
+				wsl.unlockUI();
+			},
+			error : function (xhr, textStatus, errorThrown) {
+				wsl.ajaxError("Search failed", xhr);
+				wsl.unlockUI();
+			}
+
+		});
+
 	};
 
 }(wsl));

@@ -362,4 +362,34 @@ public abstract class DB {
 	 */
 	public abstract long getTotalSongDuration() throws SQLException;
 
+	/**
+	 * @param title partial artist name
+	 * @param maxResults maximum number of results
+	 * @return artists matching the provided artist name, ignoring case.
+	 *  ie parameter 'roll' will match artist 'The Rolling Stones'
+	 * @throws SQLException
+	 */
+	public abstract List<Artist> searchArtist(String name, int maxResults)
+			throws SQLException;
+
+	/**
+	 * @param title partial album title
+	 * @param maxResults maximum number of results
+	 * @return albums matching the provided album title, ignoring case.
+	 *  ie parameter 'sou' will match album 'Rubber Soul'
+	 * @throws SQLException
+	 */
+	public abstract List<Album> searchAlbum(String title, int maxResults)
+			throws SQLException;
+
+	/**
+	 * @param title partial song title
+	 * @param maxResults maximum number of results
+	 * @return songs matching the provided song title, ignoring case.
+	 *  ie parameter 'hun' will match song 'The Hunter'
+	 * @throws SQLException
+	 */
+	public abstract List<Song> searchSong(String title, int maxResults)
+			throws SQLException;
+
 }

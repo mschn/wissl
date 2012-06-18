@@ -1836,4 +1836,108 @@ public class H2DB extends DB {
 				conn.close();
 		}
 	}
+
+	@Override
+	public List<Artist> searchArtist(String name, int maxResults)
+			throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<Artist> ret = new ArrayList<Artist>();
+		try {
+			st = conn
+					.prepareStatement("SELECT * FROM artist WHERE lower(artist_name) "
+							+ "LIKE lower(?) LIMIT ?");
+			st.setString(1, "%" + name + "%");
+			st.setInt(2, maxResults);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Artist ar = new Artist();
+				ar.id = rs.getInt("artist_id");
+				ar.name = rs.getString("artist_name");
+				ar.albums = rs.getInt("albums");
+				ar.songs = rs.getInt("songs");
+				ar.playtime = rs.getInt("playtime");
+				ret.add(ar);
+			}
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
+	public List<Album> searchAlbum(String title, int maxResults)
+			throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<Album> ret = new ArrayList<Album>();
+		try {
+			st = conn
+					.prepareStatement("SELECT * FROM album WHERE lower(album_name) "
+							+ "LIKE lower(?) LIMIT ?");
+			st.setString(1, "%" + title + "%");
+			st.setInt(2, maxResults);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Album al = new Album();
+				al.id = rs.getInt("album_id");
+				al.name = rs.getString("album_name");
+				al.date = rs.getString("date");
+				al.songs = rs.getInt("songs");
+				al.playtime = rs.getInt("playtime");
+				al.artist_id = rs.getInt("artist_id");
+				ret.add(al);
+			}
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
+	public List<Song> searchSong(String title, int maxResults)
+			throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<Song> ret = new ArrayList<Song>();
+		try {
+			st = conn.prepareStatement("SELECT * FROM song WHERE lower(title) "
+					+ "LIKE lower(?) LIMIT ?");
+			st.setString(1, "%" + title + "%");
+			st.setInt(2, maxResults);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Song s = new Song();
+				s.id = rs.getInt("song_id");
+				s.title = rs.getString("title");
+				s.album_name = rs.getString("album_name");
+				s.artist_name = rs.getString("artist_name");
+				s.position = rs.getInt("position");
+				s.disc_no = rs.getInt("disc_no");
+				s.duration = rs.getInt("duration");
+				s.format = rs.getString("format");
+				s.album_id = rs.getInt("album_id");
+				s.artist_id = rs.getInt("artist_id");
+				ret.add(s);
+			}
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
 }

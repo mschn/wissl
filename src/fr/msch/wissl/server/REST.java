@@ -1105,6 +1105,82 @@ public class REST {
 	}
 
 	/**
+	 * Search for songs, albums, artists using a single query parameter
+	 * Result size will be limited.
+	 * 
+	 * @param query a string the will match song titles, album names or artist names.
+	 * @return a JSON object describing artists, albums and songs matching the search query,
+	 * ie for query 'beat':
+	 * <pre>
+	 * {
+	 *   "artists": [
+	 *     {
+	 *       "id": 1,
+	 *       "artist_name": "The Beatles"
+	 *     }
+	 *   ],
+	 *   "albums": [
+	 *     {
+	 *       "id": 42,
+	 *       "album_name": "Beat"
+	 *     }
+	 *   ],
+	 *   "songs": [
+	 *     {
+	 *       "id": 1143,
+	 *       "title": "Eat to the beat"
+	 *     }
+	 *   ]   
+	 * }
+	 * </pre>
+	 * @throws SQLException
+	 * @throws SecurityError
+	 */
+	@GET
+	@Path("search/{query}")
+	public String search(@PathParam("query") final String query)
+			throws SQLException, SecurityError {
+		long t1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session sess = Session.check(sid, request.getRemoteAddr());
+
+		StringBuilder ret = new StringBuilder();
+
+		List<Artist> artists = DB.get().searchArtist(query, 20);
+		ret.append("{\"artists\":[");
+		for (Iterator<Artist> it = artists.iterator(); it.hasNext();) {
+			Artist ar = it.next();
+			ret.append(ar.toJSON());
+			if (it.hasNext())
+				ret.append(',');
+		}
+
+		List<Album> albums = DB.get().searchAlbum(query, 20);
+		ret.append("],\"albums\":[");
+		for (Iterator<Album> it = albums.iterator(); it.hasNext();) {
+			Album a = it.next();
+			ret.append(a.toJSON());
+			if (it.hasNext())
+				ret.append(',');
+		}
+
+		List<Song> songs = DB.get().searchSong(query, 20);
+		ret.append("],\"songs\":[");
+		for (Iterator<Song> it = songs.iterator(); it.hasNext();) {
+			Song s = it.next();
+			ret.append(s.toJSON());
+			if (it.hasNext())
+				ret.append(',');
+		}
+
+		ret.append("]}");
+
+		this.response.setHeader("Cache-Control", "max-age=60, must-revalidate");
+		log(sess, t1);
+		return ret.toString();
+	}
+
+	/**
 	 * Get song file as a stream<br>
 	 * Content type is dynamically set depending the actual file extension<br>
 	 * The response body can be directly decoded by any media player<br>

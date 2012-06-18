@@ -180,6 +180,11 @@ var wsl = wsl || {};
 		clazz = (arg.home ? 'selected-nav ' : '') + 'navbar-home';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?\')">Home</a>';
 
+		if (arg.search) {
+			clazz = 'navbar-search indent selected-nav';
+			navbar += '<a class="' + clazz + '">Search</a>';
+		}
+
 		clazz = (arg.artists ? 'selected-nav ' : '') + 'hist navbar-artists';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?artists/\')">Library</a>';
 
@@ -285,7 +290,7 @@ var wsl = wsl || {};
 	wsl.showContent = function (content) {
 		var pages, i, page;
 
-		pages = [ 'home', 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
+		pages = [ 'home', 'search', 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
 
 		for (i = 0; i < pages.length; i += 1) {
 			page = pages[i];
@@ -626,10 +631,12 @@ var wsl = wsl || {};
 				wsl.displayAdmin(scroll);
 			} else if (/about\/?$/.test(hash)) {
 				wsl.displayAbout(scroll);
+			} else if (/search\/([\S ]+)/.test(hash)) {
+				match = /search\/([\S ]+)/.exec(hash);
+				wsl.displaySearch(match[1]);
 			} else if (/logout\/?$/.test(hash)) {
 				hist.replaceState(null, title, '?');
 			} else if (hash === '?') {
-				console.log("meh");
 				wsl.displayHome();
 			} else {
 				wsl.error("Page not found: ?" + hash);
