@@ -91,12 +91,11 @@ var wsl = wsl || {};
 			dataType : 'json',
 			success : function (data) {
 
-				var content, artists, albums, songs, i;
+				var content, artists, albums, songs, i, claz, cb;
 
 				artists = data.artists;
 				albums = data.albums;
 				songs = data.songs;
-
 				content = '';
 
 				content += '<form id="search-form" method="post" onsubmit="wsl.search();return false">';
@@ -107,28 +106,56 @@ var wsl = wsl || {};
 				content += 'value="Search" class="button button-search" />';
 				content += '</form>';
 
+				content += '<div id="search-results">';
+				
+				content += '<span id="search-results-tab-songs"'; 
+				content += 'onclick="wsl.showSearchResult({songs:true});" ';
+				content += 'class="search-result-tab search-result-tab-selected">Songs (' + songs.length + ')</span>';
+				
+				content += '<span id="search-results-tab-albums" ';
+				content += 'onclick="wsl.showSearchResult({albums:true});" ';
+				content += 'class="search-result-tab">Albums (' + albums.length + ')</span>';
+				
+				content += '<span id="search-results-tab-artists" ';
+				content += 'onclick="wsl.showSearchResult({artists:true});" ';
+				content += 'class="search-result-tab">Artists (' + artists.length + ')</span>';
+				
 				if (artists) {
-					content += '<h2>Artists:</h2><ul>';
-
+					content += '<ul id="search-results-artists" style="display:none">';
 					for (i = 0; i < artists.length; i += 1) {
-						content += '<li>' + artists[i].name + '</li>';
+						content += '<li class="' + (i % 2 === 0 ? '' : 'odd') + '">';
+						content += artists[i].name + '</li>';
 					}
 					content += '</ul>';
 				}
 				if (albums) {
-					content += '<h2>Albums:</h2><ul>';
+					content += '<ul id="search-results-albums" style="display:none">';
 					for (i = 0; i < albums.length; i += 1) {
-						content += '<li>' + albums[i].name + '</li>';
+						claz = 'selectable' + (i % 2 ? ' odd' : '');
+						cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
+						
+						content += '<li class="' + claz + '">';
+						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+						content += '<span class="title">' + albums[i].name + '</span>'; 
+						content += '</li>';
 					}
 					content += '</ul>';
 				}
 				if (songs) {
-					content += '<h2>Songs:</h2><ul>';
+					content += '<ul id="search-results-songs">';
 					for (i = 0; i < songs.length; i += 1) {
-						content += '<li>' + songs[i].title + '</li>';
+						claz = 'selectable' + (i % 2 ? ' odd' : '');
+						cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
+
+						content += '<li class="' + claz + '">';
+						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+						content += '<span class="title">' + songs[i].title + '</span>';
+						content += '</li>';
 					}
 					content += '</ul>';
 				}
+				content += '</div>';
+				
 
 				wsl.refreshNavbar({
 					search : true
@@ -145,7 +172,32 @@ var wsl = wsl || {};
 			}
 
 		});
-
+	};
+	
+	wsl.showSearchResult = function (tab) {
+		wsl.clearSelection();
+		if (tab.artists) {
+			$('#search-results-songs').hide();
+			$('#search-results-albums').hide();
+			$('#search-results-artists').show();
+			$('#search-results-tab-songs').removeClass('search-result-tab-selected');
+			$('#search-results-tab-albums').removeClass('search-result-tab-selected');
+			$('#search-results-tab-artists').addClass('search-result-tab-selected');
+		} else if (tab.albums) {
+			$('#search-results-songs').hide();
+			$('#search-results-albums').show();
+			$('#search-results-artists').hide();
+			$('#search-results-tab-songs').removeClass('search-result-tab-selected');
+			$('#search-results-tab-albums').addClass('search-result-tab-selected');
+			$('#search-results-tab-artists').removeClass('search-result-tab-selected');
+		} else if (tab.songs) {
+			$('#search-results-songs').show();
+			$('#search-results-albums').hide();
+			$('#search-results-artists').hide();
+			$('#search-results-tab-songs').addClass('search-result-tab-selected');
+			$('#search-results-tab-albums').removeClass('search-result-tab-selected');
+			$('#search-results-tab-artists').removeClass('search-result-tab-selected');
+		}
 	};
 
 }(wsl));

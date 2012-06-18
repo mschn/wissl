@@ -727,7 +727,7 @@ span#next {
 #library-drag-selection {
 	width: 5px;
 	left: 200px;
-	background-color: #999;
+	background-color: #788CAA;
 	display: none;
 	position: fixed;
 	z-index: 100000;
@@ -1332,5 +1332,51 @@ span.users-connected {
 }
 
 #search {
-	margin-left: 10px;
+}
+
+#search-results {
+	margin-top: 10px;
+}
+
+.search-result-tab {
+	display: inline-block;
+	margin: 5px 5px 0 0;
+	padding: 7px 15px;
+	font-size: 1.1em;
+	color: #999;
+	cursor: pointer;
+}
+
+.search-result-tab:hover {
+	text-decoration: underline;
+}
+
+.search-result-tab-selected {
+	color: #444;
+	background: #e0e0e0;
+	font-weight: bold;
+}
+
+#search form {
+	margin-left: 5px;
+}
+
+#search-results ul {
+	border-top: 1px solid #ddd;
+	margin: 0;
+	padding: 0 0 0 5px;
+}
+
+#search-results li {
+	margin: 0;
+	display: block;
+	height: 32px;
+	line-height: 32px;
+	list-style-type: none;
+	vertical-align: middle;
+	padding-left: 32px;
+}
+
+#search-results li.odd {
+	background: #e7e7e7;
 }

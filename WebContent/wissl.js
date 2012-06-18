@@ -314,8 +314,8 @@ var wsl = wsl || {};
 		mousemove = function (event) {
 			var y, y2, elt, top, height;
 
-			top = $('.selectable').first().offset().top;
-			height = $('.selectable').first().height();
+			top = $('.selectable:visible').first().offset().top;
+			height = $('.selectable:visible').first().height();
 
 			y = Math.min(wsl.selectionDrag.mouseY, event.pageY);
 			y = Math.floor((y - top) / height) * height + top;
@@ -341,7 +341,7 @@ var wsl = wsl || {};
 			$('#library-drag-selection').hide();
 			$(document).off('mousemove', mousemove);
 
-			$('.selectable').each(function () {
+			$('.selectable:visible').each(function () {
 				var elt, offset, y, h, my, my2;
 				elt = $(this);
 				offset = elt.offset();
