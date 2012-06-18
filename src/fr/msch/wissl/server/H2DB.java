@@ -45,7 +45,7 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  */
 public class H2DB extends DB {
 
-	private static final long SCHEMA_VERSION = 3L;
+	private static final long SCHEMA_VERSION = 4L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -182,6 +182,7 @@ public class H2DB extends DB {
 			st.addBatch("CREATE TABLE album (" + //
 					"album_id IDENTITY," + //
 					"album_name VARCHAR(254) NOT NULL," + //
+					"artist_name VARCHAR(254) NOT NULL," + //
 					"date VARCHAR(8)," + //
 					"songs INTEGER NOT NULL," + //
 					"playtime INTEGER NOT NULL," + //
@@ -1240,7 +1241,7 @@ public class H2DB extends DB {
 
 		try {
 			st = conn
-					.prepareStatement("SELECT album_id,artist_id,album_name,date,songs,playtime,artwork_path "
+					.prepareStatement("SELECT album_id,artist_id,album_name,date,songs,playtime,artwork_path,artist_name "
 							+ "FROM album WHERE album_id=?");
 			st.setInt(1, album_id);
 			ResultSet rs = st.executeQuery();
@@ -1253,6 +1254,7 @@ public class H2DB extends DB {
 				ret.songs = rs.getInt(5);
 				ret.playtime = rs.getInt(6);
 				ret.artwork_path = rs.getString(7);
+				ret.artist_name = rs.getString(8);
 			} else {
 				return null;
 			}
@@ -1566,8 +1568,8 @@ public class H2DB extends DB {
 		try {
 			st = conn.prepareStatement(
 					"INSERT INTO album(album_name,date,songs,playtime,"
-							+ "artist_id,artwork_path) "
-							+ "VALUES (?,?,?,?,?,?)",
+							+ "artist_id,artwork_path,artist_name) "
+							+ "VALUES (?,?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, alb.name);
 			st.setString(2, alb.date);
@@ -1575,6 +1577,7 @@ public class H2DB extends DB {
 			st.setInt(4, 0);
 			st.setInt(5, artistId);
 			st.setString(6, alb.artwork_path);
+			st.setString(7, alb.artist_name);
 			st.executeUpdate();
 
 			ResultSet keys = st.getGeneratedKeys();
@@ -1892,6 +1895,7 @@ public class H2DB extends DB {
 				al.songs = rs.getInt("songs");
 				al.playtime = rs.getInt("playtime");
 				al.artist_id = rs.getInt("artist_id");
+				al.artist_name = rs.getString("artist_name");
 				ret.add(al);
 			}
 

@@ -39,12 +39,15 @@ public class Album {
 	public long playtime = 0;
 	/** path to the artwork image on the local FS */
 	public String artwork_path = null;
+	/** artist name */
+	public String artist_name = null;
 
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		str.append('{');
 		str.append("\"id\":" + id + ",");
 		str.append("\"artist\":" + artist_id + ",");
+		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
 		str.append("\"name\":" + JSONObject.quote(name) + ",");
 		str.append("\"date\":" + JSONObject.quote(date) + ",");
 		str.append("\"songs\":" + songs + ",");

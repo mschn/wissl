@@ -648,6 +648,7 @@ public class Library {
 		song.hash = hash;
 		song.album_name = album.name;
 		song.artist_name = artist.name;
+		album.artist_name = artist.name;
 
 		String format = af.getAudioHeader().getEncodingType();
 		if ("mp3".equalsIgnoreCase(format)) {
