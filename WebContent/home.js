@@ -136,7 +136,7 @@ var wsl = wsl || {};
 						}
 
 						content += '<li id="artist-' + artists[i].id + '" class="' + claz + '">';
-						content += '<span class="artist-name" ' + link + '>' + artists[i].name + '</li>';
+						content += '<span class="artist-name" ' + link + '>' + wsl.highlightSearch(artists[i].name, query) + '</li>';
 					}
 					content += '</ul>';
 				}
@@ -153,7 +153,7 @@ var wsl = wsl || {};
 						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
 						content += '<span class="album-date">' + albums[i].date + '</span>';
 						content += '<span onclick="wsl.load(\'?songs/' + albums[i].id + '\')"';
-						content += 'class="album-name">' + albums[i].name + '</span>';
+						content += 'class="album-name">' + wsl.highlightSearch(albums[i].name, query) + '</span>';
 						content += '<span onclick="wsl.load(\'?albums/' + albums[i].artist + '\')"';
 						content += 'class="album-artist-name">' + albums[i].artist_name + '</span>';
 						content += '<span class="album-songs">' + albums[i].songs + ' songs</span>';
@@ -175,7 +175,7 @@ var wsl = wsl || {};
 						content += '<li id="song-' + songs[i].id + '" class="' + claz + '">';
 						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
 						content += '<span onclick="wsl.playAlbum(' + songs[i].album_id + ',' + songs[i].id + ',' + songs[i].position + ')"" ';
-						content += 'class="song-title">' + songs[i].title + '</span>';
+						content += 'class="song-title">' + wsl.highlightSearch(songs[i].title, query) + '</span>';
 						content += '<span onclick="wsl.load(\'?songs/' + songs[i].album_id + '\')" ';
 						content += 'class="song-album">' + songs[i].album_name + '</span>';
 						content += '<span onclick="wsl.load(\'?albums/' + songs[i].artist_id + '\')" ';
@@ -204,6 +204,19 @@ var wsl = wsl || {};
 			}
 
 		});
+	};
+
+	wsl.highlightSearch = function (str, query) {
+		var i, ret;
+		i = str.toLowerCase().indexOf(query);
+
+		ret = str.substring(0, i);
+		ret += '<span class="search-highlight">';
+		ret += str.substring(i, i + query.length);
+		ret += '</span>';
+		ret += str.substring(i + query.length, str.length);
+
+		return ret;
 	};
 
 	wsl.showSearchResult = function (tab) {

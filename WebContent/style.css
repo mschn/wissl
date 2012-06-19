@@ -1384,7 +1384,7 @@ span.users-connected {
 	background: #e7e7e7;
 }
 
-#search-results li span {
+#search-results li>span {
 	display: inline-block;
 	line-height: 32px;
 	vertical-align: middle;
@@ -1462,4 +1462,12 @@ span.users-connected {
 
 #search-results li.playing span {
 	color: white;
+}
+
+#search-results li span.search-highlight {
+	background: #a8bfe0;
+	text-shadow: 0 1px 2px #444;
+	color: white;
+	padding: 0;
+	margin: 0;
 }
