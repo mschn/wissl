@@ -819,7 +819,7 @@ span#next {
 	-moz-box-sizing: border-box;
 	text-overflow: ellipsis;
 	box-sizing: border-box;
-	padding: 0 3px;;
+	padding: 0 3px;
 }
 
 #library .playlist-artist {
@@ -1331,9 +1331,6 @@ span.users-connected {
 	display: none;
 }
 
-#search {
-}
-
 #search-results {
 	margin-top: 10px;
 }
@@ -1375,8 +1372,94 @@ span.users-connected {
 	list-style-type: none;
 	vertical-align: middle;
 	padding-left: 32px;
+	line-height: 32px;
+}
+
+#search-results li:hover,#search-results li.odd:hover {
+	background-color: #d4dbe4;
+	text-shadow: 0 1px 0px rgb(230, 240, 255);
 }
 
 #search-results li.odd {
 	background: #e7e7e7;
+}
+
+#search-results li span {
+	display: inline-block;
+	line-height: 32px;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
+	padding: 0 3px;
+}
+
+#search-results span.artist-name {
+	font-size: 1.1em;
+	cursor: pointer;
+	width: 100%;
+}
+
+#search-results span.album-date {
+	color: #999;
+	width: 10%;
+}
+
+#search-results span.album-name {
+	cursor: pointer;
+	width: 30%;
+	font-size: 1.1em;
+}
+
+#search-results span.album-artist-name {
+	cursor: pointer;
+	font-size: 1.1em;
+	width: 30%;
+}
+
+#search-results span.album-songs {
+	color: #999;
+	width: 15%;
+}
+
+#search-results span.album-playtime {
+	color: #999;
+	width: 15%;
+}
+
+#search-results span.song-title {
+	cursor: pointer;
+	width: 35%;
+	font-size: 1.1em;
+}
+
+#search-results span.song-album {
+	cursor: pointer;
+	width: 25%;
+	font-size: 1em;
+}
+
+#search-results span.song-artist {
+	cursor: pointer;
+	width: 25%;
+	font-size: 1em;
+}
+
+#search-results span.song-duration {
+	color: #999;
+	cursor: pointer;
+	width: 15%;
+	font-size: 1em;
+}
+
+#search-results li.playing,#search-results li.playing:hover {
+	background-color: #a8bfe0;
+	text-shadow: 0 1px 2px #444;
+}
+
+#search-results li.playing span {
+	color: white;
 }
