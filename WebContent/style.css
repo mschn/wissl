@@ -303,8 +303,8 @@ span#next {
 	line-height: 16px;
 	float: right;
 	margin-right: 8px;
-	color: #888;
-	text-shadow: 0 1px 1px #eee;
+	color: #bbb;
+	text-shadow: 0 1px 1px #000;
 }
 
 #volume {
