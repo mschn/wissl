@@ -57,9 +57,9 @@ var wsl = wsl || {};
 					content += '<span><span>' + st.playlists + '</span> playlist' + (st.playlists > 1 ? 's' : '') + '</span>';
 					content += '<span><span>' + st.users + '</span> user' + (st.users > 1 ? 's' : '') + '</span>';
 					content += '</p><p class="home-stats-p">';
-					content += '<span><span>' + wsl.formatSeconds(st.playtime) + '</span> playtime</span>';
+					content += '<span><span>' + wsl.formatSecondsAlt(st.playtime, 2) + '</span> playtime</span>';
 					content += '<span><span>' + wsl.formatBytes(st.downloaded, 0) + '</span> downloaded</span>';
-					content += '<span><span>' + wsl.formatSeconds(st.uptime / 1000, true, true) + '</span> uptime</span>';
+					content += '<span><span>' + wsl.formatSecondsAlt(st.uptime / 1000, 2) + '</span> uptime</span>';
 					content += '</p>';
 				}
 

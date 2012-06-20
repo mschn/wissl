@@ -1304,12 +1304,18 @@ span.users-connected {
 }
 
 #search-input {
-	width: 60%;
+	width: 50%;
 	border-radius: 3px;
 	border: 1px solid #999;
-	font-size: 1.1em;
-	padding: 5px;
+	font-size: 1.4em;
+	height: 40px;
+	padding: 0 5px;
 }
+
+#search-ok {
+	margin-left: 5px;
+}
+
 
 .home-stats-p {
 	text-align: center;

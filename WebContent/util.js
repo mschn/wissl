@@ -116,33 +116,56 @@ var wsl = wsl || {};
 		$("#error-dialog").hide();
 	};
 
-	wsl.formatSeconds = function (seconds, alt, onlyFirst) {
+	wsl.formatSecondsAlt = function (seconds, precision) {
+		var day, hou, min, sec, ret, l;
+		l = precision;
+		ret = '';
+
+		day = Math.floor(seconds / 86400);
+		seconds -= (day * 86400);
+		hou = Math.floor(seconds / 3600);
+		seconds -= (hou * 3600);
+		min = Math.floor(seconds / 60);
+		sec = Math.floor(seconds % 60);
+
+		if (day > 0 && l > 0) {
+			ret += day + 'd';
+			l -= 1;
+		}
+		if (hou > 0 && l > 0) {
+			ret += (l < precision ? ' ' : '');
+			ret += hou + 'h';
+			l -= 1;
+		}
+		if (min > 0 && l > 0) {
+			ret += (l < precision ? ' ' : '');
+			ret += min + 'm';
+			l -= 1;
+		}
+		if (sec > 0 && l > 0) {
+			ret += (l < precision ? ' ' : '');
+			ret += sec + 's';
+		}
+		if (ret === '') {
+			ret = '0s';
+		}
+
+		return ret;
+	};
+
+	wsl.formatSeconds = function (seconds) {
+
 		var hou, min, sec, ret;
+		ret = '';
 
 		hou = Math.floor(seconds / 3600);
 		seconds -= (hou * 3600);
 		min = Math.floor(seconds / 60);
 		sec = Math.floor(seconds % 60);
 
-		if (alt) {
-			if (onlyFirst) {
-				if (hou > 0) {
-					return hou + 'h';
-				} else if (min > 0) {
-					return min + 'm';
-				} else {
-					return sec + 's';
-				}
-			} else {
-				ret = (hou > 0 ? hou + 'h ' : '');
-				ret += (min > 0 ? min + 'm ' : '');
-				ret += sec + 's';
-			}
-		} else {
-			ret = (hou > 0 ? hou + ':' : '');
-			ret += (min < 10 && hou > 0 ? '0' : '') + min + ':';
-			ret += (sec < 10 ? '0' : '') + sec;
-		}
+		ret = (hou > 0 ? hou + ':' : '');
+		ret += (min < 10 && hou > 0 ? '0' : '') + min + ':';
+		ret += (sec < 10 ? '0' : '') + sec;
 		return ret;
 	};
 
