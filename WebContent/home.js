@@ -158,6 +158,7 @@ var wsl = wsl || {};
 
 						cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
 						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+						content += '<span class="album-id">' + albums[i].id + '</span>';
 						content += '<span class="album-date">' + albums[i].date + '</span>';
 						content += '<span onclick="wsl.load(\'?songs/' + albums[i].id + '\')"';
 						content += 'class="album-name">' + wsl.highlightSearch(albums[i].name, query) + '</span>';
@@ -181,6 +182,7 @@ var wsl = wsl || {};
 
 						content += '<li id="song-' + songs[i].id + '" class="' + claz + '">';
 						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+						content += '<span class="song-id">' + songs[i].id + '</span>';
 						content += '<span onclick="wsl.playAlbum(' + songs[i].album_id + ',' + songs[i].id + ',' + songs[i].position + ')"" ';
 						content += 'class="song-title">' + wsl.highlightSearch(songs[i].title, query) + '</span>';
 						content += '<span onclick="wsl.load(\'?songs/' + songs[i].album_id + '\')" ';

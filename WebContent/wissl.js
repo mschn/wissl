@@ -167,11 +167,11 @@ var wsl = wsl || {};
 	wsl.refreshNavbar = function (arg) {
 		var navbar = '', clazz, cb, name;
 
-		clazz = 'hist navbar-playing';
+		clazz = 'navbar-playing';
 		cb = 'wsl.load(\'?playing/\')';
 		navbar += '<a id="navbar-playing" class="' + clazz + '" onclick="' + cb + '">Playing</a>';
 
-		clazz = 'hist navbar-random';
+		clazz = 'navbar-random';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?random\')">Random</a>';
 
 		navbar += '<hr/>';
@@ -182,13 +182,20 @@ var wsl = wsl || {};
 		if (arg.search) {
 			clazz = 'navbar-search indent selected-nav';
 			navbar += '<a class="' + clazz + '">Search</a>';
+			navbar += '<div class="context-action">';
+			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all albums'></a>";
+			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
+			navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
+			navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+			navbar += '</div>';
+
 		}
 
-		clazz = (arg.artists ? 'selected-nav ' : '') + 'hist navbar-artists';
+		clazz = (arg.artists ? 'selected-nav ' : '') + 'navbar-artists';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?artists/\')">Library</a>';
 
 		if (arg.artist) {
-			clazz = 'hist navbar-artist indent' + (arg.album ? '' : ' selected-nav');
+			clazz = 'navbar-artist indent' + (arg.album ? '' : ' selected-nav');
 			name = arg.artist.name;
 			if (name === '') {
 				name = 'no metadata';
@@ -207,7 +214,7 @@ var wsl = wsl || {};
 		}
 
 		if (arg.album) {
-			clazz = 'hist navbar-album indent selected-nav';
+			clazz = 'navbar-album indent selected-nav';
 			name = arg.album.name;
 			if (name === '') {
 				name = 'no metadata';
@@ -233,7 +240,7 @@ var wsl = wsl || {};
 		}
 
 		if (arg.playlist) {
-			clazz = 'hist navbar-playlist indent selected-nav';
+			clazz = 'navbar-playlist indent selected-nav';
 			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlist/' + arg.playlist.id + '\')">';
 			navbar += arg.playlist.name + "</a>";
 

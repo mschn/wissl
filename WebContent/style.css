@@ -1324,7 +1324,6 @@ span.users-connected {
 	background-color: #a8bfe0;
 }
 
-
 .home-stats-p {
 	text-align: center;
 	margin: 10px 0;
@@ -1347,6 +1346,11 @@ span.users-connected {
 
 #search-results {
 	margin-top: 10px;
+}
+
+#search-results span.song-id,#search-results span.album-id,#search-results span.playlist-id
+	{
+	display: none;
 }
 
 .search-result-tab {
