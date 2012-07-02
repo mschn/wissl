@@ -1255,6 +1255,7 @@ public class REST {
 					} catch (SQLException e) {
 						Logger.error("Failed to update user stats", e);
 					}
+					in.close();
 				}
 			}
 		};
@@ -1326,6 +1327,7 @@ public class REST {
 					return;
 				} finally {
 					RuntimeStats.addDownloaded(totalBytes);
+					in.close();
 				}
 			}
 		};
@@ -1573,6 +1575,8 @@ public class REST {
 				} catch (Throwable e) {
 					Logger.warn(
 							"GET log interrupted after " + totalBytes + "B", e);
+				} finally {
+					in.close();
 				}
 			}
 		};

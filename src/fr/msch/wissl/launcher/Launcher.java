@@ -241,13 +241,15 @@ public class Launcher {
 
 	private static void checkLock(String dir) {
 		boolean locked = false;
+		RandomAccessFile raf = null;
 		try {
 			File lock = new File(dir + "lock");
 			if (!lock.exists()) {
 				lock.createNewFile();
 				lock.deleteOnExit();
 			}
-			FileChannel chan = new RandomAccessFile(lock, "rw").getChannel();
+			raf = new RandomAccessFile(lock, "rw");
+			FileChannel chan = raf.getChannel();
 			FileLock fl = chan.tryLock();
 			if (fl == null) {
 				locked = true;
@@ -255,6 +257,7 @@ public class Launcher {
 		} catch (Exception e) {
 			e.printStackTrace();
 			locked = true;
+		} finally {
 		}
 
 		if (locked) {
