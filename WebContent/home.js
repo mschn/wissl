@@ -45,7 +45,7 @@ var wsl = wsl || {};
 				content += '<input id="search-input" type="text"';
 				content += 'placeholder="song, artist, album" />';
 				content += '<input id="search-ok" type="submit"';
-				content += 'value="Search" class="button button-search" />';
+				content += 'value="Search" />';
 				content += '</form>';
 				content += '</div>';
 
@@ -109,7 +109,7 @@ var wsl = wsl || {};
 				content += 'value="' + query + '"';
 				content += 'placeholder="song, artist, album" />';
 				content += '<input id="search-ok" type="submit"';
-				content += 'value="Search" class="button button-search" />';
+				content += 'value="Search"/>';
 				content += '</form>';
 
 				content += '<div id="search-results">';

@@ -163,10 +163,6 @@ body {
 	background-image: url("img/shutdown_24.png");
 }
 
-.button-search {
-	background-image: url("img/search_24.png");
-}
-
 .button:hover {
 	color: rgb(90, 110, 255);
 	background-color: #a8bfe0;
@@ -1307,15 +1303,25 @@ span.users-connected {
 
 #search-input {
 	width: 50%;
-	border-radius: 3px;
+	border-radius: 0px;
 	border: 1px solid #999;
 	font-size: 1.4em;
-	height: 40px;
-	padding: 0 5px;
+	padding: 5px 5px;
+	box-shadow: inset 1px 1px 8px #bbb;
 }
 
 #search-ok {
+	height: 40px;
+	width: 40px;
+	border: 0;
 	margin-left: 5px;
+	background: 4px 4px no-repeat url("img/search_32.png");
+	display: inline-block;
+	color: transparent;
+}
+
+#search-ok:hover {
+	background-color: #a8bfe0;
 }
 
 
