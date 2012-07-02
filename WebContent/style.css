@@ -648,6 +648,14 @@ span#next {
 	color: rgb(80, 80, 120);
 }
 
+#artists span.name.no-metadata {
+	padding-left: 20px;
+	background: 0 5px no-repeat url('img/no-tag_16.png');
+	color: #666;
+	font-style: italic;
+}
+
+
 #artists li:hover span.name {
 	
 }
@@ -899,15 +907,10 @@ li span.select-box-checked {
 }
 
 #library span.no-metadata {
-	
-}
-
-#library span.no-metadata a {
 	padding-left: 20px;
-	background: 0 5px no-repeat url('img/no-tag_16.png');
+	background: 0 7px no-repeat url('img/no-tag_16.png');
 	color: #999;
 	font-style: italic;
-	font-weight: bold;
 }
 
 #library span.title {

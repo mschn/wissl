@@ -42,6 +42,7 @@ var wsl = wsl || {};
 					clazz = 'name';
 					if (name === '') {
 						clazz += ' no-metadata';
+						name = 'no metadata';
 					}
 
 					liclass = (i % 2 ? 'odd' : '');
@@ -90,10 +91,11 @@ var wsl = wsl || {};
 			},
 			dataType : "json",
 			success : function (data) {
-				var artist, albums, content, album, i, name, clazz, liclass, events;
+				var artist, albums, content, album, i, name, clazz, liclass, events, hastag;
 				artist = data.artist;
 				albums = data.albums;
 				content = "<ul>";
+				hastag = true;
 				for (i = 0; i < albums.length; i += 1) {
 					album = albums[i];
 					clazz = 'name';
@@ -101,6 +103,7 @@ var wsl = wsl || {};
 					if (name === '') {
 						clazz += ' no-metadata';
 						name = 'no metadata';
+						hastag = false;
 					}
 
 					liclass = ' selectable' + (i % 2 ? ' odd' : '');
@@ -117,7 +120,9 @@ var wsl = wsl || {};
 					if (album.artwork) {
 						content += '<img src="/wissl/art/' + album.id + '" />';
 					} else {
-						content += '<img src="img/no-artwork.jpg" />';
+						if (hastag) {
+							content += '<img src="img/no-artwork.jpg" />';
+						}
 					}
 					content += name + '</span>';
 					content += '<span class="duration">' + wsl.formatSeconds(album.playtime) + '</span>';
@@ -154,10 +159,14 @@ var wsl = wsl || {};
 			},
 			dataType : "json",
 			success : function (data) {
-				var artist, album, songs, content, i, song, liclass, events;
+				var artist, album, songs, content, i, song, liclass, events, name;
 				artist = data.artist;
 				album = data.album;
 				songs = data.songs;
+				name = album.name;
+				if (name === '') {
+					name = 'no metadata';
+				}
 
 				content = '<div id="library-heading">';
 				if (album.artwork) {
@@ -165,7 +174,8 @@ var wsl = wsl || {};
 				} else {
 					content += '<img src="img/no-artwork.jpg" />';
 				}
-				content += '<span class="library-heading-title">' + album.name + '</span>';
+
+				content += '<span class="library-heading-title">' + name + '</span>';
 				content += '<span class="library-heading-link">' + artist.name + '</span>';
 				content += '<span class="library-heading-duration">' + wsl.formatSeconds(album.playtime) + '</span>';
 				content += '</div>';
