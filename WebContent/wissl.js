@@ -166,7 +166,6 @@ var wsl = wsl || {};
 
 	wsl.refreshNavbar = function (arg) {
 		var navbar = '', clazz, cb, name;
-		navbar += '<hr/>';
 
 		clazz = 'hist navbar-playing';
 		cb = 'wsl.load(\'?playing/\')';
