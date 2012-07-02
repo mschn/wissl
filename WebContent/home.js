@@ -80,9 +80,16 @@ var wsl = wsl || {};
 	};
 
 	wsl.search = function () {
-		var query, url;
+		var query, url, enc;
 		query = $('#search-input').val();
-		url = '\?search/' + encodeURIComponent(query);
+		enc = encodeURIComponent(query);
+		if (enc.length === 0) {
+			return;
+		}
+
+		url = '\?search/' + enc;
+
+		console.log("SEARCH", query, enc, url);
 
 		wsl.load(url);
 	},

@@ -633,6 +633,8 @@ var wsl = wsl || {};
 			} else if (/search\/([\S ]+)/.test(hash)) {
 				match = /search\/([\S ]+)/.exec(hash);
 				wsl.displaySearch(match[1]);
+			} else if (/search\/?$/.test(hash)) {
+				wsl.displayHome();
 			} else if (/logout\/?$/.test(hash)) {
 				hist.replaceState(null, title, '?');
 			} else if (hash === '?') {
