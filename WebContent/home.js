@@ -43,7 +43,7 @@ var wsl = wsl || {};
 				content += '<div id="home-search">';
 				content += '<form id="search-form" method="post" onsubmit="wsl.search();return false">';
 				content += '<input id="search-input" type="text"';
-				content += 'placeholder="song, artist, album" />';
+				content += 'placeholder="search" />';
 				content += '<input id="search-ok" type="submit"';
 				content += 'value="Search" />';
 				content += '</form>';
