@@ -75,9 +75,12 @@ body {
 	position: fixed;
 }
 
-.login h2 {
-	color: #444;
-	text-shadow: 2px 2px 5px #ddd;
+.login .logo-header {
+	width: 169px;
+	height: 80px;
+	padding: 0;
+	margin: 0 auto;
+	background: 0 0 no-repeat url('img/logo_80.png');
 }
 
 .error {
@@ -1277,9 +1280,12 @@ span.users-connected {
 	margin: 2px 0;
 }
 
-#about h2 {
-	font-size: 1.8em;
-	margin: 5px 0 0 0;
+#about div#about-header {
+	width: 169px;
+	height: 80px;
+	padding: 0;
+	margin: 0;
+	background: 0 0 no-repeat url('img/logo_80.png');
 }
 
 #about p.subtitle {
@@ -1293,14 +1299,14 @@ span.users-connected {
 }
 
 #home-title {
-	margin-top: 40px;
-	text-align: center;
-	font-size: 2.4em;
-	text-shadow: 0 1px 4px #aaa;
+	width: 203px;
+	height: 96px;
+	margin: 30px auto;
+	background: 0 0 no-repeat url('img/logo_96.png');
 }
 
 #home-search {
-	margin: 40px 0 70px 0;
+	margin: 0 0 70px 0;
 	text-align: center;
 }
 

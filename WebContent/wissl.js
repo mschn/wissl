@@ -497,7 +497,7 @@ var wsl = wsl || {};
 				sessionId : wsl.sessionId
 			},
 			success : function (data) {
-				var content = '<h2>Wissl</h2>';
+				var content = '<div id="about-header"></div>';
 				content += '<p class="subtitle">Web Interface for Sound Streaming Library</p>';
 
 				content += '<div>';

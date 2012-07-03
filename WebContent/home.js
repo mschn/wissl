@@ -38,7 +38,7 @@ var wsl = wsl || {};
 			success : function (data) {
 				var content = '', st = data.stats;
 
-				content += '<div id="home-title">Wissl</div>';
+				content += '<div id="home-title"></div>';
 
 				content += '<div id="home-search">';
 				content += '<form id="search-form" method="post" onsubmit="wsl.search();return false">';
