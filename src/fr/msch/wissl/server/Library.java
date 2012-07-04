@@ -540,6 +540,10 @@ public class Library {
 				album.date = "";
 			}
 			album.name = tag.getFirst(FieldKey.ALBUM);
+			album.genre = tag.getFirst(FieldKey.GENRE);
+			if (album.genre.length() > 63) {
+				album.genre = album.genre.substring(0, 63);
+			}
 
 			String discNo = tag.getFirst(FieldKey.DISC_NO);
 			if (discNo != null && discNo.trim().length() > 0) {

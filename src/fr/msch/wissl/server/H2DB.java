@@ -45,7 +45,10 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  */
 public class H2DB extends DB {
 
-	private static final long SCHEMA_VERSION = 4L;
+	/* This number should be incremented each time the DB Schema changes.
+	 * It is written in the DB so that we decide on startup whether 
+	 * the DB can be recovered or needs to be erased */
+	private static final long SCHEMA_VERSION = 5L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -184,6 +187,7 @@ public class H2DB extends DB {
 					"album_name VARCHAR(254) NOT NULL," + //
 					"artist_name VARCHAR(254) NOT NULL," + //
 					"date VARCHAR(8)," + //
+					"genre VARCHAR(64) NOT NULL," + //
 					"songs INTEGER NOT NULL," + //
 					"playtime INTEGER NOT NULL," + //
 					"artwork_path VARCHAR(254)," + //
@@ -1207,7 +1211,7 @@ public class H2DB extends DB {
 
 		try {
 			st = conn
-					.prepareStatement("SELECT album_id,album_name,date,songs,playtime,artwork_path "
+					.prepareStatement("SELECT album_id,album_name,date,songs,playtime,artwork_path,genre "
 							+ "FROM album WHERE artist_id=? ORDER BY date,album_name");
 			st.setInt(1, artist_id);
 			ResultSet rs = st.executeQuery();
@@ -1221,6 +1225,7 @@ public class H2DB extends DB {
 				a.songs = rs.getInt(4);
 				a.playtime = rs.getInt(5);
 				a.artwork_path = rs.getString(6);
+				a.genre = rs.getString(7);
 				ret.add(a);
 			}
 
@@ -1241,7 +1246,7 @@ public class H2DB extends DB {
 
 		try {
 			st = conn
-					.prepareStatement("SELECT album_id,artist_id,album_name,date,songs,playtime,artwork_path,artist_name "
+					.prepareStatement("SELECT album_id,artist_id,album_name,date,songs,playtime,artwork_path,artist_name,genre "
 							+ "FROM album WHERE album_id=?");
 			st.setInt(1, album_id);
 			ResultSet rs = st.executeQuery();
@@ -1255,6 +1260,7 @@ public class H2DB extends DB {
 				ret.playtime = rs.getInt(6);
 				ret.artwork_path = rs.getString(7);
 				ret.artist_name = rs.getString(8);
+				ret.genre = rs.getString(9);
 			} else {
 				return null;
 			}
@@ -1568,8 +1574,8 @@ public class H2DB extends DB {
 		try {
 			st = conn.prepareStatement(
 					"INSERT INTO album(album_name,date,songs,playtime,"
-							+ "artist_id,artwork_path,artist_name) "
-							+ "VALUES (?,?,?,?,?,?,?)",
+							+ "artist_id,artwork_path,artist_name,genre) "
+							+ "VALUES (?,?,?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, alb.name);
 			st.setString(2, alb.date);
@@ -1578,6 +1584,7 @@ public class H2DB extends DB {
 			st.setInt(5, artistId);
 			st.setString(6, alb.artwork_path);
 			st.setString(7, alb.artist_name);
+			st.setString(8, alb.genre);
 			st.executeUpdate();
 
 			ResultSet keys = st.getGeneratedKeys();
@@ -1896,6 +1903,7 @@ public class H2DB extends DB {
 				al.playtime = rs.getInt("playtime");
 				al.artist_id = rs.getInt("artist_id");
 				al.artist_name = rs.getString("artist_name");
+				al.genre = rs.getString("genre");
 				ret.add(al);
 			}
 

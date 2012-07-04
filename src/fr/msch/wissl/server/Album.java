@@ -31,6 +31,8 @@ public class Album {
 	public String name = "";
 	/** year of release, ie "2012" */
 	public String date = "";
+	/** album genre, ie 'Pop Rock' */
+	public String genre = "";
 	/** number of songs */
 	public int songs = 0;
 	/** DB unique artist id */
@@ -50,6 +52,7 @@ public class Album {
 		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
 		str.append("\"name\":" + JSONObject.quote(name) + ",");
 		str.append("\"date\":" + JSONObject.quote(date) + ",");
+		str.append("\"genre\":" + JSONObject.quote(genre) + ",");
 		str.append("\"songs\":" + songs + ",");
 		str.append("\"playtime\":" + playtime);
 		if (artwork_path != null && artwork_path.trim().length() > 0) {

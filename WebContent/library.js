@@ -175,10 +175,17 @@ var wsl = wsl || {};
 					content += '<img src="img/no-artwork.jpg" />';
 				}
 
-				content += '<span class="library-heading-title">' + name + '</span>';
+				content += '<span class="library-heading-title">' + name;
+				if (album.date) {
+					content += '<span class="library-heading-date">' + album.date + '</span>';
+				}
+				content += '</span>';
 				content += '<span class="library-heading-link">' + artist.name + '</span>';
-				content += '<span class="library-heading-duration">' + wsl.formatSeconds(album.playtime) + '</span>';
-				content += '</div>';
+				content += '<span class="library-heading-link">' + wsl.formatSeconds(album.playtime);
+				if (album.genre) {
+					content += ' - ' + album.genre;
+				}
+				content += '</span></div>';
 
 				content += '<ul>';
 				for (i = 0; i < songs.length; i += 1) {

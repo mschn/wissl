@@ -748,7 +748,7 @@ span#next {
 	height: 74px;
 }
 
-#library #library-heading span {
+#library-heading span {
 	display: block;
 	color: black;
 }
@@ -759,10 +759,13 @@ span#next {
 
 #library-heading span.library-heading-link {
 	font-size: 1.1em;
+	color: #444;
 }
 
-#library-heading span.library-heading-duration {
-	font-size: 1.1em;
+#library-heading span.library-heading-date {
+	display: inline;
+	padding-left: 10px;
+	color: #888;
 }
 
 #library-heading img {
