@@ -81,8 +81,8 @@ var player = {};
 				$('#navbar-playing').show();
 
 				$('#playing-title').html('<a title="' + song.title + '">' + song.title + '</a><br>');
-				$('#playing-album').empty().html('<a title="' + album.name + '" onclick="wsl.load(\'?songs/' + album.id + '\')" class="playing-album">' + (album.name || ' ') + '</a>');
-				$('#playing-artist').empty().html('<a title="' + artist.name + '" onclick="wsl.load(\'?albums/' + artist.id + '\')" class="playing-artist">' + (artist.name || ' ') + '</a>');
+				$('#playing-album').empty().html('<a title="' + album.name + '" onclick="wsl.load(\'?songs/' + album.id + '\')" class="playing-album">' + (album.name || ' ') + '</a><br>');
+				$('#playing-artist').empty().html('<a title="' + artist.name + '" onclick="wsl.load(\'?albums/' + artist.id + '\')" class="playing-artist">' + (artist.name || ' ') + '</a><br>');
 
 				$('#playing').show();
 
