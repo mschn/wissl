@@ -366,7 +366,7 @@ public class H2DB extends DB {
 		PreparedStatement st = null;
 		User user = null;
 		try {
-			st = conn.prepareStatement("SELECT user_id,hash,salt,auth " + //
+			st = conn.prepareStatement("SELECT * " + //
 					"FROM user WHERE user_name=?");
 			st.setString(1, username);
 			ResultSet rs = st.executeQuery();
@@ -374,10 +374,10 @@ public class H2DB extends DB {
 			if (rs.next()) {
 				user = new User();
 				user.username = username;
-				user.id = rs.getInt(1);
-				user.sha1 = rs.getBytes(2);
-				user.salt = rs.getBytes(3);
-				user.auth = rs.getInt(4);
+				user.id = rs.getInt("user_id");
+				user.sha1 = rs.getBytes("hash");
+				user.salt = rs.getBytes("salt");
+				user.auth = rs.getInt("auth");
 			}
 
 		} finally {
@@ -495,7 +495,7 @@ public class H2DB extends DB {
 			ResultSet rs = st.executeQuery();
 			List<Integer> albumIds = new ArrayList<Integer>();
 			while (rs.next()) {
-				albumIds.add(rs.getInt(1));
+				albumIds.add(rs.getInt("album_id"));
 			}
 			// for each album...
 			for (int albumId : albumIds) {
@@ -529,7 +529,7 @@ public class H2DB extends DB {
 			rs = st.executeQuery();
 			List<Integer> artistIds = new ArrayList<Integer>();
 			while (rs.next()) {
-				artistIds.add(rs.getInt(1));
+				artistIds.add(rs.getInt("artist_id"));
 			}
 			// for each artist...
 			for (int artistId : artistIds) {
@@ -574,18 +574,18 @@ public class H2DB extends DB {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("SELECT playlist_id,songs,playtime "
+			st = conn.prepareStatement("SELECT * "
 					+ "FROM playlist WHERE user_id=? AND name=?");
 			st.setInt(1, user_id);
 			st.setString(2, name);
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				Playlist pl = new Playlist();
-				pl.id = rs.getInt(1);
+				pl.id = rs.getInt("playlist_id");
 				pl.name = name;
 				pl.user_id = user_id;
-				pl.songs = rs.getInt(2);
-				pl.playtime = rs.getInt(3);
+				pl.songs = rs.getInt("songs");
+				pl.playtime = rs.getInt("playtime");
 				return pl;
 			}
 
@@ -636,7 +636,7 @@ public class H2DB extends DB {
 			int count = 0;
 			HashSet<Integer> hs = new HashSet<Integer>();
 			while (rs.next()) {
-				hs.add(rs.getInt(1));
+				hs.add(rs.getInt("song_id"));
 				count++;
 			}
 
@@ -716,7 +716,7 @@ public class H2DB extends DB {
 
 			ArrayList<Integer> song_ids = new ArrayList<Integer>();
 			while (rs.next()) {
-				song_ids.add(rs.getInt(1));
+				song_ids.add(rs.getInt("song_id"));
 			}
 			int[] arr = new int[song_ids.size()];
 			for (int i = 0; i < arr.length; i++) {
@@ -828,7 +828,7 @@ public class H2DB extends DB {
 			ids = "";
 			while (rs.next()) {
 				ids += "?,";
-				toRemove.add(rs.getInt(1));
+				toRemove.add(rs.getInt("song_id"));
 			}
 			if (toRemove.size() == 0) {
 				return 0;
@@ -846,7 +846,7 @@ public class H2DB extends DB {
 			rs = st.executeQuery();
 			List<Integer> playlists = new ArrayList<Integer>();
 			while (rs.next()) {
-				playlists.add(rs.getInt(1));
+				playlists.add(rs.getInt("playlist_id"));
 			}
 
 			// delete the songs
@@ -1012,19 +1012,18 @@ public class H2DB extends DB {
 		List<Playlist> ret = new ArrayList<Playlist>();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT playlist_id,name,songs,playtime FROM playlist "
-							+ "WHERE user_id=?");
+			st = conn.prepareStatement("SELECT * FROM playlist "
+					+ "WHERE user_id=?");
 			st.setInt(1, user_id);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Playlist pl = new Playlist();
 				pl.user_id = user_id;
-				pl.id = rs.getInt(1);
-				pl.name = rs.getString(2);
-				pl.songs = rs.getInt(3);
-				pl.playtime = rs.getInt(4);
+				pl.id = rs.getInt("playlist_id");
+				pl.name = rs.getString("name");
+				pl.songs = rs.getInt("songs");
+				pl.playtime = rs.getInt("playtime");
 				ret.add(pl);
 			}
 		} finally {
@@ -1042,19 +1041,18 @@ public class H2DB extends DB {
 		PreparedStatement st = null;
 		Playlist ret = null;
 		try {
-			st = conn
-					.prepareStatement("SELECT name,user_id,songs,playtime FROM playlist "
-							+ "WHERE playlist_id=?");
+			st = conn.prepareStatement("SELECT * FROM playlist "
+					+ "WHERE playlist_id=?");
 			st.setInt(1, playlist_id);
 
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				ret = new Playlist();
 				ret.id = playlist_id;
-				ret.name = rs.getString(1);
-				ret.user_id = rs.getInt(2);
-				ret.songs = rs.getInt(3);
-				ret.playtime = rs.getInt(4);
+				ret.name = rs.getString("name");
+				ret.user_id = rs.getInt("user_id");
+				ret.songs = rs.getInt("songs");
+				ret.playtime = rs.getInt("playtime");
 			}
 		} finally {
 			if (st != null)
@@ -1074,9 +1072,9 @@ public class H2DB extends DB {
 		try {
 			st = conn
 					.prepareStatement("SELECT "
-							+ "song.song_id,song.title,song.position,song.duration,song.disc_no,"
-							+ "song.album_id,song.artist_id,song.album_name,song.artist_name "
-							+ "FROM song JOIN playlist_song "
+							//+ "song.song_id,song.title,song.position,song.duration,song.disc_no,"
+							//+ "song.album_id,song.artist_id,song.album_name,song.artist_name "
+							+ "song.* " + "FROM song JOIN playlist_song "
 							+ "ON song.song_id=playlist_song.song_id "
 							+ "WHERE playlist_id=?"
 							+ "ORDER BY playlist_song.position");
@@ -1085,15 +1083,15 @@ public class H2DB extends DB {
 
 			while (rs.next()) {
 				Song s = new Song();
-				s.id = rs.getInt(1);
-				s.title = rs.getString(2);
-				s.position = rs.getInt(3);
-				s.duration = rs.getInt(4);
-				s.disc_no = rs.getInt(5);
-				s.album_id = rs.getInt(6);
-				s.artist_id = rs.getInt(7);
-				s.album_name = rs.getString(8);
-				s.artist_name = rs.getString(9);
+				s.id = rs.getInt("song_id");
+				s.title = rs.getString("title");
+				s.position = rs.getInt("position");
+				s.duration = rs.getInt("duration");
+				s.disc_no = rs.getInt("disc_no");
+				s.album_id = rs.getInt("album_id");
+				s.artist_id = rs.getInt("artist_id");
+				s.album_name = rs.getString("album_name");
+				s.artist_name = rs.getString("artist_name");
 				ret.add(s);
 			}
 		} finally {
@@ -1149,18 +1147,17 @@ public class H2DB extends DB {
 		List<Artist> ret = new ArrayList<Artist>();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT artist_id,artist_name,albums,songs,playtime "
-							+ "FROM artist ORDER BY lower(artist_name)");
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM artist ORDER BY lower(artist_name)");
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Artist a = new Artist();
-				a.id = rs.getInt(1);
-				a.name = rs.getString(2);
-				a.albums = rs.getInt(3);
-				a.songs = rs.getInt(4);
-				a.playtime = rs.getInt(5);
+				a.id = rs.getInt("artist_id");
+				a.name = rs.getString("artist_name");
+				a.albums = rs.getInt("albums");
+				a.songs = rs.getInt("songs");
+				a.playtime = rs.getInt("playtime");
 				ret.add(a);
 			}
 
@@ -1180,17 +1177,17 @@ public class H2DB extends DB {
 		Artist ret = new Artist();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT artist_id,artist_name,albums,songs,playtime FROM artist WHERE artist_id=?");
+			st = conn.prepareStatement("SELECT * " + //
+					"FROM artist WHERE artist_id=?");
 			st.setInt(1, id);
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				ret.id = rs.getInt(1);
-				ret.name = rs.getString(2);
-				ret.albums = rs.getInt(3);
-				ret.songs = rs.getInt(4);
-				ret.playtime = rs.getInt(5);
+				ret.id = rs.getInt("artist_id");
+				ret.name = rs.getString("artist_name");
+				ret.albums = rs.getInt("albums");
+				ret.songs = rs.getInt("songs");
+				ret.playtime = rs.getInt("playtime");
 			} else {
 				return null;
 			}
@@ -1210,22 +1207,21 @@ public class H2DB extends DB {
 		List<Album> ret = new ArrayList<Album>();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT album_id,album_name,date,songs,playtime,artwork_path,genre "
-							+ "FROM album WHERE artist_id=? ORDER BY date,album_name");
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM album WHERE artist_id=? ORDER BY date,album_name");
 			st.setInt(1, artist_id);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Album a = new Album();
-				a.id = rs.getInt(1);
+				a.id = rs.getInt("album_id");
 				a.artist_id = artist_id;
-				a.name = rs.getString(2);
-				a.date = rs.getString(3);
-				a.songs = rs.getInt(4);
-				a.playtime = rs.getInt(5);
-				a.artwork_path = rs.getString(6);
-				a.genre = rs.getString(7);
+				a.name = rs.getString("album_name");
+				a.date = rs.getString("date");
+				a.songs = rs.getInt("songs");
+				a.playtime = rs.getInt("playtime");
+				a.artwork_path = rs.getString("artwork_path");
+				a.genre = rs.getString("genre");
 				ret.add(a);
 			}
 
@@ -1245,22 +1241,21 @@ public class H2DB extends DB {
 		Album ret = new Album();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT album_id,artist_id,album_name,date,songs,playtime,artwork_path,artist_name,genre "
-							+ "FROM album WHERE album_id=?");
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM album WHERE album_id=?");
 			st.setInt(1, album_id);
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				ret.id = rs.getInt(1);
-				ret.artist_id = rs.getInt(2);
-				ret.name = rs.getString(3);
-				ret.date = rs.getString(4);
-				ret.songs = rs.getInt(5);
-				ret.playtime = rs.getInt(6);
-				ret.artwork_path = rs.getString(7);
-				ret.artist_name = rs.getString(8);
-				ret.genre = rs.getString(9);
+				ret.id = rs.getInt("album_id");
+				ret.artist_id = rs.getInt("artist_id");
+				ret.name = rs.getString("album_name");
+				ret.date = rs.getString("date");
+				ret.songs = rs.getInt("songs");
+				ret.playtime = rs.getInt("playtime");
+				ret.artwork_path = rs.getString("artwork_path");
+				ret.artist_name = rs.getString("artist_name");
+				ret.genre = rs.getString("genre");
 			} else {
 				return null;
 			}
@@ -1284,7 +1279,7 @@ public class H2DB extends DB {
 			st.setInt(1, album_id);
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
-				return rs.getString(1);
+				return rs.getString("artwork_path");
 			}
 
 		} finally {
@@ -1306,8 +1301,8 @@ public class H2DB extends DB {
 					+ "FROM album WHERE artwork_path != 'null'");
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				int album = rs.getInt(1);
-				int artist = rs.getInt(2);
+				int album = rs.getInt("album_id");
+				int artist = rs.getInt("artist_id");
 				List<Integer> li = ret.get(artist);
 				if (li == null) {
 					li = new ArrayList<Integer>();
@@ -1331,21 +1326,20 @@ public class H2DB extends DB {
 		List<Song> ret = new ArrayList<Song>();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT song_id,title,position,disc_no,duration,format "
-							+ "FROM song WHERE album_id=? ORDER BY disc_no,position");
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM song WHERE album_id=? ORDER BY disc_no,position");
 			st.setInt(1, album_id);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Song s = new Song();
-				s.id = rs.getInt(1);
+				s.id = rs.getInt("song_id");
 				s.album_id = album_id;
-				s.title = rs.getString(2);
-				s.position = rs.getInt(3);
-				s.disc_no = rs.getInt(4);
-				s.duration = rs.getInt(5);
-				s.format = rs.getString(6);
+				s.title = rs.getString("title");
+				s.position = rs.getInt("position");
+				s.disc_no = rs.getInt("disc_no");
+				s.duration = rs.getInt("duration");
+				s.format = rs.getString("format");
 				ret.add(s);
 			}
 		} finally {
@@ -1399,21 +1393,20 @@ public class H2DB extends DB {
 		List<Song> ret = new ArrayList<Song>();
 
 		try {
-			st = conn
-					.prepareStatement("SELECT song_id,album_id,title,position,disc_no,duration,format "
-							+ "FROM song " + "ORDER BY RAND() LIMIT ?");
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM song " + "ORDER BY RAND() LIMIT ?");
 			st.setInt(1, number);
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
 				Song s = new Song();
-				s.id = rs.getInt(1);
-				s.album_id = rs.getInt(2);
-				s.title = rs.getString(3);
-				s.position = rs.getInt(4);
-				s.disc_no = rs.getInt(5);
-				s.duration = rs.getInt(6);
-				s.format = rs.getString(7);
+				s.id = rs.getInt("song_id");
+				s.album_id = rs.getInt("album_id");
+				s.title = rs.getString("title");
+				s.position = rs.getInt("position");
+				s.disc_no = rs.getInt("disc_no");
+				s.duration = rs.getInt("duration");
+				s.format = rs.getString("format");
 				ret.add(s);
 			}
 		} finally {
@@ -1457,7 +1450,7 @@ public class H2DB extends DB {
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				path = rs.getString(1);
+				path = rs.getString("filepath");
 			}
 
 		} finally {
@@ -1485,7 +1478,7 @@ public class H2DB extends DB {
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				int id = rs.getInt(1);
+				int id = rs.getInt("artist_id");
 				return id;
 			} else {
 				return null;
@@ -1547,7 +1540,7 @@ public class H2DB extends DB {
 			st.setInt(2, artist_id);
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
-				int id = rs.getInt(1);
+				int id = rs.getInt("album_id");
 				return id;
 			} else {
 				return null;
@@ -1617,7 +1610,7 @@ public class H2DB extends DB {
 			st.setString(1, song.hash);
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
-				int id = rs.getInt(1);
+				int id = rs.getInt("song_id");
 				return id;
 			} else {
 				return null;
@@ -1716,7 +1709,7 @@ public class H2DB extends DB {
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				int uid = rs.getInt(1);
+				int uid = rs.getInt("user_id");
 				if (uid != user_id) {
 					throw new ForbiddenException(
 							"You do not have the permissions to edit this playlist");
