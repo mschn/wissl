@@ -113,7 +113,7 @@ public class Session {
 					while (it.hasNext()) {
 						Session sess = it.next().getValue();
 						long t = System.currentTimeMillis();
-						if (t - sess.lastActivity > Config
+						if (t - sess.lastActivity > 1000 * Config
 								.getSessionExpirationDelay()) {
 							it.remove();
 							Logger.info("Session expired");
@@ -124,7 +124,7 @@ public class Session {
 					while (it.hasNext()) {
 						Session sess = it.next().getValue();
 						long t = System.currentTimeMillis();
-						if (t - sess.lastActivity > Config
+						if (t - sess.lastActivity > 1000 * Config
 								.getSessionExpirationDelay()) {
 							it.remove();
 						}
