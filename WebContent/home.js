@@ -89,8 +89,6 @@ var wsl = wsl || {};
 
 		url = '\?search/' + enc;
 
-		console.log("SEARCH", query, enc, url);
-
 		wsl.load(url);
 	},
 
