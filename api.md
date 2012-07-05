@@ -18,7 +18,7 @@ Preamble
   * an HTTP header, ie:
    `curl -H "sessionId: af0ee222-6ed1-409d-9d99-5654c7802df1" http://localhost/wissl/req`
   * an HTTP query parameter, ie:
-  `curl http://localhost/wissl/req?sessionId=af0ee222-6ed1-409d-9d99-5654c7802df1`
+  `curl http://localhost/wissl/req?sessionId=af0ee222-6ed1-409d-9d99-5654c7802df1`  
   This sessionId will be provided once upon login.
   
 Data types
@@ -125,14 +125,15 @@ API methods
 * param: `username` a valid non-empty user name
 * param: `password` cleartext password matching the username
 * returns:
-    {
-      // unique user id
-      "userId": INT,
-      // session UUID
-      "sessionId": STRING,
-      // 1: admin; 2: regular user
-      "auth": INT
-    }
+      {
+        // unique user id
+        "userId": INT,
+        // session UUID
+        "sessionId": STRING,
+        // 1: admin; 2: regular user
+        "auth": INT
+      }
+* ex: `curl -d 'username=user&password=pwd' http://localhost/wissl/login`
     
 The password is sent in clear-text; to prevent eavesdropping,
 configure the server to use SSL.
@@ -150,5 +151,6 @@ destroyed session.
 * path: `/logout`
 * no parameter
 * does not return any reponse
+* ex: `curl -X POST -H 'sessionId:UUID' http://localhost/wissl/logout`
 
 Destroys the used to authenticate the request.
