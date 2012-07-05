@@ -193,12 +193,12 @@ body {
 	display: none;
 	position: fixed;
 	top: 0px;
-	height: 34px;
+	height: 33px;
 	width: 100%;
-	padding-left: 205px;
+	padding-left: 202px;
 	z-index: 300;
-	background: #aaa;
-	border-bottom: 1px solid #888;
+	background: #ccc;
+	border-bottom: 1px solid #aaa;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -220,7 +220,7 @@ body {
 }
 
 #controls span:hover {
-	background-color: #d0d0d0;
+	background-color: #eee;
 }
 
 span#next {
@@ -288,7 +288,7 @@ span#next {
 	padding: 5px;
 	font-weight: bold;
 	font-size: 1.3em;
-	background: #bbb;
+	background: #ccc;
 	border-radius: 3px;
 	border: 1px solid #999;
 	box-shadow: 1px 1px 4px 1px #aaa;
@@ -350,7 +350,7 @@ span#next {
 	position: fixed;
 	top: 32px;
 	z-index: 200;
-	background: #bbb;
+	background: #ccc;
 	border-radius: 3px;
 	border: 1px solid #999;
 	box-shadow: 1px 1px 4px 1px #aaa;
@@ -384,7 +384,7 @@ span#next {
 	padding: 0 4px;
 	left: 1px solid #bbb;
 	margin: 8px 0 0 0;
-	text-shadow: 0 1px 1px white;
+	text-shadow: 0 1px 1px #ddd;
 }
 
 #playing {
@@ -452,7 +452,6 @@ span#next {
 	overflow: hidden;
 	height: 100%;
 	border-right: 1px solid #606c7d;
-	box-shadow: 0 0 8px 4px #999;
 	z-index: 350;
 }
 
@@ -587,12 +586,12 @@ span#next {
 
 #navbar a:hover {
 	color: white;
-	background-color: #9aa4b3;
+	background-color: rgb(120, 140, 170);
 }
 
 #navbar a.selected-nav {
 	color: white;
-	background-color: rgb(120, 140, 170);
+	background-color: #6784b0;
 	box-shadow: 0 2px 4px 2px #606060;
 }
 
@@ -606,7 +605,7 @@ span#next {
 }
 
 #content {
-	padding: 35px 0 0 200px;
+	padding: 33px 0 0 200px;
 	overflow: hidden;
 	text-shadow: 0 1px 0 white;
 	color: #444;
@@ -658,18 +657,17 @@ span#next {
 	font-style: italic;
 }
 
-
 #artists li:hover span.name {
 	
 }
 
 #artists li.playing {
-	background: #a8bfe0;
+	background: #7a9ac9;
 }
 
 #artists li.playing div.artists-info {
-	background: #a8bfe0;
-	box-shadow: 0 0 5px 5px #a8bfe0;
+	background: #7a9ac9;
+	box-shadow: 0 0 5px 5px #7a9ac9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -736,7 +734,7 @@ span#next {
 #library-drag-selection {
 	width: 5px;
 	left: 200px;
-	background-color: #788CAA;
+	background-color: #6784b0;
 	display: none;
 	position: fixed;
 	z-index: 100000;
@@ -867,7 +865,7 @@ span#next {
 }
 
 #library li.playing,#library li.playing:hover {
-	background-color: #a8bfe0;
+	background-color: #7a9ac9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -1190,7 +1188,7 @@ span.users-connected {
 }
 
 #admin ul li.selected {
-	background-color: #a8bfe0;
+	
 }
 
 #admin p {
@@ -1316,20 +1314,20 @@ span.users-connected {
 #search-input {
 	width: 50%;
 	border-radius: 0px;
-	border: 1px solid #999;
+	border: 1px solid #888;
 	font-size: 1.4em;
 	padding: 5px 5px;
-	box-shadow: inset 1px 1px 8px #bbb;
+	box-shadow: inset 1px 1px 8px #ddd;
 }
 
 #search-ok {
 	height: 40px;
 	width: 40px;
 	border: 0;
-	margin-left: 5px;
-	background: 4px 4px no-repeat url("img/search_32.png");
-	display: inline-block;
+	background: 4px 4px no-repeat url("img/search_32.png"); display :
+	inline-block;
 	color: transparent;
+	display: inline-block;
 }
 
 #search-ok:hover {
@@ -1391,7 +1389,7 @@ span.users-connected {
 #search-results ul {
 	border-top: 1px solid #ddd;
 	margin: 0;
-	padding: 0 0 0 5px;
+	padding: 0;
 }
 
 #search-results li {
@@ -1486,7 +1484,7 @@ span.users-connected {
 }
 
 #search-results li.playing,#search-results li.playing:hover {
-	background-color: #a8bfe0;
+	background-color: #7a9ac9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -1495,7 +1493,7 @@ span.users-connected {
 }
 
 #search-results li span.search-highlight {
-	background: #a8bfe0;
+	background: #7a9ac9;
 	text-shadow: 0 1px 2px #444;
 	color: white;
 	padding: 0;
