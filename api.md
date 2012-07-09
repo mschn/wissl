@@ -10,47 +10,47 @@ Summary
 -------
 
 * Data types
-  * [user](#d1)
-  * [session](#d2)
-  * [artist](#d3)
-  * [album](#d4)
-  * [song](#d5)
-  * [playlist](#d6)
+  * [user](#user)
+  * [session](#session)
+  * [artist](#artist)
+  * [album](#album)
+  * [song](#song)
+  * [playlist](#playlist)
 * API methods
-  * [`/login`](#m1)
-  * [`/logout`](#m2)
-  * [`/hasusers`](#m3)
-  * [`/users`](#m4)
-  * [`/user/{user_id}`](#m5)
-  * [`/user/add`](#m6)
-  * [`/user/password`](#m7)
-  * [`/user/remove`](#m8)
-  * [`/playlist/create`](#m9)
-  * [`/playlist/create-add`](#m10)
-  * [`/playlist/random`](#m11)
-  * [`/playlist/{playlist_id}/add`](#m12)
-  * [`/playlist/{playlist_id}/remove`](#m13)
-  * [`/playlist/{playlist_id}/songs`](#m14)
-  * [`/playlist/{playlist_id}/song/{song_pos}`](#m15)
-  * [`/playlists/remove`](#m16)
-  * [`/playlists`](#m17)
-  * [`/playlists/{user_id}`](#m18)
-  * [`/artists`](#m19)
-  * [`/albums/{artist_id}`](#m20)
-  * [`/songs/{album_id}`](#m21)
-  * [`/song/{song_id}`](#m22)
-  * [`/song/{song_id}/stream`](#m23)
-  * [`/search/{query}`](#m24)
-  * [`/art/{album_id}`](#m25)
-  * [`/folders`](#m26)
-  * [`/folders/listing`](#m27)
-  * [`/folders/add`](#m28)
-  * [`/folders/remove`](#m29)
-  * [`/indexer/status`](#m30)
-  * [`/logs`](#m31)
-  * [`/stats`](#m32)
-  * [`/info`](#m33)
-  * [`/shutdown`](#m34)
+  * [`/login`](#login)
+  * [`/logout`](#logout)
+  * [`/hasusers`](#hasusers)
+  * [`/users`](#users)
+  * [`/user/{user_id}`](#useruser_id)
+  * [`/user/add`](#useradd)
+  * [`/user/password`](#userpassword)
+  * [`/user/remove`](#userremove)
+  * [`/playlist/create`](#playlistcreate)
+  * [`/playlist/create-add`](#playlistcreate-add)
+  * [`/playlist/random`](#playlistrandom)
+  * [`/playlist/{playlist_id}/add`](#playlistplaylist_idadd)
+  * [`/playlist/{playlist_id}/remove`](#playlistplaylist_idremove)
+  * [`/playlist/{playlist_id}/songs`](#playlistplaylist_idsongs)
+  * [`/playlist/{playlist_id}/song/{song_pos}`](#playlistplaylist_idsongsong_pos)
+  * [`/playlists/remove`](#playlistsremove)
+  * [`/playlists`](#playlists)
+  * [`/playlists/{user_id}`](#playlistsuser_id)
+  * [`/artists`](#artists)
+  * [`/albums/{artist_id}`](#albumsartist_id)
+  * [`/songs/{album_id}`](#songsalbum_id)
+  * [`/song/{song_id}`](#songsong_id)
+  * [`/song/{song_id}/stream`](#songsong_id)
+  * [`/search/{query}`](#searchquery)
+  * [`/art/{album_id}`](#artalbum_id)
+  * [`/folders`](#folders)
+  * [`/folders/listing`](#folderslisting)
+  * [`/folders/add`](#foldersadd)
+  * [`/folders/remove`](#foldersremove)
+  * [`/indexer/status`](#indexerstatus)
+  * [`/logs`](#logs)
+  * [`/stats`](#stats)
+  * [`/info`](#info)
+  * [`/shutdown`](#shutdown)
 
 Preamble
 --------
@@ -73,7 +73,7 @@ Data types
 Here are defined the data types that will appear in the responses of the server.
 Those types will be referenced later to avoid redundancy.
 
-### <a id="d1"></a>user
+### <a id="user"></a>user
 
 Each registered account is represented by an user.
 
@@ -88,7 +88,7 @@ Each registered account is represented by an user.
       "downloaded": INT
     }
 
-### <a id="d2"></a>session
+### <a id="session"></a>session
 
 When an user is connected, a Session is bound to it.
 There can be only one session per user at a time.
@@ -108,7 +108,7 @@ There can be only one session per user at a time.
       "last_played_song": SONG
     }
 
-### <a id="d3"></a>artist
+### <a id="artist"></a>artist
 
 An artist contains several albums.
 
@@ -125,7 +125,7 @@ An artist contains several albums.
       "playtime": INT
     }
 
-### <a id="d4"></a>album
+### <a id="album"></a>album
 
 An album contains several songs, and is contained by one artist.
 
@@ -150,7 +150,7 @@ An album contains several songs, and is contained by one artist.
       "artwork": BOOL
     }
 
-### <a id="d5"></a>song
+### <a id="song"></a>song
 
 A song is contained by one album and one artist.
 Each song can be added to multiple playlists.
@@ -178,7 +178,7 @@ Each song can be added to multiple playlists.
       "artist_name": STRING,
     }
 
-### <a id="d6"></a>playlist
+### <a id="playlist"></a>playlist
 
 A playlist is a list of songs created by an user.
 
@@ -198,7 +198,7 @@ A playlist is a list of songs created by an user.
 API methods
 -----------
 
-### <a id="m1"></a>`/login`
+### <a id="login"></a>`/login`
 * method: `POST`
 * param: `username` a valid non-empty user name
 * param: `password` cleartext password matching the username
@@ -225,7 +225,7 @@ If a session associated with the same user already exists, the previous session
 will be destroyed and the client will be notified if it tries to reuse the
 destroyed session.
 
-### <a id="m2"></a>`/logout`
+### <a id="logout"></a>`/logout`
 * method: `POST`
 * no parameter
 * ex: `curl -X POST -H 'sessionId:UUID' http://localhost/wissl/logout`
@@ -233,7 +233,7 @@ destroyed session.
 
 Destroys the session associated with the UUID in the request.
 
-### <a id="m3"></a>`/hasusers`
+### <a id="hasusers"></a>`/hasusers`
 * method: `GET`
 * no parameter
 * ex: `curl -H 'sessionId:UUID http://localhost/wissl/hasusers`
@@ -249,7 +249,7 @@ If it does (`hasusers === true`), then only the registered users can log in.
 
 If it does not, then any client can call `/user/add` to create the initial user without authentication.
 
-### <a id="m4"></a>`/users`
+### <a id="users"></a>`/users`
 * method: `GET`
 * no parameter
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/users`
@@ -270,7 +270,7 @@ List all users and all sessions.
 
 Allows clients to list users and check which is currently logged in.
 
-### <a id="m5"></a>`/user/{user_id}`
+### <a id="useruser_id"></a>`/user/{user_id}`
 * method: `GET`
 * param: `user_id` unique user id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/user/5`
@@ -288,7 +288,7 @@ Retrieve information about a specific user.
 
 The user id used as parameter can be found in the response of the `/users` request.
 
-### <a id="m6"></a>`/user/add`
+### <a id="useradd"></a>`/user/add`
 * method: `POST`
 * param: `username` name of the user to create
 * param: `password` clear text password
@@ -309,7 +309,7 @@ As shown by the examples, two distinct scenarios can be distinguished:
 
 The provided password can be changed later using `/user/password`.
 
-### <a id="m7"></a>`/user/password`
+### <a id="userpassword"></a>`/user/password`
 * method: `POST`
 * param: `old_password` re-authenticate user with old password
 * param: `new_password` new password to set
@@ -319,7 +319,7 @@ The provided password can be changed later using `/user/password`.
 Change the password for the user associated with the current session/
 Clear-text password is sent as parameter. Configure the server to use SSL to prevent eavesdropping.
 
-### <a id="m8"></a>`/user/remove`
+### <a id="userremove"></a>`/user/remove`
 * method: `POST`
 * param: `user_ids[]` array of unique user ids
 * ex: `curl -H 'sessionId:UUID' -d 'user_ids=3&user_ids=5' http://locahost/wissl/user/remove`
@@ -331,7 +331,7 @@ You can not remove the user account that you are currently authenticated with.
 
 You can not remove the last admin user account.
 
-### <a id="m9"></a>`/playlist/create`
+### <a id="playlistcreate"></a>`/playlist/create`
 * method: `POST`
 * param: `name` name of the new playlist
 * ex: `curl -H 'sessionId:UUID' -d 'name=foo' http://localhost/wissl/playlist/create`
@@ -341,7 +341,7 @@ You can not remove the last admin user account.
 
 Create a new empty playlist.
 
-### <a id="m10"></a>`/playlist/create-add`
+### <a id="playlistcreate-add"></a>`/playlist/create-add`
 * method: `POST`
 * param: `name` name of the new playlist
 * param: `clear` optional boolean. If true, clears a pre-existing playlist with the same name
@@ -364,7 +364,7 @@ exists, it will be cleared before adding the songs specified by the parameters.
 
 Both parameters `song_ids` and `album_ids` are optional and can be used simultaneously.
 
-### <a id="m11"></a>`/playlist/random`
+### <a id="playlistrandom"></a>`/playlist/random`
 * method: `POST`
 * param: `name` name of the random playlist
 * param: `number` number of random songs to add
@@ -389,7 +389,7 @@ The maximum number of songs that can be requested is 50.
 The number of songs added to the playlist may be less than requested
 if the library contains less than 50 songs.
 
-### <a id="m12"></a>`/playlist/{playlist_id}/add`
+### <a id="playlistplaylist_idadd"></a>`/playlist/{playlist_id}/add`
 * method: `POST`
 * param: `playlist_id` unique playlist id
 * param: `clear` optional boolean. If true, clears the playlist
@@ -413,7 +413,7 @@ Both parameters `song_ids` and `album_ids` are optional and can be used simultan
 
 An user can only alter a playlist that it has created.
 
-### <a id="m13"></a>`/playlist/{playlist_id}/remove`
+### <a id="playlistplaylist_idremove"></a>`/playlist/{playlist_id}/remove`
 * method: `POST`
 * param: `playlist_id` unique playlist id
 * param: `song_ids[]` array of song ids to remove from the playlist
@@ -424,7 +424,7 @@ Remove songs from a playlist.
 
 An user can only alter a playlist that it has created.
 
-### <a id="m14"></a>`/playlist/{playlist_id}/songs`
+### <a id="playlistplaylist_idsongs"></a>`/playlist/{playlist_id}/songs`
 * method: `GET`
 * param: `playlist_id` unique playlist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlist/3songs`
@@ -443,7 +443,7 @@ List the content of a playlist.
 
 The ordering of the `playlist` song array reflects the playlist play order.
 
-### <a id="m15"></a>`/playlist/{playlist_id}/song/{song_pos}`
+### <a id="playlistplaylist_idsongsong_pos"></a>`/playlist/{playlist_id}/song/{song_pos}`
 * method: `GET`
 * param: `playlist_id` unique playlist id
 * param: `song_pos` song position in playlist
@@ -454,7 +454,7 @@ The ordering of the `playlist` song array reflects the playlist play order.
 
 Get a single song at a given position in a playlist.
 
-### <a id="m16"></a>`/playlists/remove`
+### <a id="playlistsremove"></a>`/playlists/remove`
 * method: `POST`
 * param: `playlist_ids[]` array of playlist ids to remove
 * does not return anything
@@ -463,7 +463,7 @@ Remove one or more playlists.
 
 An user can only remove playlists that it has created.
 
-### <a id="m17"></a>`/playlists`
+### <a id="playlists"></a>`/playlists`
 * method: `GET`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists`
 * returns:<pre>
@@ -476,7 +476,7 @@ An user can only remove playlists that it has created.
 
 Get all playlists created by the authenticated used.
 
-### <a id="m18"></a>`/playlists/{user_id}`
+### <a id="playlistsuser_id"></a>`/playlists/{user_id}`
 * method: `GET`
 * param: `user_id` unique user id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists/3`
@@ -490,7 +490,7 @@ Get all playlists created by the authenticated used.
 
 Get all playlists created by a given user.
 
-### <a id="m19"></a>`/artists`
+### <a id="artists"></a>`/artists`
 * method: `GET`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/artists`
 * returns:<pre>
@@ -513,7 +513,7 @@ Get all artists.
 The returned object contains both the artist information and the ids of all albums that
 have an artwork ready to be served by the method `/art/{album_id}`.
 
-### <a id="m20"></a>`/albums/{artist_id}`
+### <a id="albumsartist_id"></a>`/albums/{artist_id}`
 * method: `GET`
 * param: `artist_id` unique artist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/albums/{artist_id}`
@@ -528,7 +528,7 @@ have an artwork ready to be served by the method `/art/{album_id}`.
 
 Get all albums for a given artist.
 
-### <a id="m21"></a>`/songs/{album_id}`
+### <a id="songsalbum_id"></a>`/songs/{album_id}`
 * method: `GET`
 * param: `album_id` unique album id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/songs/5`
@@ -544,7 +544,7 @@ Get all albums for a given artist.
 
 Get all songs for a given album.
 
-### <a id="m22"></a>`/song/{song_id}`
+### <a id="songsong_id"></a>`/song/{song_id}`
 * method: `GET`
 * param: `song_id` unique song id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/song/10`
@@ -558,7 +558,7 @@ Get all songs for a given album.
 
 Get a specific song.
 
-### <a id="m23"></a>`/song/{song_id}/stream`
+### <a id="songsong_idstream"></a>`/song/{song_id}/stream`
 * method: `GET`
 * param: `song_id` unique song id
 * ex: `mplayer http://localhost/wissl/song/13/stream?sessionId=UUID`
@@ -574,7 +574,7 @@ This method supports seeking using HTTP range headers.
 The reponse advertises remaiming byte length using the `Content-Length` header,
 and will begin reading at the byte specified by the `range` request header.
 
-### <a id="m24"></a>`/search/{query}`
+### <a id="searchquery"></a>`/search/{query}`
 * method: `GET`
 * param: `query` search query string
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/search/foo`
@@ -596,7 +596,7 @@ Search for songs, albums and artists with a single string query.
 The search query will be matched against song titles, artist names and album names.
 For example, the query 'bea' will match artist 'The Beatles' and song 'Heartbeat'.
 
-### <a id="m25"></a>`/art/{album_id}`
+### <a id="artalbum_id"></a>`/art/{album_id}`
 * method: `GET`
 * param: `album_id` unique album id
 * does not require authentication
@@ -610,7 +610,7 @@ If no artwork is available for this album, you will get a 404 Not Found error.
 Authentication is not required because it would prevent caching for some browsers,
 since they would try to download the image with a session id as query paremeter.
 
-### <a id="m26"></a>`/folders`
+### <a id="folders"></a>`/folders`
 * method: `GET`
 * no parameter
 * requires admin privileges
@@ -627,7 +627,7 @@ Lists the folders that are indexed as part as the music library.
 
 These folders are relative to the server's local filesystem.
 
-### <a id="m27"></a>`/folders/listing`
+### <a id="folderslisting"></a>`/folders/listing`
 * method: `GET`
 * param: `directory` optional directory to list, or `$ROOT` to view filesystem root
 * requires admin privileges
@@ -660,7 +660,7 @@ be the home of the user running the server process.
 If the query parameter is `$ROOT`, this method will list the filesystem root.
 This is equivalent to `/` on unix systems, but allows listing all drives on Windows.
 
-### <a id="m28"></a>`/folders/add`
+### <a id="foldersadd"></a>`/folders/add`
 * method: `POST`
 * param: `directory` absolute path of the directory to add
 * requires admin privileges
@@ -674,7 +674,7 @@ This folder will be regularly scanned and the music files it contains will be in
 The parameter `directory` is a directory relative to the server's local filesystem.
 This directory can be discovered by using the `/folders/listing` method.
 
-### <a id="m29"></a>`/folders/remove`
+### <a id="foldersremove"></a>`/folders/remove`
 * method: `POST`
 * param: `directory[]` array of absolute paths to remove from the library indexation system
 * requires admin privileges
@@ -685,7 +685,7 @@ Remove one or more folders from the music library indexation system.
 
 The folders currently indexed can be listed with the method `/folders`.
 
-### <a id="m30"></a>`/indexer/status`
+### <a id="indexerstatus"></a>`/indexer/status`
 * method: `GET`
 * no parameter
 * requires admin privileges
@@ -711,7 +711,7 @@ Indexation is triggered when adding or removing a folder.
 This method allows an administrator to know if the indexer is running,
 and have an estimate of the time left before finishing.
 
-### <a id="m31"></a>`/logs`
+### <a id="logs"></a>`/logs`
 * method: `POST`
 * no parameter
 * requires admin privileges
@@ -723,7 +723,7 @@ List log file content.
 Logs are rotated after a number of lines have been appended to it.
 This method only returns the content of the last file, to investigate on recent events.
 
-### <a id="m32"></a>`/stats`
+### <a id="stats"></a>`/stats`
 * method: `GET`
 * no parameter
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/stats`
@@ -752,7 +752,7 @@ This method only returns the content of the last file, to investigate on recent 
 
 Return a short list of runtime statistics properties for the server.
 
-### <a id="m33"></a>`/info`
+### <a id="info"></a>`/info`
 * method: `GET`
 * path: `/info`
 * no parameter
@@ -774,7 +774,7 @@ Return a short list of runtime statistics properties for the server.
 
 Returns various information about the server runtime environment.
 
-### <a id="m34"></a>`/shutdown`
+### <a id="shutdown"></a>`/shutdown`
 * method: `POST`
 * path: `/shutdown`
 * no parameter
