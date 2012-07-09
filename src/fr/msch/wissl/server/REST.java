@@ -96,23 +96,6 @@ public class REST {
 		this.response.setHeader("Cache-Control", "no-cache");
 	}
 
-	/**
-	 * @param username
-	 *            a valid username
-	 * @param password
-	 *            cleartext password matching the username
-	 * @return the id for a newly created session if login succeeds, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 * 	"userId" : 1,
-	 * 	"sessionId" : "af0ee222-6ed1-409d-9d99-5654c7802df1",
-	 *  "auth" : 1
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityException
-	 */
 	@POST
 	@Path("login")
 	public String login(@FormParam("username") String username,
@@ -155,11 +138,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Destroy session
-	 * 
-	 * @throws SecurityError
-	 */
 	@POST
 	@Path("logout")
 	public void logout() throws SecurityError {
@@ -171,28 +149,6 @@ public class REST {
 		log(removed, t);
 	}
 
-	/**
-	 * List global users info
-	 * 
-	 * @return a list of users containing various info as json, ie:
-	 * 
-	 *         <pre>
-	 * { "users" : [
-	 *     { "id": 0,
-	 *       "username": "toto",
-	 *       "auth": 0 },
-	 *     { "id": 1,
-	 *       "username": "titi",
-	 *       "auth": 1 }
-	 *   ], "sessions" : [
-	 *     { "user_id": 0,
-	 *       "last_activity": 123545 }  
-	 *   ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("users")
 	public String getUsers() throws SQLException, SecurityError {
@@ -232,15 +188,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Check whether the system already has users registered,
-	 * or if the client should now create a new admin user
-	 * @return a JSON object indicating whether the system has users:
-	 * <pre>
-	 * { "hasusers" : true }
-	 * </pre>
-	 * @throws SQLException
-	 */
 	@GET
 	@Path("hasusers")
 	public String hasUsers() throws SQLException {
@@ -248,30 +195,6 @@ public class REST {
 		return "{\"hasusers\":" + hasUsers + "}";
 	}
 
-	/**
-	 * Get info for one user: user info, session info, playlists, stats
-	 * 
-	 * @param userId
-	 *            unique user id
-	 * @return user info as json, ie:
-	 * 
-	 *         <pre>
-	 * { "user":{
-	 *     "id": 0,
-	 *     "username": "toto",
-	 *     "auth": 0
-	 *   }, "session":{
-	 *     "user_id":0,
-	 *     "last_activity": 12345,
-	 *   }, "playlists":[
-	 * 	   {"id":1,"name":"foo"},
-	 *     {"id":2,"name":"bar"}
-	 *   ]}
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("user/{user_id}")
 	public String getUser(@PathParam("user_id") int userId)
@@ -313,18 +236,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Create a new user
-	 * 
-	 * @param username
-	 *            name of the user
-	 * @param password
-	 *            clear text password
-	 * @param auth
-	 *            1: admin, 2: user
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@POST
 	@Path("user/add")
 	public void addUser(@FormParam("username") String username,
@@ -428,19 +339,6 @@ public class REST {
 		log(sess, l);
 	}
 
-	/**
-	 * Create new playlist for authenticated user
-	 * 
-	 * @param name
-	 *            name of the new playlist
-	 * @return the created playlist as json, ie:
-	 * 
-	 *         <pre>
-	 * {"id":1,"name":"foo","user":1}
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@POST
 	@Path("playlist/create")
 	public String createPlaylist(@FormParam("name") String name)
@@ -458,35 +356,6 @@ public class REST {
 		return pl.toJSON();
 	}
 
-	/**
-	 * Create a new playlist and add songs to it If playlist already exists,
-	 * reuse it
-	 * 
-	 * @param name
-	 *            name of the new playlist
-	 * @param song_ids
-	 *            ids of the songs to add
-	 * @param album_ids
-	 *            id of the albums to add
-	 * @return the created playlist as json along with number of added songs,
-	 *         ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *   "added": 4,
-	 *   "playlist" : {
-	 *     "id":1,
-	 *     "name":"foo",
-	 *     "user":1,
-	 *     "songs":6
-	 *   }
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 * @throws ForbiddenException
-	 * @throws javassist.NotFoundException
-	 */
 	@POST
 	@Path("playlist/create-add")
 	public String createAndAddToPlaylist(@FormParam("name") String name,
@@ -526,34 +395,6 @@ public class REST {
 		return sb.toString();
 	}
 
-	/**
-	 * Create a new playlist, fills it with random songs. If the playlist
-	 * already exists, it will be cleared
-	 * 
-	 * @param name
-	 *            name of the new playlist
-	 * @param number
-	 *            number of random songs to add
-	 * @return the created playlist as json along with number of added songs, id
-	 *         of first song
-	 * 
-	 *         <pre>
-	 * {
-	 *   "added": 4,
-	 *   "first_song": 1234,
-	 *   "playlist" : {
-	 *     "id":1,
-	 *     "name":"foo",
-	 *     "user":1,
-	 *     "songs":6
-	 *   }
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 * @throws ForbiddenException
-	 * @throws javassist.NotFoundException
-	 */
 	@POST
 	@Path("playlist/random")
 	public String randomPlaylist(@FormParam("name") String name,
@@ -603,36 +444,6 @@ public class REST {
 		return sb.toString();
 	}
 
-	/**
-	 * Add songs at the end of the given playlist
-	 * 
-	 * @param playlist_id
-	 *            id of the playlist
-	 * @param clear
-	 *            clear playlist before adding if true, defaults to false
-	 * @param song_ids
-	 *            id of the songs to add
-	 * @param album_ids
-	 *            id of the albums to add
-	 * @return the created playlist as json along with number of added songs,
-	 *         ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *   "added": 4,
-	 *   "playlist" : {
-	 *     "id":1,
-	 *     "name":"foo",
-	 *     "user":1,
-	 *     "songs":6
-	 *   }
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 * @throws ForbiddenException
-	 * @throws javassist.NotFoundException
-	 */
 	@POST
 	@Path("playlist/{playlist_id}/add")
 	public String addSongsToPlaylist(@PathParam("playlist_id") int playlist_id,
@@ -669,21 +480,6 @@ public class REST {
 		return sb.toString();
 	}
 
-	/**
-	 * Remove songs from a playlist
-	 * <p>
-	 * impl note: should use @DELETE, but @DELETE resources cannot have proper
-	 * array params and should be identified uniquely using only path and query
-	 * parameters. Therefore I'm using POST which is a lot more convenient
-	 * 
-	 * @param playlist_id
-	 *            id of the playlist from which songs are deleted
-	 * @param song_ids
-	 *            ids of the songs to remove from playlist
-	 * @throws SQLException
-	 * @throws SecurityError
-	 * @throws ForbiddenException
-	 */
 	@POST
 	@Path("playlist/{playlist_id}/remove")
 	public void removeFromPlaylist(@PathParam("playlist_id") int playlist_id,
@@ -703,27 +499,6 @@ public class REST {
 		log(s, l);
 	}
 
-	/**
-	 * Get the content of a given playlist
-	 * 
-	 * @param playlist_id
-	 *            id of the playlist
-	 * @return the playlist content as json, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *  "name": "foo",
-	 *  "playlist":[
-	 *   {"id":1,"name":"Song1"},
-	 *   {"id":30,"name":"Song30"}
-	 *  ]
-	 * }
-	 * </pre>
-	 * 
-	 *         The ordering of the song array reflects the playlist order.
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("playlist/{playlist_id}/songs")
 	public String getPlaylistSongs(@PathParam("playlist_id") int playlist_id)
@@ -756,26 +531,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Get a single Song at a given position in a playlist
-	 * 
-	 * @param playlist_id
-	 *            unique playlist id
-	 * @param song_pos
-	 *            position of the song in the playlist
-	 * @return the song as JSON, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 * 	"id": 10,
-	 *  "name": "Foo",
-	 *  "position": "1/7",
-	 *  "duration": "342"
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("playlist/{playlist_id}/song/{song_pos}")
 	public String getPlaylistSong(@PathParam("playlist_id") int playlist_id,
@@ -796,20 +551,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Remove playlists
-	 * <p>
-	 * impl note: should use @DELETE, but @DELETE resources cannot have proper
-	 * array params and should be identified uniquely using only path and query
-	 * parameters. Therefore I'm using POST which is a lot more convenient
-	 * 
-	 * @param playlist_ids
-	 *            ids of the playlists to delete
-	 * @throws SQLException
-	 * @throws SecurityError
-	 * @throws ForbiddenException
-	 * @throws NotFoundException
-	 */
 	@POST
 	@Path("playlists/remove")
 	public void deletePlaylists(@FormParam("playlist_ids[]") int[] playlist_ids)
@@ -830,22 +571,6 @@ public class REST {
 		log(sess, l);
 	}
 
-	/**
-	 * Return all playlists for the authenticated user
-	 * 
-	 * @return all playlists (excluding actual songs) as JSON, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 * 	"playlists":[
-	 * 	  {"id":1,"name":"foo"},
-	 *    {"id":2,"name":"bar"}
-	 *  ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("playlists")
 	public String getPlaylists() throws SQLException, SecurityError {
@@ -870,22 +595,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Return all playlists for the given user
-	 * 
-	 * @return all playlists (excluding actual songs) as JSON, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 * 	"playlists":[
-	 * 	  {"id":1,"name":"foo"},
-	 *    {"id":2,"name":"bar"}
-	 *  ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("playlists/{user_id}")
 	public String getPlaylists(@PathParam("user_id") int userId)
@@ -911,20 +620,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * @return all artists as json, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *  "artists": [
-	 *    {"id":1,"name":"Yes"},
-	 *    {"id":2,"name":"Rush"}
-	 *  ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("artists")
 	public String getArtists() throws SQLException, SecurityError {
@@ -965,23 +660,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * @param artist_id
-	 *            a valid unique artist id
-	 * @return the artist and all its albums as json,ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *  "artist": {"id":1,"name":"Yes"},
-	 * 	"albums":[
-	 *    {"id":1,"name":"Fragile","date":"1971"},
-	 *    {"id":2,"name":"Relayer","date":"1974"},
-	 *  ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("albums/{artist_id}")
 	public String getAlbums(@PathParam("artist_id") int artist_id)
@@ -1014,23 +692,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * @param album_id
-	 *            a valid unique album id
-	 * @return the artist, the album and all the songs as json, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *  "artist":{"id":1,"name":"Yes"},
-	 *  "album":{"id":1,"name":"Fragile","date":"1971"},
-	 * 	"songs":[
-	 *    {"id":1,"title":"Roundabout","position":"1/11","duration":285}
-	 *  ]
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("songs/{album_id}")
 	public String getSongs(@PathParam("album_id") int album_id)
@@ -1064,21 +725,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * @param song_id
-	 *            valid unique song id
-	 * @return the artist, album and song as json, ie:
-	 * 
-	 *         <pre>
-	 * {
-	 *  "artist":{"id":1,"name":"Yes"},
-	 *  "album":{"id":1,"name":"Fragile","date":"1971"},
-	 *  "song":{"id":1,"title":"Roundabout","position":"1/11","duration":285}
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("song/{song_id}")
 	public String getSong(@PathParam("song_id") final int song_id)
@@ -1104,38 +750,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Search for songs, albums, artists using a single query parameter
-	 * Result size will be limited.
-	 * 
-	 * @param query a string the will match song titles, album names or artist names.
-	 * @return a JSON object describing artists, albums and songs matching the search query,
-	 * ie for query 'beat':
-	 * <pre>
-	 * {
-	 *   "artists": [
-	 *     {
-	 *       "id": 1,
-	 *       "artist_name": "The Beatles"
-	 *     }
-	 *   ],
-	 *   "albums": [
-	 *     {
-	 *       "id": 42,
-	 *       "album_name": "Beat"
-	 *     }
-	 *   ],
-	 *   "songs": [
-	 *     {
-	 *       "id": 1143,
-	 *       "title": "Eat to the beat"
-	 *     }
-	 *   ]   
-	 * }
-	 * </pre>
-	 * @throws SQLException
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("search/{query}")
 	public String search(@PathParam("query") final String query)
@@ -1180,21 +794,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Get song file as a stream<br>
-	 * Content type is dynamically set depending the actual file extension<br>
-	 * The response body can be directly decoded by any media player<br>
-	 * Supports seeking anywhere in the file using the http range header<br>
-	 * 
-	 * @param song_id
-	 *            a valid unique song id
-	 * @param sessionId
-	 *            session id as GET parameter, convenience audio players that do
-	 *            not allow setting http headers
-	 * @return binary file content of the song, ie the raw mp3/ogg/audio data,
-	 *         that a client will be able to decode and play.
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("song/{song_id}/stream")
 	public Response getSong(@PathParam("song_id") final int song_id,
@@ -1342,22 +941,6 @@ public class REST {
 				.build();
 	}
 
-	/**
-	 * Requires admin privileges
-	 * 
-	 * @return file paths on the server's filesystem that are searched for music
-	 *         files to be served, ie:
-	 * 
-	 *         <pre>
-	 * { "folders": [
-	 *   "C:\Users\bob\Downloads",
-	 *   "E:\music"
-	 *   ]
-	 * }
-	 * </pre>
-	 * @throws SecurityError
-	 * @throws SQLException
-	 */
 	@GET
 	@Path("folders")
 	public String getMusicFolders() throws SecurityError, SQLException {
@@ -1382,17 +965,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * List directory content on the server's filesystem requires admin
-	 * privileges
-	 * 
-	 * @param directory
-	 *            directory to list, or null, or $ROOT to list FS root
-	 * @return directories contained in the parameter directory, or directories
-	 *         contained in home directory if none specified
-	 * @throws SecurityError
-	 * @throws SQLException
-	 */
 	@GET
 	@Path("folders/listing")
 	public String getFolderListing(@QueryParam("directory") String directory)
@@ -1465,16 +1037,6 @@ public class REST {
 		return ret.toString();
 	}
 
-	/**
-	 * Add a folder to the library search path
-	 * <p>
-	 * library will be notified and songs will be added asynchronously
-	 * 
-	 * @param directory
-	 *            a valid directory on the server's filesystem
-	 * @throws SecurityError
-	 * @throws SQLException
-	 */
 	@POST
 	@Path("folders/add")
 	public void addMusicFolder(@FormParam("directory") String directory)
@@ -1502,16 +1064,6 @@ public class REST {
 		log(sess, l1);
 	}
 
-	/**
-	 * Remove folders from the library search path
-	 * <p>
-	 * library will be notified and will remove songs asynchronously
-	 * 
-	 * @param directory
-	 *            a valid directory on the server's filesystem
-	 * @throws SecurityError
-	 * @throws SQLException
-	 */
 	@POST
 	@Path("folders/remove")
 	public void removeMusicFolders(@FormParam("directory[]") String[] directory)
@@ -1545,10 +1097,6 @@ public class REST {
 		log(sess, l1);
 	}
 
-	/**
-	 * @return server logs as text/plain
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("logs")
 	public Response getLogs() throws SecurityError {
@@ -1591,10 +1139,6 @@ public class REST {
 				.build();
 	}
 
-	/**
-	 * Shutdown the server and the JVM
-	 * @throws SecurityError
-	 */
 	@POST
 	@Path("shutdown")
 	public void shutdown() throws SecurityError {
@@ -1607,24 +1151,6 @@ public class REST {
 		System.exit(0);
 	}
 
-	/**
-	 * @return indexer status as a json string, ie:
-	 * If not running :
-	 * <pre>
-	 * { "running": false }
-	 * </pre>
-	 * If running :
-	 * <pre>
-	 * {
-	 *   "running": true,
-	 *   "percentDone": 0.5,
-	 *   "secondsLeft": 431,
-	 *   "songsDone": 600,
-	 *   "songsTodo": 1200
-	 * }
-	 * </pre>
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("indexer/status")
 	public String getIndexerStatus() throws SecurityError {
@@ -1638,16 +1164,6 @@ public class REST {
 		return ret;
 	}
 
-	/**
-	 * @return simple runtime stats containing general server info, ie:
-	 * <pre>
-	 * {
-	 *   "songs": 123,
-	 *   "albums": 26,
-	 *   "artists": 5
-	 * }
-	 * </pre>
-	 */
 	@GET
 	@Path("stats")
 	public String getStats() throws SecurityError {
@@ -1663,19 +1179,6 @@ public class REST {
 		return sb.toString();
 	}
 
-	/**
-	 * @return Various server info packed in a JSON object,ie:
-	 * <pre>
-	 * { 
-	 *   "version": "1.0",
-	 *   "build": "b32",
-	 *   "server": "Tomcat 7.0",
-	 *   "os": "Linux 3.3"
-	 *   "java": "HotSpot 1.6 Sun"
-	 * }
-	 * </pre>
-	 * @throws SecurityError
-	 */
 	@GET
 	@Path("info")
 	public String getInfo() throws SecurityError {
