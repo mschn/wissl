@@ -158,7 +158,7 @@ API methods
 * param: `username` a valid non-empty user name
 * param: `password` cleartext password matching the username
 * ex: `curl -d 'username=user&password=pwd' http://localhost/wissl/login`
-* returns:<code><pre>
+* returns:<pre>
     {
       // unique user id
       "userId": INT,
@@ -167,9 +167,9 @@ API methods
       // 1: admin; 2: regular user
       "auth": INT
     }
-</pre></code>
+</pre>
 
-The password is sent in clear-text. 
+The password is sent in clear-text.
 To prevent eavesdropping, configure the server to use SSL.
 
 Use the session id provided in the response to authenticate for each further call.
@@ -191,14 +191,14 @@ Destroys the session associated with the UUID in the request.
 
 ### has users
 * method: `GET`
-* path: `hasusers`
+* path: `/hasusers`
 * no parameter
 * ex: `curl -H 'sessionId:UUID http://localhost/wissl/hasusers`
-* returns:<code><pre>
+* returns:<pre>
     {
       "hasusers": BOOL
     }
-</pre></code>
+</pre>
 
 Checks whether the server already has an user registered.
 
@@ -211,7 +211,7 @@ If it does not, then any client can call `/user/add` to create the initial user 
 * path: `/users`
 * no parameter
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/users`
-* returns:<code><pre>
+* returns:<pre>
     {
 	  // all known users
       "users": [
@@ -222,7 +222,7 @@ If it does not, then any client can call `/user/add` to create the initial user 
         SESSION, ...
 	  ]
     }
-</pre></code>
+</pre>
 
 List all users and all sessions.
 
@@ -233,7 +233,7 @@ Allows clients to list users and check which is currently logged in.
 * path: `/user/{user_id}`
 * param: `user_id` unique user id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/user/5`
-* returns:<code><pre>
+* returns:<pre>
     {
       "user": USER,
       "session": SESSION,
@@ -241,7 +241,7 @@ Allows clients to list users and check which is currently logged in.
         PLAYLIST, ...
       }
     }
-</pre></code>
+</pre>
 
 Retrieve information about a specific user.
 
@@ -261,7 +261,7 @@ The user id used as parameter can be found in the response of the `/users` reque
 Create a new user account.
 Clear-text password is sent as parameter. Configure the server to use SSL to prevent eavesdropping.
 
-As shown by the examples, two distinct scenarios can be distinguished:\
+As shown by the examples, two distinct scenarios can be distinguished:
 * Add the first user of the system right after a clean startup. No authentication is required.
   The first user must be admin (`auth === 1`).
 * Add a new user. The client must authenticate as an admin user to perform this operation.
@@ -297,9 +297,9 @@ You can not remove the last admin user account.
 * path: `/playlist/create`
 * param: `name` name of the new playlist
 * ex: `curl -H 'sessionId:UUID' -d 'name=foo' http://localhost/wissl/playlist/create`
-* returns:<code><pre>
+* returns:<pre>
     PLAYLIST
-</pre></code>
+</pre>
 
 Create a new empty playlist.
 
@@ -311,14 +311,14 @@ Create a new empty playlist.
 * param: `song_ids[]` array of song ids to add to the playlist
 * param: `album_ids[]` array of album ids to add to the playlist
 * ex: `curl -H 'sessionId:UUID' -d 'name=foo&songs_ids=5&songs_ids=7' http://localhost/wissl/playlist/create-add`
-* returns:<code><pre>
+* returns:<pre>
     {
       // number of songs added to the playlist
       "added": INT,
       // playlist that was just created
       "playlist": PLAYLIST
     }
-</pre></code>
+</pre>
 
 Create a new playlist and add songs to it.
 
@@ -333,7 +333,7 @@ Both parameters `song_ids` and `album_ids` are optional and can be used simultan
 * param: `name` name of the random playlist
 * param: `number` number of random songs to add
 * ex: `curl -H 'sessionId:UUID' -d 'name=random&number=20' http://localhost/wissl/playlist/random`
-* returns:<code><pre>
+* returns:<pre>
     {
       // number of songs added to the random playlist
       "added": INT,
@@ -342,7 +342,7 @@ Both parameters `song_ids` and `album_ids` are optional and can be used simultan
       // playlist that was created
       "playlist": PLAYLIST
     }
-</pre></code>
+</pre>
 
 Creates a new playlist that contains randomly picked songs.
 
@@ -361,13 +361,13 @@ if the library contains less than 50 songs.
 * param: `song_ids[]` array of song ids to add to the playlist
 * param: `album_ids[]` array of album ids to add to the playlist
 * ex: `curl -H 'sessionId:UUID' -d 'song_ids=5&song_ids=7' http://localhost/wissl/playlist/3/add`
-* returns:<code><pre>
+* returns:<pre>
     {
       // number of songs added to the playlist
       "added": INT,
       "playlist": PLAYLIST
     }
-</pre></code>
+</pre>
 
 Add songs to an existing playlist.
 
@@ -395,7 +395,7 @@ An user can only alter a playlist that it has created.
 * path: `/playlist/{playlist_id}/songs`
 * param: `playlist_id` unique playlist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlist/3songs`
-* returns:<code><pre>
+* returns:<pre>
     {
       // playlist name
       "name": STRING,
@@ -404,7 +404,7 @@ An user can only alter a playlist that it has created.
         SONG, ...
       ]
     }
-</pre></code>
+</pre>
 
 List the content of a playlist.
 
@@ -416,9 +416,9 @@ The ordering of the `playlist` song array reflects the playlist play order.
 * param: `playlist_id` unique playlist id
 * param: `song_pos` song position in playlist
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/{playlist_id}/song/{song_pos}`
-* returns:<code><pre>
+* returns:<pre>
     SONG
-</pre></code>
+</pre>
 
 Get a single song at a given position in a playlist.
 
@@ -436,13 +436,13 @@ An user can only remove playlists that it has created.
 * method: `GET`
 * path: `/playlists`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists`
-* returns:<code><pre>
+* returns:<pre>
     {
       "playlists": [
         PLAYLIST, ...
       ]
     }
-</pre></code>
+</pre>
 
 Get all playlists created by the authenticated used.
 
@@ -451,13 +451,13 @@ Get all playlists created by the authenticated used.
 * path: `/playlists/{user_id}`
 * param: `user_id`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists/3`
-* returns:<code><pre>
+* returns:<pre>
     {
       "playlists": [
         PLAYLIST, ...
       ]
     }
-</pre></code>
+</pre>
 
 Get all playlists created by a given user.
 
@@ -465,7 +465,7 @@ Get all playlists created by a given user.
 * method: `GET`
 * path: `/artists`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/artists`
-* returns:<code><pre>
+* returns:<pre>
     {
       "artists": [
         {
@@ -478,7 +478,7 @@ Get all playlists created by a given user.
         ...
       ]
     }
-</pre></code>
+</pre>
 
 Get all artists.
 
@@ -487,16 +487,263 @@ have an artwork ready to be served by the method `/art/{album_id}`.
 
 ### albums
 * method: `GET`
-* path: `/albums/{artist_id}
+* path: `/albums/{artist_id}`
 * param: `artist_id` unique artist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/albums/{artist_id}`
-* returns:<code><pre>
+* returns:<pre>
     {
       "artist": ARTIST,
       "albums": [
         ALBUM, ...
       ]
     }
-</pre></code>
+</pre>
 
 Get all albums for a given artist.
+
+### songs
+* method: `GET`
+* path: `/songs/{album_id}`
+* param: `album_id` unique album id
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/songs/5`
+* returns:<pre>
+    {
+      "artist": ARTIST,
+      "album": ALBUM,
+      "songs": [
+        SONG, ...
+      ]
+    }
+</pre>
+
+Get all songs for a given album.
+
+### song
+* method: `GET`
+* path: `/song/{song_id}`
+* param: `song_id` unique song id
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/song/10`
+* returns:<pre>
+    {
+      "artist": ARTIST,
+      "album": ALBUM,
+      "song": SONG
+    }
+</pre>
+
+Get a specific song.
+
+### search
+* method: `GET`
+* path: `/search/{query}`
+* param: `query` search query string
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/search/foo`
+* returns:<pre>
+    {
+      "artists": [
+        ARTIST, ...
+      ],
+      "albums": [
+        ALBUM, ...
+      ],
+      "songs": [
+        SONG, ...
+      ]
+    }
+</pre>
+
+Search for songs, albums and artists with a single string query.
+The search query will be matched against song titles, artist names and album names.
+For example, the query 'bea' will match artist 'The Beatles' and song 'Heartbeat'.
+
+### stream
+* method: `GET`
+* path: `/song/{song_id}/stream`
+* param: `song_id` unique song id
+* ex: `mplayer http://localhost/wissl/song/13/stream?sessionId=UUID`
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/song/13/stream`
+* returns: raw binary content of the song file
+
+Read the music stream for a specific song.
+
+The binary file is directly served, suitable to be read by any audio player that
+understands the format.
+
+This method supports seeking using HTTP range headers.
+The reponse advertises remaiming byte length using the `Content-Length` header,
+and will begin reading at the byte specified by the `range` request header.
+
+### album art
+* method: `GET`
+* path: `/art/{album_id}`
+* param: `album_id` unique album id
+* does not require authentication
+* ex: `curl http://localhost/wissl/art/6`
+* returns: raw binary image content
+
+Download the album art image.
+
+If no artwork is available for this album, you will get a 404 Not Found error.
+
+Authentication is not required because it would prevent caching for some browsers,
+since they would try to download the image with a session id as query paremeter.
+
+### music folders
+* method: `GET`
+* path: `/folders`
+* no parameter
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders`
+* returns:<pre>
+    {
+      // array of folder paths relative to the server filesystem
+      "folders": [
+        STRING, ...
+      ]
+</pre>
+
+Lists the folders that are indexed as part as the music library.
+
+These folders are relative to the server's local filesystem.
+
+### list folder
+* method: `GET`
+* path: `/folders/listing`
+* param: `directory` optional directory to list, or `$ROOT` to view filesystem root
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders/listing&directory=/tmp/`
+* returns:<pre>
+    {
+      // directory listed
+      "directory": STRING.
+      // platform path separator
+      "separator": STRING
+      // parent directory
+      "parent": STRING,
+      // directories contained
+      "listing": [
+        STRING, ...
+      ]
+    }
+</pre>
+
+List directory on the server's filesystem.
+
+Does not display single files, only directories.
+
+This method allows an administrator to browse the server's filesystem to look for
+a new folder to add to the library indexer path using `/folders/add`.
+
+If the optional `directory` parameter is empty, the directory listed will
+be the home of the user running the server process.
+
+If the query parameter is `$ROOT`, this method will list the filesystem root.
+This is equivalent to `/` on unix systems, but allows listing all drives on Windows.
+
+### add folder
+* method: `POST`
+* path: `/folders/add`
+* param: `directory` absolute path of the directory to add
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' -d 'directory=/music/ http://localhost/wissl/folders/add`
+* does not return anything
+
+Add a folder to the music library indexation system.
+
+This folder will be regularly scanned and the music files it contains will be indexed by the server.
+
+The parameter `directory` is a directory relative to the server's local filesystem.
+This directory can be discovered by using the `/folders/listing` method.
+
+### remove folder
+* method: `POST`
+* path: `/folders/remove`
+* param: `directory[]` array of absolute paths to remove from the library indexation system
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' -d 'directory=/tmp&directory=/music' http://localhost/wissl/folders/remove`
+* does not return anything
+
+Remove one or more folders from the music library indexation system.
+
+The folders currently indexed can be listed with the method `/folders`.
+
+### indexer status
+* method: `GET`
+* path: `/indexer/status`
+* no parameter
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/indexer/status`
+* returns:<pre>
+    {
+      // false when idle, true when indexing
+      "running": BOOL,
+      // when indexing, estimates percent done in [0.0;1.0]
+      "percentDone": DOUBLE,
+      // when indexing, estimates time left in seconds
+      "secondsLeft": INT,
+      // when indexing, total songs indexed
+      "songsDone": INT,
+      // when indexing, total songs to index
+      "songsTodo": INT
+    }
+</pre>
+
+Gets music library indexation system status.
+
+Indexation is triggered when adding or removing a folder.
+This method allows an administrator to know if the indexer is running,
+and have an estimate of the time left before finishing.
+
+### logs
+* method: `POST`
+* path: `/logs`
+* no parameter
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/logs`
+* returns: log file content as plain text
+
+List log file content.
+
+Logs are rotated after a number of lines have been appended to it.
+This method only returns the content of the last file, to investigate on recent events.
+
+### runtime stats
+* method: `GET`
+* path: `/stats`
+* no parameter
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/stats`
+* returns:<pre>
+    {
+      "stats": {
+        // total number of songs indexed
+        "songs": INT,
+        // total number of albums indexed
+        "albums": INT,
+        // total number of artists indexed
+        "artists": INT,
+        // total number of playlists
+        "playlists": INT,
+        // total number of users
+        "users": INT,
+        // cumulated duration of all songs in seconds
+        "playtime": INT,
+        // cumulated downloaded bytes since startup
+        "downloaded": INT,
+        // time since server startup in seconds
+        "uptime": INT
+      }
+    }
+<pre>
+
+Return a short list of runtime statistics properties for the server.
+
+
+### shutdown
+* method: `POST`
+* path: `/shutdown`
+* no parameter
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' -X POST http://localhost/wissl/shutdown`
+* does not return anything
+
+Shutdown the server.
