@@ -152,9 +152,8 @@ A playlist is a list of songs created by an user.
 API methods
 -----------
 
-### login
+### /login
 * method: `POST`
-* path: `/login`
 * param: `username` a valid non-empty user name
 * param: `password` cleartext password matching the username
 * ex: `curl -d 'username=user&password=pwd' http://localhost/wissl/login`
@@ -180,18 +179,16 @@ If a session associated with the same user already exists, the previous session
 will be destroyed and the client will be notified if it tries to reuse the
 destroyed session.
 
-### logout
+### /logout
 * method: `POST`
-* path: `/logout`
 * no parameter
 * ex: `curl -X POST -H 'sessionId:UUID' http://localhost/wissl/logout`
 * does not return any reponse
 
 Destroys the session associated with the UUID in the request.
 
-### has users
+### /hasusers
 * method: `GET`
-* path: `/hasusers`
 * no parameter
 * ex: `curl -H 'sessionId:UUID http://localhost/wissl/hasusers`
 * returns:<pre>
@@ -206,9 +203,8 @@ If it does (`hasusers === true`), then only the registered users can log in.
 
 If it does not, then any client can call `/user/add` to create the initial user without authentication.
 
-### users
+### /users
 * method: `GET`
-* path: `/users`
 * no parameter
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/users`
 * returns:<pre>
@@ -228,9 +224,8 @@ List all users and all sessions.
 
 Allows clients to list users and check which is currently logged in.
 
-### user
+### /user/{user_id}
 * method: `GET`
-* path: `/user/{user_id}`
 * param: `user_id` unique user id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/user/5`
 * returns:<pre>
@@ -247,9 +242,8 @@ Retrieve information about a specific user.
 
 The user id used as parameter can be found in the response of the `/users` request.
 
-### add user
+### /user/add
 * method: `POST`
-* path: `/user/add`
 * param: `username` name of the user to create
 * param: `password` clear text password
 * param: `auth` int authorization level. 1: admin, 2: user
@@ -262,15 +256,15 @@ Create a new user account.
 Clear-text password is sent as parameter. Configure the server to use SSL to prevent eavesdropping.
 
 As shown by the examples, two distinct scenarios can be distinguished:
+
 * Add the first user of the system right after a clean startup. No authentication is required.
   The first user must be admin (`auth === 1`).
 * Add a new user. The client must authenticate as an admin user to perform this operation.
 
 The provided password can be changed later using `/user/password`.
 
-### change password
+### /user/password
 * method: `POST`
-* path: `/user/password`
 * param: `old_password` re-authenticate user with old password
 * param: `new_password` new password to set
 * ex: `curl -H 'sessionId:UUID' -d 'old_password=pwd&new_password=pwd2 http://localhost/wissl/user/password`
@@ -279,9 +273,8 @@ The provided password can be changed later using `/user/password`.
 Change the password for the user associated with the current session/
 Clear-text password is sent as parameter. Configure the server to use SSL to prevent eavesdropping.
 
-### remove user
+### /user/remove
 * method: `POST`
-* path: `/user/remove`
 * param: `user_ids[]` array of unique user ids
 * ex: `curl -H 'sessionId:UUID' -d 'user_ids=3&user_ids=5' http://locahost/wissl/user/remove`
 * does not return anything
@@ -292,9 +285,8 @@ You can not remove the user account that you are currently authenticated with.
 
 You can not remove the last admin user account.
 
-### create empty playlist
+### /playlist/create
 * method: `POST`
-* path: `/playlist/create`
 * param: `name` name of the new playlist
 * ex: `curl -H 'sessionId:UUID' -d 'name=foo' http://localhost/wissl/playlist/create`
 * returns:<pre>
@@ -303,9 +295,8 @@ You can not remove the last admin user account.
 
 Create a new empty playlist.
 
-### create playlist with songs
+### /playlist/create-add
 * method: `POST`
-* path: `/playlist/create-add`
 * param: `name` name of the new playlist
 * param: `clear` optional boolean. If true, clears a pre-existing playlist with the same name
 * param: `song_ids[]` array of song ids to add to the playlist
@@ -327,9 +318,8 @@ exists, it will be cleared before adding the songs specified by the parameters.
 
 Both parameters `song_ids` and `album_ids` are optional and can be used simultaneously.
 
-### random playlist
+### /playlist/random
 * method: `POST`
-* path: `/playlist/random`
 * param: `name` name of the random playlist
 * param: `number` number of random songs to add
 * ex: `curl -H 'sessionId:UUID' -d 'name=random&number=20' http://localhost/wissl/playlist/random`
@@ -353,9 +343,8 @@ The maximum number of songs that can be requested is 50.
 The number of songs added to the playlist may be less than requested
 if the library contains less than 50 songs.
 
-### add to playlist
+### /playlist/{playlist_id}/add
 * method: `POST`
-* path: `/playlist/{playlist_id}/add`
 * param: `playlist_id` unique playlist id
 * param: `clear` optional boolean. If true, clears the playlist
 * param: `song_ids[]` array of song ids to add to the playlist
@@ -378,9 +367,8 @@ Both parameters `song_ids` and `album_ids` are optional and can be used simultan
 
 An user can only alter a playlist that it has created.
 
-### remove from playlist
+### /playlist/{playlist_id}/remove
 * method: `POST`
-* path: `/playlist/{playlist_id}/remove`
 * param: `playlist_id` unique playlist id
 * param: `song_ids[]` array of song ids to remove from the playlist
 * ex: `curl -H 'sessionId:UUID' -d 'song_ids=3&song_ids=7' http://localhost/wissl/playlist/3/remove`
@@ -390,9 +378,8 @@ Remove songs from a playlist.
 
 An user can only alter a playlist that it has created.
 
-### playlist songs
+### /playlist/{playlist_id}/songs
 * method: `GET`
-* path: `/playlist/{playlist_id}/songs`
 * param: `playlist_id` unique playlist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlist/3songs`
 * returns:<pre>
@@ -410,9 +397,8 @@ List the content of a playlist.
 
 The ordering of the `playlist` song array reflects the playlist play order.
 
-### playlist song
+### /playlist/{playlist_id}/song/{song_pos}
 * method: `GET`
-* path: `/playlist/{playlist_id}/song/{song_pos}`
 * param: `playlist_id` unique playlist id
 * param: `song_pos` song position in playlist
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/{playlist_id}/song/{song_pos}`
@@ -422,9 +408,8 @@ The ordering of the `playlist` song array reflects the playlist play order.
 
 Get a single song at a given position in a playlist.
 
-### remove playlists
+### /playlists/remove
 * method: `POST`
-* path: `/playlists/remove`
 * param: `playlist_ids[]` array of playlist ids to remove
 * does not return anything
 
@@ -432,9 +417,8 @@ Remove one or more playlists.
 
 An user can only remove playlists that it has created.
 
-### playlists
+### /playlists
 * method: `GET`
-* path: `/playlists`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists`
 * returns:<pre>
     {
@@ -446,10 +430,9 @@ An user can only remove playlists that it has created.
 
 Get all playlists created by the authenticated used.
 
-### user playlists
+### /playlists/{user_id}
 * method: `GET`
-* path: `/playlists/{user_id}`
-* param: `user_id`
+* param: `user_id` unique user id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlists/3`
 * returns:<pre>
     {
@@ -461,9 +444,8 @@ Get all playlists created by the authenticated used.
 
 Get all playlists created by a given user.
 
-### artists
+### /artists
 * method: `GET`
-* path: `/artists`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/artists`
 * returns:<pre>
     {
@@ -485,9 +467,8 @@ Get all artists.
 The returned object contains both the artist information and the ids of all albums that
 have an artwork ready to be served by the method `/art/{album_id}`.
 
-### albums
+### /albums/{artist_id}
 * method: `GET`
-* path: `/albums/{artist_id}`
 * param: `artist_id` unique artist id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/albums/{artist_id}`
 * returns:<pre>
@@ -501,9 +482,8 @@ have an artwork ready to be served by the method `/art/{album_id}`.
 
 Get all albums for a given artist.
 
-### songs
+### /songs/{album_id}
 * method: `GET`
-* path: `/songs/{album_id}`
 * param: `album_id` unique album id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/songs/5`
 * returns:<pre>
@@ -518,9 +498,8 @@ Get all albums for a given artist.
 
 Get all songs for a given album.
 
-### song
+### /song/{song_id}
 * method: `GET`
-* path: `/song/{song_id}`
 * param: `song_id` unique song id
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/song/10`
 * returns:<pre>
@@ -533,9 +512,8 @@ Get all songs for a given album.
 
 Get a specific song.
 
-### search
+### /search/{query}
 * method: `GET`
-* path: `/search/{query}`
 * param: `query` search query string
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/search/foo`
 * returns:<pre>
@@ -556,9 +534,8 @@ Search for songs, albums and artists with a single string query.
 The search query will be matched against song titles, artist names and album names.
 For example, the query 'bea' will match artist 'The Beatles' and song 'Heartbeat'.
 
-### stream
+### /song/{song_id}/stream
 * method: `GET`
-* path: `/song/{song_id}/stream`
 * param: `song_id` unique song id
 * ex: `mplayer http://localhost/wissl/song/13/stream?sessionId=UUID`
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/song/13/stream`
@@ -573,9 +550,8 @@ This method supports seeking using HTTP range headers.
 The reponse advertises remaiming byte length using the `Content-Length` header,
 and will begin reading at the byte specified by the `range` request header.
 
-### album art
+### /art/{album_id}
 * method: `GET`
-* path: `/art/{album_id}`
 * param: `album_id` unique album id
 * does not require authentication
 * ex: `curl http://localhost/wissl/art/6`
@@ -588,9 +564,8 @@ If no artwork is available for this album, you will get a 404 Not Found error.
 Authentication is not required because it would prevent caching for some browsers,
 since they would try to download the image with a session id as query paremeter.
 
-### music folders
+### /folders
 * method: `GET`
-* path: `/folders`
 * no parameter
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders`
@@ -606,9 +581,8 @@ Lists the folders that are indexed as part as the music library.
 
 These folders are relative to the server's local filesystem.
 
-### list folder
+### /folders/listing
 * method: `GET`
-* path: `/folders/listing`
 * param: `directory` optional directory to list, or `$ROOT` to view filesystem root
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders/listing&directory=/tmp/`
@@ -640,9 +614,8 @@ be the home of the user running the server process.
 If the query parameter is `$ROOT`, this method will list the filesystem root.
 This is equivalent to `/` on unix systems, but allows listing all drives on Windows.
 
-### add folder
+### /folders/add
 * method: `POST`
-* path: `/folders/add`
 * param: `directory` absolute path of the directory to add
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' -d 'directory=/music/ http://localhost/wissl/folders/add`
@@ -655,9 +628,8 @@ This folder will be regularly scanned and the music files it contains will be in
 The parameter `directory` is a directory relative to the server's local filesystem.
 This directory can be discovered by using the `/folders/listing` method.
 
-### remove folder
+### /folders/remove
 * method: `POST`
-* path: `/folders/remove`
 * param: `directory[]` array of absolute paths to remove from the library indexation system
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' -d 'directory=/tmp&directory=/music' http://localhost/wissl/folders/remove`
@@ -667,9 +639,8 @@ Remove one or more folders from the music library indexation system.
 
 The folders currently indexed can be listed with the method `/folders`.
 
-### indexer status
+### /indexer/status
 * method: `GET`
-* path: `/indexer/status`
 * no parameter
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/indexer/status`
@@ -694,9 +665,8 @@ Indexation is triggered when adding or removing a folder.
 This method allows an administrator to know if the indexer is running,
 and have an estimate of the time left before finishing.
 
-### logs
+### /logs
 * method: `POST`
-* path: `/logs`
 * no parameter
 * requires admin privileges
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/logs`
@@ -707,9 +677,8 @@ List log file content.
 Logs are rotated after a number of lines have been appended to it.
 This method only returns the content of the last file, to investigate on recent events.
 
-### runtime stats
+### /stats
 * method: `GET`
-* path: `/stats`
 * no parameter
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/stats`
 * returns:<pre>
@@ -738,7 +707,7 @@ This method only returns the content of the last file, to investigate on recent 
 Return a short list of runtime statistics properties for the server.
 
 
-### shutdown
+### /shutdown
 * method: `POST`
 * path: `/shutdown`
 * no parameter
