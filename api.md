@@ -814,7 +814,7 @@ Shutdown the server.
 * path: `/modules`
 * no parameter
 * requires admin privileges
-* ex: `curl -H 'sessionId:UUID' -X POST http://localhost/wissl/modules`
+* ex: `curl -H 'sessionId:UUID' -X GET http://localhost/wissl/modules`
 * returns<pre>
     {
       // all available modules
