@@ -1228,7 +1228,7 @@ public class REST {
 	 * @throws SecurityError
 	 */
 	@POST
-	@Path("file_organizer/enable")
+	@Path("modules/file_organizer/enable")
 	public String enableFileOragnizer(@FormParam("enabled") boolean enabled)
 			throws SecurityError {
 		long l1 = System.nanoTime();

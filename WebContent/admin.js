@@ -427,7 +427,7 @@ var wsl = wsl || {};
 		wsl.lockUI();
 
 		$.ajax({
-			url : '/wissl/file_organizer/enable',
+			url : '/wissl/modules/file_organizer/enable',
 			type : 'POST',
 			headers : {
 				sessionId : wsl.sessionId
