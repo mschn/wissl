@@ -357,12 +357,16 @@ public class REST {
 		Session s = Session.check(sid, request.getRemoteAddr());
 		int uid = s.getUserId();
 
+		StringBuilder sb = new StringBuilder();
 		Playlist pl = DB.get().addPlaylist(uid, name);
 		RuntimeStats.addPlaylistCount(1);
+		sb.append("{\"playlist\":");
+		sb.append(pl.toJSON());
+		sb.append("}");
 
 		nocache();
 		log(s, l);
-		return pl.toJSON();
+		return sb.toString();
 	}
 
 	@POST
@@ -551,9 +555,13 @@ public class REST {
 
 		StringBuilder ret = new StringBuilder();
 		Song s = DB.get().getPlaylistSong(playlist_id, song_pos);
-		if (s != null) {
-			ret.append(s.toJSON());
+		if (s == null) {
+			throw new NotFoundException("Could not find song " + song_pos
+					+ " in playlist " + playlist_id);
 		}
+		ret.append("{\"song\":");
+		ret.append(s.toJSON());
+		ret.append("}");
 
 		nocache();
 		log(sess, t1);

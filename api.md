@@ -341,7 +341,9 @@ You can not remove the last admin user account.
 * param: `name` name of the new playlist
 * ex: `curl -H 'sessionId:UUID' -d 'name=foo' http://localhost/wissl/playlist/create`
 * returns:<pre>
-    PLAYLIST
+    {
+      "playlist": PLAYLIST
+    }
 </pre>
 
 Create a new empty playlist.
@@ -454,7 +456,9 @@ The ordering of the `playlist` song array reflects the playlist play order.
 * param: `song_pos` song position in playlist
 * ex: `curl -H 'sessionId:UUID' http://localhost/wissl/{playlist_id}/song/{song_pos}`
 * returns:<pre>
-    SONG
+    {
+      "song": SONG
+    }
 </pre>
 
 Get a single song at a given position in a playlist.

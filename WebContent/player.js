@@ -258,9 +258,9 @@ var player = {};
 				},
 				dataType : "json",
 				success : function (data) {
-					if (data && data.id) {
+					if (data.song && data.song.id) {
 						player.play({
-							song_id : data.id,
+							song_id : data.song.id,
 							playlist_id : p.playlist_id,
 							playlist_name : p.playlist_name,
 							position : p.position - 1
@@ -287,9 +287,9 @@ var player = {};
 				},
 				dataType : "json",
 				success : function (data) {
-					if (data && data.id) {
+					if (data.song && data.song.id) {
 						player.play({
-							song_id : data.id,
+							song_id : data.song.id,
 							playlist_id : p.playlist_id,
 							playlist_name : p.playlist_name,
 							position : p.position + 1
