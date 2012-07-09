@@ -836,7 +836,7 @@ List optional modules.
     {
       // all available modules
       "file_organizer": {
-	"enabled": BOOLEAN
+        "enabled": BOOLEAN
       }
     }
 </pre>
