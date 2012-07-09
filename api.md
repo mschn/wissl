@@ -296,7 +296,12 @@ The user id used as parameter can be found in the response of the `/users` reque
 * ex: `curl -H 'sessionId:UUID' -d 'username=user&password=pwd&auth=2' http://localhost/wissl/user/add`
 * ex: `curl -d 'username=admin&password=pwd&auth=1 http://localhost/wissl/user/add`
 * requires admin privileges
-* does not return anything
+* returns:<pre>
+    {
+      // newly created user
+      "user": USER
+    }
+</pre>
 
 Create a new user account.
 Clear-text password is sent as parameter. Configure the server to use SSL to prevent eavesdropping.

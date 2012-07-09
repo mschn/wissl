@@ -238,7 +238,7 @@ public class REST {
 
 	@POST
 	@Path("user/add")
-	public void addUser(@FormParam("username") String username,
+	public String addUser(@FormParam("username") String username,
 			@FormParam("password") String password, @FormParam("auth") int auth)
 			throws SQLException, SecurityError {
 		long l = System.nanoTime();
@@ -250,6 +250,9 @@ public class REST {
 		if (password.trim().length() < 4) {
 			throw new IllegalArgumentException("Password too short");
 		}
+
+		StringBuilder ret = new StringBuilder();
+		ret.append("{\"user\":");
 
 		if (sid == null || sid.trim().length() == 0 && auth == 1) {
 			// no user is present, accept the first admin creation
@@ -264,7 +267,9 @@ public class REST {
 				DB.get().addUser(u);
 				Logger.info("Added first user: " + username + " from "
 						+ request.getRemoteAddr());
-				return;
+				ret.append(u.toJSON());
+				ret.append("}");
+				return ret.toString();
 			}
 		}
 
@@ -286,12 +291,16 @@ public class REST {
 		u.password = password.getBytes();
 		u.hashPassword();
 
+		ret.append(u.toJSON());
+		ret.append("}");
+
 		DB.get().addUser(u);
 
 		RuntimeStats.addUserCount(1);
 
 		nocache();
 		log(s, l);
+		return ret.toString();
 	}
 
 	@POST
