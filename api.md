@@ -49,7 +49,8 @@ Summary
   * [`/indexer/status`](#m30)
   * [`/logs`](#m31)
   * [`/stats`](#m32)
-  * [`/shutdown`](#m33)
+  * [`/info`](#m33)
+  * [`/shutdown`](#m34)
 
 Preamble
 --------
@@ -747,12 +748,33 @@ This method only returns the content of the last file, to investigate on recent 
         "uptime": INT
       }
     }
-<pre>
+</pre>
 
 Return a short list of runtime statistics properties for the server.
 
+### <a id="m33"></a>`/info`
+* method: `GET`
+* path: `/info`
+* no parameter
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/info`
+* returns:<pre>
+    {
+      // server release version
+      "version": STRING,
+      // server build number
+      "build": STRING,
+      // java servlet container
+      "server": STRING,
+      // operating system
+      "os": STRING,
+      // java version
+      "java": STRING
+    }
+</pre>
 
-### <a id="m33"></a>`/shutdown`s
+Returns various information about the server runtime environment.
+
+### <a id="m34"></a>`/shutdown`
 * method: `POST`
 * path: `/shutdown`
 * no parameter
