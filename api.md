@@ -39,7 +39,7 @@ Summary
   * [`/albums/{artist_id}`](#albumsartist_id)
   * [`/songs/{album_id}`](#songsalbum_id)
   * [`/song/{song_id}`](#songsong_id)
-  * [`/song/{song_id}/stream`](#songsong_id)
+  * [`/song/{song_id}/stream`](#songsong_idstream)
   * [`/search/{query}`](#searchquery)
   * [`/art/{album_id}`](#artalbum_id)
   * [`/folders`](#folders)
