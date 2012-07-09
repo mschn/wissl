@@ -1350,6 +1350,40 @@ public class H2DB extends DB {
 		}
 		return ret;
 	}
+	
+	@Override
+	public Song getSong(String hash) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		Song ret = new Song();
+
+		try {
+			st = conn.prepareStatement("SELECT * " + "FROM song WHERE hash=?");
+			st.setString(1, hash);
+			ResultSet rs = st.executeQuery();
+
+			if (rs.next()) {
+				ret.id = rs.getInt("song_id");
+				ret.album_id = rs.getInt("album_id");
+				ret.album_name = rs.getString("album_name");
+				ret.artist_id = rs.getInt("artist_id");
+				ret.artist_name = rs.getString("artist_name");
+				ret.title = rs.getString("title");
+				ret.position = rs.getInt("position");
+				ret.disc_no = rs.getInt("disc_no");
+				ret.duration = rs.getInt("duration");
+				ret.format = rs.getString("format");
+			} else {
+				return null;
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
 
 	@Override
 	public Song getSong(int song_id) throws SQLException {
@@ -1944,5 +1978,32 @@ public class H2DB extends DB {
 				conn.close();
 		}
 		return ret;
+	}
+	
+	@Override
+	public int updateSongLocation(Song song) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement("UPDATE song SET filepath = ?, hash = ?"
+					+ " WHERE song_id = ?");
+
+			st.setString(1, song.filepath);
+			st.setString(2, song.hash);
+			st.setInt(3, song.id);
+
+			int result = st.executeUpdate();
+			if (result >= 0) {
+				return result;
+			} else {
+				throw new SQLException("Failed to update song " + song.title);
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
 	}
 }

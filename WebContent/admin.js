@@ -22,15 +22,21 @@ var wsl = wsl || {};
 	'use strict';
 
 	wsl.displayAdmin = function (scroll) {
-		var cb, folders = null, users = null;
+		var cb, folders = null, users = null, modules = null;
 
 		wsl.lockUI();
 
 		cb = function () {
-			var i, content;
+			var i, content, fileOrganizerModule = null;
 
 			if (!users || !folders) {
 				return;
+			}
+
+			if (!!modules) {
+				if (!!modules.file_organizer) {
+					fileOrganizerModule = modules.file_organizer;
+				}
 			}
 
 			content = '<h3>Music folders</h3>';
@@ -81,6 +87,16 @@ var wsl = wsl || {};
 				}, 1000);
 			}
 
+			if (fileOrganizerModule !== null) {
+				content += '<ul>';
+				content += '<li id="fileOragnizerEnable" class="selectable">';
+				content += '<span onclick="wsl.enableFileOrganizer(this.parentNode)" ';
+				content += 'class="select-box">&nbsp</span>';
+				content += '<span>File oragnizer</span>';
+				content += '</li>';
+				content += '</ul>';
+			}
+
 			content += '<h3>Users</h3>';
 			content += '<ul id="admin-users-list">';
 			for (i = 0; i < users.length; i += 1) {
@@ -110,6 +126,11 @@ var wsl = wsl || {};
 			wsl.refreshNavbar({
 				admin : true
 			});
+
+			if (fileOrganizerModule !== null && fileOrganizerModule.enabled) {
+				wsl.select('#fileOragnizerEnable');
+			}
+
 			wsl.unlockUI();
 		};
 
@@ -125,6 +146,22 @@ var wsl = wsl || {};
 			},
 			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to display admin", xhr);
+				wsl.unlockUI();
+			}
+		});
+
+		$.ajax({
+			url : '/wissl/modules',
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			dataType : 'json',
+			success : function (data) {
+				modules = data.modules;
+				cb();
+			},
+			error : function (xhr, textStatus, errorThrown) {
+				wsl.ajaxError("Failed to get modules info", xhr);
 				wsl.unlockUI();
 			}
 		});
@@ -377,6 +414,45 @@ var wsl = wsl || {};
 			});
 		}, function () {
 		});
+	};
+
+	wsl.enableFileOrganizer = function (parentNode) {
+		var enabled = false;
+
+		wsl.toggleSelection(parentNode);
+
+		enabled = $(parentNode).hasClass('selected');
+		console.log($(parentNode));
+
+		wsl.lockUI();
+
+		$.ajax({
+			url : '/wissl/file_organizer/enable',
+			type : 'POST',
+			headers : {
+				sessionId : wsl.sessionId
+			},
+			data : {
+				enabled : enabled
+			},
+			success : function (data) {
+				if (data) {
+					if (data.enabled) {
+						wsl.select(parentNode);
+					} else {
+						wsl.deselect(parentNode);
+					}
+				}
+
+				wsl.unlockUI();
+				wsl.displayAdmin();
+			},
+			error : function (xhr) {
+				wsl.unlockUI();
+				wsl.ajaxError("Failed to enable/disable file organizer", xhr);
+			}
+		});
+
 	};
 
 }(wsl));

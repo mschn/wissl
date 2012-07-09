@@ -52,6 +52,7 @@ import org.jboss.resteasy.spi.NotFoundException;
 import fr.msch.wissl.common.Config;
 import fr.msch.wissl.server.exception.ForbiddenException;
 import fr.msch.wissl.server.exception.SecurityError;
+import fr.msch.wissl.util.FileOrganizer;
 
 /**
  * RESTful HTTP frontend using JBoss RESTEASY
@@ -1211,6 +1212,49 @@ public class REST {
 				+ ",");
 		sb.append("\"os\":" + JSONObject.quote(Config.getOsInfo()) + ",");
 		sb.append("\"java\":" + JSONObject.quote(Config.getJavaInfo()));
+		sb.append('}');
+
+		nocache();
+		log(s, l1);
+
+		return sb.toString();
+	}
+	
+	/**
+	 * Enable/disable file oragnizer module
+	 * 
+	 * @param enabled TRUE to enable
+	 * @return FileOrganizer module enable status
+	 * @throws SecurityError
+	 */
+	@POST
+	@Path("file_organizer/enable")
+	public String enableFileOragnizer(@FormParam("enabled") boolean enabled)
+			throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), false);
+
+		Config.enableFileOrganizer(enabled);
+
+		log(s, l1);
+
+		return FileOrganizer.get().toJSON();
+	}
+
+	@GET
+	@Path("modules")
+	public String getModules() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), false);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append('{');
+		sb.append("\"modules\":");
+
+		sb.append(FileOrganizer.get().toJSON());
+
 		sb.append('}');
 
 		nocache();

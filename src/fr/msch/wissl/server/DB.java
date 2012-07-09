@@ -296,6 +296,13 @@ public abstract class DB {
 	 * @throws SQLException
 	 */
 	public abstract Song getSong(int song_id) throws SQLException;
+	
+	/**
+	 * @param hash MD5 hash of a song filepath
+	 * @return the song corresponding the hash, or null
+	 * @throws SQLException
+	 */
+	public abstract Song getSong(String hash) throws SQLException;
 
 	/**
 	 * @param album_id unique album id in DB
@@ -392,4 +399,12 @@ public abstract class DB {
 	public abstract List<Song> searchSong(String title, int maxResults)
 			throws SQLException;
 
+	/**
+	 * Update song tags
+	 * 
+	 * @param song song to update
+	 * @throws SQLException
+	 */
+	public abstract int updateSongLocation(Song song) throws SQLException;
+	
 }

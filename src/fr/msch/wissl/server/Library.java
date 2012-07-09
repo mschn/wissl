@@ -54,6 +54,7 @@ import org.jaudiotagger.tag.images.Artwork;
 import org.jboss.util.file.Files;
 
 import fr.msch.wissl.common.Config;
+import fr.msch.wissl.util.FileOrganizer;
 
 /**
  * 
@@ -134,6 +135,19 @@ public class Library {
 
 		instance.startIndexing();
 	}
+	
+	/**
+	 * Get the current library
+	 * 
+	 * @return The library
+	 */
+	public static Library getInstance() {
+		return instance;
+	}
+
+	public String md5(String message) {
+		return new String(this.md5.digest(message.getBytes()));
+	}
 
 	/**
 	 * Kill indexer thread
@@ -183,6 +197,8 @@ public class Library {
 						.getName().toLowerCase());
 			}
 		};
+		
+		FileOrganizer.create();
 
 		Runnable timer = new Runnable() {
 
@@ -259,10 +275,12 @@ public class Library {
 									String hash = new String(md5.digest(f
 											.getAbsolutePath().getBytes()));
 
+									Song song = null;
 									boolean hasSong = false;
 
 									try {
-										hasSong = DB.get().hasSong(hash);
+										song = DB.get().getSong(hash);
+										hasSong = (song != null);
 									} catch (SQLException e) {
 										Logger.error(
 												"Failed to query DB for file "
@@ -272,6 +290,8 @@ public class Library {
 									if (!hasSong) {
 										toRead.put(hash, f);
 									} else {
+										FileOrganizer.get().organizeSong(f,
+												song);
 										skipSongCount++;
 									}
 									hashes.add(hash);
@@ -302,6 +322,10 @@ public class Library {
 									try {
 										Song s = getSong(f.getValue(),
 												f.getKey());
+										
+										FileOrganizer.get().organizeSong(
+												f.getValue(), s);
+										
 										songs.add(s);
 										addSongCount++;
 									} catch (IOException e) {
@@ -433,6 +457,8 @@ public class Library {
 					} catch (SQLException e) {
 						Logger.error("Failed to update runtime statistics", e);
 					}
+					
+					FileOrganizer.get().clean();
 
 					working = false;
 
@@ -639,6 +665,8 @@ public class Library {
 					if (!m.containsKey(album.name)) {
 						m.put(album.name, artwork.getAbsolutePath());
 					}
+					
+					FileOrganizer.get().organizeArtwork(artwork, song);
 				}
 			}
 		}

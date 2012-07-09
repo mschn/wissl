@@ -81,6 +81,9 @@ public class Config {
 	private String artworkMatcher = null;
 
 	private int sessionExpirationDelay = 0;
+	
+	/** File organizer module activation */
+	private boolean fileOrganizerEnabled = true;
 
 	/**
 	 * Create and initialize
@@ -130,6 +133,9 @@ public class Config {
 		this.artworkMatcher = getString("wsl.artwork.regex", props);
 
 		this.sessionExpirationDelay = getInt("wsl.session.expiration.delay",
+				props);
+		
+		this.fileOrganizerEnabled = getBoolean("wsl.fileoragnizer.enabled",
 				props);
 
 		if (dbClean) {
@@ -181,6 +187,8 @@ public class Config {
 		pw.println("wsl.artwork.path="
 				+ getArtworkPath().replace(tmpdir, tmpMacro).replace("\\",
 						"\\\\"));
+		pw.println("wsl.fileoragnizer.enabled=" + isFileOrganizerEnabled());
+		
 		pw.println();
 
 		pw.close();
@@ -385,7 +393,26 @@ public class Config {
 		return instance.artworkMatcher;
 	}
 
-	private static void deleteRecursive(File f) {
+	/**
+	 * Is the FileOrganizer module enabled
+	 * 
+	 * @return TRUE if FileOragnizer is enabled
+	 */
+	public static boolean isFileOrganizerEnabled() {
+		return instance.fileOrganizerEnabled;
+	}
+
+	/**
+	 * Enable/disable the FileOrganizer module
+	 * 
+	 * @param enabled
+	 *            Set TRUE to enable the FileOragnizer module, else FALSE
+	 */
+	public static void enableFileOrganizer(boolean enabled) {
+		instance.fileOrganizerEnabled = enabled;
+	}
+
+	public static void deleteRecursive(File f) {
 		if (f.isDirectory()) {
 			for (File c : f.listFiles())
 				deleteRecursive(c);
