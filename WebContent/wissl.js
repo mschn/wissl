@@ -468,7 +468,7 @@ var wsl = wsl || {};
 					dataType : 'json',
 					success : function (data) {
 						player.play({
-							song_id : data.id,
+							song_id : data.song.id,
 							playlist_id : playlist.id,
 							playlist_name : playlist.name,
 							position : 0
