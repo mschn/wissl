@@ -16,6 +16,7 @@ Summary
   * [album](#album)
   * [song](#song)
   * [playlist](#playlist)
+  * [module](#module)
 * API methods
   * [`/login`](#login)
   * [`/logout`](#logout)
@@ -51,6 +52,8 @@ Summary
   * [`/stats`](#stats)
   * [`/info`](#info)
   * [`/shutdown`](#shutdown)
+  * [`/modules`](#modules)
+  * [`/modules/file_organizer/enable`](#modulesfileorganizerenabled)
 
 Preamble
 --------
@@ -193,6 +196,19 @@ A playlist is a list of songs created by an user.
       "songs": INT,
       // total duration of all songs in seconds
       "playtime": INT
+    }
+    
+### <a id="module"></a>module
+
+Each registered module has particular parameters.
+
+    {
+      // name of the module
+      STRING: [
+      	// name of the parameter and its value
+      	STRING: STRING,
+      	...
+      ]
     }
 
 API methods
@@ -792,3 +808,37 @@ Returns various information about the server runtime environment.
 * does not return anything
 
 Shutdown the server.
+
+### <a id="modules"></a>`/modules`
+* method: `GET`
+* path: `/modules`
+* no parameter
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' -X POST http://localhost/wissl/modules`
+* returns<pre>
+    {
+      // all available modules
+      "modules": [
+        MODULE, ...
+      ]
+    }
+</pre>
+
+List optional modules.
+
+### <a id="modulesfileorganizerenabled"></a>`/modules/file_organizer/enabled`
+* method: `POST`
+* path: `/modules/file_organizer/enabled`
+* param: `enabled` enable/disable module
+* requires admin privileges
+* ex: `curl -H 'sessionId:UUID' -X POST http://localhost/wissl/modules/file_organizer/enabled&enable=true`
+* returns<pre>
+    {
+      // all available modules
+      "file_organizer": {
+	"enabled": BOOLEAN
+      }
+    }
+</pre>
+
+Give the current state of the file organizer module.
