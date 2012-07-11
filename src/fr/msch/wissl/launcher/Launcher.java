@@ -200,7 +200,6 @@ public class Launcher {
 		Map<String, String> srvArgs = new HashMap<String, String>();
 		srvArgs.put("httpPort", "" + port);
 		srvArgs.put("warfile", warFile.getAbsolutePath());
-		loadConfig(configFile);
 
 		Server srv = new BootStrap(srvArgs).boot();
 		srv.start();
@@ -221,21 +220,6 @@ public class Launcher {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private static void loadConfig(File confPath) {
-		Properties props = new Properties();
-
-		try {
-			props.load(new FileInputStream(confPath));
-		} catch (IOException e) {
-			error("Failed to load config: " + e.getMessage());
-		}
-
-		for (Entry<Object, Object> entry : props.entrySet()) {
-			System.setProperty(entry.getKey().toString(), entry.getValue()
-					.toString());
 		}
 	}
 
