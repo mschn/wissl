@@ -291,10 +291,10 @@ public class REST {
 		u.password = password.getBytes();
 		u.hashPassword();
 
+		u.id = DB.get().addUser(u);
+
 		ret.append(u.toJSON());
 		ret.append("}");
-
-		DB.get().addUser(u);
 
 		RuntimeStats.addUserCount(1);
 
