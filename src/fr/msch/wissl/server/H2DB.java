@@ -314,21 +314,26 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public void addUser(User user) throws SQLException {
+	public int addUser(User user) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
 
 		try {
 			st = conn.prepareStatement("INSERT INTO user " + //
-					"(user_name,hash,salt,auth,downloaded) VALUES(?,?,?,?,?);");
+					"(user_name,hash,salt,auth,downloaded) VALUES(?,?,?,?,?);",
+					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, user.username);
 			st.setBytes(2, user.sha1);
 			st.setBytes(3, user.salt);
 			st.setInt(4, user.auth);
 			st.setInt(5, 0);
 
-			int rs = st.executeUpdate();
-			if (rs != 1) {
+			st.executeUpdate();
+
+			ResultSet keys = st.getGeneratedKeys();
+			if (keys != null && keys.next()) {
+				return keys.getInt(1);
+			} else {
 				throw new SQLException("Could not insert user '"
 						+ user.username + "'");
 			}

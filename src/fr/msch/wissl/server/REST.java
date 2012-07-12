@@ -264,7 +264,7 @@ public class REST {
 				u.password = password.getBytes();
 				u.hashPassword();
 
-				DB.get().addUser(u);
+				u.id = DB.get().addUser(u);
 				Logger.info("Added first user: " + username + " from "
 						+ request.getRemoteAddr());
 				ret.append(u.toJSON());

@@ -73,9 +73,10 @@ public abstract class DB {
 	/**
 	 * Insert a new User record into DB
 	 * @param user user to insert
+	 * @return unique id of the inserted user
 	 * @throws SQLException
 	 */
-	public abstract void addUser(User user) throws SQLException;
+	public abstract int addUser(User user) throws SQLException;
 
 	/**
 	 * Change password for an existing user
