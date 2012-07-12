@@ -11,6 +11,8 @@
 	<property name="webinf.lib.dir" value="${war.root}/WEB-INF/lib" />
 	<property name="webinf.classes.dir" value="${war.root}/WEB-INF/classes" />
 	<property name="src.dir" value="${projectRoot}/src" />
+    <property name="test.dir" value="${projectRoot}/test" />
+    <property name="test.result" value="${projectRoot}/testresult" />
 
 	<tstamp>
 		<format property="timestamp" pattern="yyyy/MM/dd HH:mm:ss" />
@@ -46,6 +48,7 @@
 		<delete dir="${dist.dir}" />
 		<delete file="wissl.jar" />
 		<delete file="wissl.zip" />
+        <delete dir="${test.result}" />
 	</target>
 
 	<path id="src.classpath">
@@ -53,6 +56,11 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+
+    <path id="test.classpath">
+      <path refid="src.classpath" />
+      <pathelement location="${classes.dir}" />
+    </path>
 
 	<target name="compile" depends="prepare" description="Compile Java source">
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" failonerror="true" debug="true">
@@ -125,4 +133,18 @@
 		</fileset>
 	  </zip>
 	</target>
+
+    <target name="test" depends="launcher" description="Run junit tests">
+      <javac srcdir="${test.dir}" destdir="${classes.dir}" debug="true">
+        <classpath refid="src.classpath" />
+      </javac>
+      <mkdir dir="${test.result}" />
+      <junit fork="true" haltonerror="true" haltonfailure="true" printsummary="on">
+        <classpath refid="test.classpath" />
+        <formatter type="plain" />
+        <batchtest fork="yes" todir="${test.result}">
+          <fileset dir="${classes.dir}" includes="**/Test*.class" />
+        </batchtest>
+      </junit>
+    </target>
 </project>
