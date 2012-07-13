@@ -1241,6 +1241,28 @@ public class REST {
 
 		return FileOrganizer.get().toJSON();
 	}
+	
+	/**
+	 * Set default library for file oragnizer module
+	 * 
+	 * @param enabled TRUE to enable
+	 * @return FileOrganizer module enable status
+	 * @throws SecurityError
+	 */
+	@POST
+	@Path("modules/file_organizer/library")
+	public String setFileOragnizerLibrary(@FormParam("dir") String dir)
+			throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), false);
+
+		Config.setFileOrganizerLibrary(dir);
+
+		log(s, l1);
+
+		return FileOrganizer.get().toJSON();
+	}
 
 	@GET
 	@Path("modules")

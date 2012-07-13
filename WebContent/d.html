@@ -173,6 +173,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</p>
 			</fieldset>
 		</div>
+		<div class="dialog" id="fileorganizerlibrary-dialog">
+			<form method="post"
+				onsubmit='wsl.setFileOrganizerLibrary();return false'
+				name='fileorganizerlibrary-form'>
+				<fieldset>
+					<h2 id='fileorganizerlibrary-dialog-title'>Default library
+						path</h2>
+					<p id='fileorganizerlibrary-dialog-content'></p>
+					<p class='dialog-buttons'>
+						<input class='button button-ok'
+							id='fileorganizerlibrary-dialog-ok' type="submit" value="OK" />
+						<input class='button button-cancel'
+							id='fileorganizerlibrary-dialog-cancel' type='button'
+							value='Cancel'
+							onclick='wsl.cancelSelectFileOrganizerLibraryFolder()' />
+					</p>
+				</fieldset>
+			</form>
+		</div>
 		<div class="dialog" id="adduser-dialog">
 			<form method="post" onsubmit='wsl.addUser();return false'>
 				<fieldset>

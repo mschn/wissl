@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.codehaus.jettison.json.JSONObject;
+
 import fr.msch.wissl.common.Config;
 import fr.msch.wissl.server.DB;
 import fr.msch.wissl.server.Library;
@@ -106,7 +108,8 @@ public class FileOrganizer {
 		try {
 			this.checkArguments(musicPath, sourceFile, song);
 
-			String newFileDir = musicPath + File.separator
+			String libPath = this.getDefaultLibrary(musicPath);
+			String newFileDir = libPath + File.separator
 					+ this.buildDestinationDirectory(song);
 			String newFilePath = newFileDir + File.separator
 					+ this.buildSongFilename(song);
@@ -125,13 +128,13 @@ public class FileOrganizer {
 
 				this.updateSongLocation(song, newFilePath);
 			} catch (Throwable e) {
-				this.putFileToRemove(musicPath, destDir);
+				this.putFileToRemove(libPath, destDir);
 				this.putFileToNotRemove(musicPath, sourceFile.getParentFile());
 
 				throw new FileOrganizerException(e);
 			}
 
-			this.putFileToNotRemove(musicPath, destDir);
+			this.putFileToNotRemove(libPath, destDir);
 			this.putFileToRemove(musicPath, sourceFile.getParentFile());
 		} catch (FileOrganizerException e) {
 			Logger.error("FileOrganizer : cannot organize file", e);
@@ -151,7 +154,8 @@ public class FileOrganizer {
 		try {
 			this.checkArguments(musicPath, sourceFile, song);
 
-			String newFileDir = musicPath + File.separator
+			String libPath = this.getDefaultLibrary(musicPath);
+			String newFileDir = libPath + File.separator
 					+ this.buildDestinationDirectory(song);
 			String newFilePath = newFileDir + File.separator
 					+ sourceFile.getName();
@@ -168,6 +172,21 @@ public class FileOrganizer {
 		} catch (FileOrganizerException e) {
 			Logger.error("FileOrganizer : cannot organize artwork", e);
 		}
+	}
+
+	/**
+	 * TODO a commenter
+	 * @param musicPath
+	 * @return
+	 */
+	private String getDefaultLibrary(String musicPath) {
+		String configLibrary = Config.getFileOrganizerLibrary();
+
+		if (configLibrary == null || configLibrary.isEmpty()) {
+			return musicPath;
+		}
+
+		return configLibrary;
 	}
 
 	/**
@@ -327,7 +346,8 @@ public class FileOrganizer {
 		str.append("\"file_organizer\": ");
 
 		str.append('{');
-		str.append("\"enabled\":" + Config.isFileOrganizerEnabled());
+		str.append("\"enabled\":" + Config.isFileOrganizerEnabled() + ", ");
+		str.append("\"library\":" + JSONObject.quote(Config.getFileOrganizerLibrary()));
 		str.append('}');
 
 		str.append('}');

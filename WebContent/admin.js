@@ -27,7 +27,8 @@ var wsl = wsl || {};
 		wsl.lockUI();
 
 		cb = function () {
-			var i, content, fileOrganizerModule = null;
+			var i, content, fileOrganizerModule = null, fileorganizerlibraries = null, defaultLibrary = 'No default library';
+			;
 
 			if (!users || !folders) {
 				return;
@@ -88,13 +89,48 @@ var wsl = wsl || {};
 			}
 
 			if (fileOrganizerModule !== null) {
+				if (fileOrganizerModule.library.length > 0) {
+					defaultLibrary = fileOrganizerModule.library;
+				}
+
 				content += '<ul>';
 				content += '<li id="fileOragnizerEnable" class="selectable">';
 				content += '<span onclick="wsl.enableFileOrganizer(this.parentNode)" ';
 				content += 'class="select-box">&nbsp</span>';
 				content += '<span>File oragnizer</span>';
 				content += '</li>';
+				content += '<li>';
+				content += '<span>' + defaultLibrary + '</span>';
+				content += '<span onclick="wsl.showSelectFileOrganizerLibraryFolder()" ';
+				content += 'class="button">...</span>';
+				content += '</li>';
 				content += '</ul>';
+
+				fileorganizerlibraries = '<div>';
+				fileorganizerlibraries += '<input type="radio" id="null" name="fileorganizerlibrary" value="null" required="required"';
+
+				if (defaultLibrary == 'No default library') {
+					fileorganizerlibraries += 'checked';
+				}
+
+				fileorganizerlibraries += '/>';
+				fileorganizerlibraries += '<label class="radio-label" for="null">No default library</label>';
+				fileorganizerlibraries += '</div>';
+
+				for (i = 0; i < folders.length; i += 1) {
+					fileorganizerlibraries += '<div>';
+					fileorganizerlibraries += '<input type="radio" id="f' + i + '" name="fileorganizerlibrary" value="f' + i + '" required="required"';
+
+					if (defaultLibrary == folders[i]) {
+						fileorganizerlibraries += 'checked';
+					}
+
+					fileorganizerlibraries += '>';
+					fileorganizerlibraries += '<label class="radio-label" for="f' + i + '">' + folders[i] + '</label>';
+					fileorganizerlibraries += '</div>';
+				}
+
+				$('#fileorganizerlibrary-dialog-content').html(fileorganizerlibraries);
 			}
 
 			content += '<h3>Users</h3>';
@@ -453,6 +489,49 @@ var wsl = wsl || {};
 			}
 		});
 
+	};
+
+	wsl.showSelectFileOrganizerLibraryFolder = function () {
+		wsl.showDialog('fileorganizerlibrary-dialog');
+	};
+
+	wsl.cancelSelectFileOrganizerLibraryFolder = function () {
+		$('#dialog-mask').hide();
+		$('#fileorganizerlibrary-dialog').hide();
+	};
+
+	wsl.setFileOrganizerLibrary = function () {
+		var sel, dir;
+
+		sel = $('#fileorganizerlibrary-dialog input[type=radio]:checked').val();
+		if (sel) {
+			if (sel != 'null') {
+				dir = $('#fileorganizerlibrary-dialog label[for=' + sel + ']').html();
+			} else {
+				dir = '';
+			}
+
+			$.ajax({
+				url : '/wissl/modules/file_organizer/library',
+				type : 'POST',
+				headers : {
+					sessionId : wsl.sessionId
+				},
+				data : {
+					dir : dir
+				},
+				success : function (data) {
+					wsl.unlockUI();
+					wsl.displayAdmin();
+				},
+				error : function (xhr) {
+					wsl.unlockUI();
+					wsl.ajaxError("Failed to change file organizer library", xhr);
+				}
+			});
+		}
+		
+		wsl.cancelSelectFileOrganizerLibraryFolder();
 	};
 
 }(wsl));

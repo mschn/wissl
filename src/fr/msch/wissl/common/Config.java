@@ -81,9 +81,11 @@ public class Config {
 	private String artworkMatcher = null;
 
 	private int sessionExpirationDelay = 0;
-	
+
 	/** File organizer module activation */
 	private boolean fileOrganizerEnabled = true;
+	/** File organizer module default library */
+	private String fileOrganizerLibrary = null;
 
 	/**
 	 * Create and initialize
@@ -134,8 +136,10 @@ public class Config {
 
 		this.sessionExpirationDelay = getInt("wsl.session.expiration.delay",
 				props);
-		
+
 		this.fileOrganizerEnabled = getBoolean("wsl.fileoragnizer.enabled",
+				props);
+		this.fileOrganizerLibrary = getString("wsl.fileoragnizer.library",
 				props);
 
 		if (dbClean) {
@@ -187,8 +191,11 @@ public class Config {
 		pw.println("wsl.artwork.path="
 				+ getArtworkPath().replace(tmpdir, tmpMacro).replace("\\",
 						"\\\\"));
+		pw.println();
 		pw.println("wsl.fileoragnizer.enabled=" + isFileOrganizerEnabled());
-		
+		pw.println("wsl.fileoragnizer.library="
+				+ getFileOrganizerLibrary().replace("\\", "\\\\"));
+
 		pw.println();
 
 		pw.close();
@@ -410,6 +417,14 @@ public class Config {
 	 */
 	public static void enableFileOrganizer(boolean enabled) {
 		instance.fileOrganizerEnabled = enabled;
+	}
+
+	public static String getFileOrganizerLibrary() {
+		return instance.fileOrganizerLibrary;
+	}
+
+	public static void setFileOrganizerLibrary(String library) {
+		instance.fileOrganizerLibrary = library;
 	}
 
 	public static void deleteRecursive(File f) {
