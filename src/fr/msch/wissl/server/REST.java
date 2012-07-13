@@ -310,7 +310,7 @@ public class REST {
 			SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr());
 
 		User user = DB.get().getUser(sess.getUserId());
 		user.password = oldPassword.getBytes();
