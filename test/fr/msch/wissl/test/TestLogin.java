@@ -29,8 +29,10 @@ import org.junit.Test;
 
 /**
  * Functional test for the following rest server endpoints:
- * /login
- * /logout
+ * <ul>
+ * <li>/login
+ * <li>/logout
+ * </ul>
  * 
  * @author mathieu.schnoor@gmail.com
  * 
@@ -43,7 +45,7 @@ public class TestLogin extends TServer {
 
 		// good username, bad password: error 401
 		PostMethod post = new PostMethod(TServer.URL + "login");
-		post.addParameter("username", username_admin);
+		post.addParameter("username", admin_username);
 		post.addParameter("password", "bad_password");
 		client.executeMethod(post);
 		post.getResponseBodyAsString();
@@ -59,8 +61,8 @@ public class TestLogin extends TServer {
 
 		// log in as admin
 		post = new PostMethod(TServer.URL + "login");
-		post.addParameter("username", username_admin);
-		post.addParameter("password", password_admin);
+		post.addParameter("username", admin_username);
+		post.addParameter("password", admin_password);
 		client.executeMethod(post);
 
 		String ret = post.getResponseBodyAsString();
@@ -70,7 +72,7 @@ public class TestLogin extends TServer {
 		int auth = obj.getInt("auth");
 
 		Assert.assertEquals(200, post.getStatusCode());
-		Assert.assertEquals(uid_admin, this.userId_admin);
+		Assert.assertEquals(uid_admin, this.admin_userId);
 		Assert.assertNotNull(UUID.fromString(sid_admin));
 		Assert.assertEquals(auth, 1);
 
@@ -83,13 +85,13 @@ public class TestLogin extends TServer {
 		// the previous session that was setup by the test case 
 		// for this user should have been destroyed
 		get = new GetMethod(TServer.URL + "stats");
-		get.addRequestHeader("sessionId", this.sessionId_admin);
+		get.addRequestHeader("sessionId", this.admin_sessionId);
 		client.executeMethod(get);
 		Assert.assertEquals(401, get.getStatusCode());
 
 		// the other user set up by the test case should still be logged in
 		get = new GetMethod(TServer.URL + "stats");
-		get.addRequestHeader("sessionId", this.sessionId_user);
+		get.addRequestHeader("sessionId", this.user_sessionId);
 		client.executeMethod(get);
 		Assert.assertEquals(200, get.getStatusCode());
 
@@ -97,12 +99,12 @@ public class TestLogin extends TServer {
 		post = new PostMethod(TServer.URL + "logout");
 		post.addRequestHeader("sessionId", sid_admin);
 		client.executeMethod(post);
-		Assert.assertEquals(200, get.getStatusCode());
+		Assert.assertEquals(204, post.getStatusCode());
 
 		post = new PostMethod(TServer.URL + "logout");
-		post.addRequestHeader("sessionId", this.sessionId_user);
+		post.addRequestHeader("sessionId", this.user_sessionId);
 		client.executeMethod(post);
-		Assert.assertEquals(200, get.getStatusCode());
+		Assert.assertEquals(204, post.getStatusCode());
 
 		// check that neither client can call 'stats'
 		get = new GetMethod(TServer.URL + "stats");
@@ -111,7 +113,7 @@ public class TestLogin extends TServer {
 		Assert.assertEquals(401, get.getStatusCode());
 
 		get = new GetMethod(TServer.URL + "stats");
-		get.addRequestHeader("sessionId", this.sessionId_user);
+		get.addRequestHeader("sessionId", this.user_sessionId);
 		client.executeMethod(get);
 		Assert.assertEquals(401, get.getStatusCode());
 	}

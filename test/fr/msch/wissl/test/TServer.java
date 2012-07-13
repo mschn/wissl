@@ -26,16 +26,27 @@ import net.winstone.Server;
 import net.winstone.boot.BootStrap;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.varia.NullAppender;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
 /**
  * Helper class for rest server testing
- * 
+ * <p>
+ * Will start a clean server,
+ * create 2 users (one admin, one regular user),
+ * and login using those 2 user accounts.
+ * Both accounts can then be used by test cases.
+ * <p>
+ * Also tests the following rest server endpoints:
+ * <ul>
+ * <li>/hasusers
+ * </ul>
  * 
  * @author mathieu.schnoor@gmail.com
  *
@@ -46,45 +57,49 @@ public class TServer extends TestCase {
 
 	protected Server srv = null;
 
-	protected int userId_admin = -1;
-	protected String sessionId_admin = null;
-	protected String username_admin = "tadmin";
-	protected String password_admin = "pw-tadmin";
+	protected int admin_userId = -1;
+	protected String admin_sessionId = null;
+	protected String admin_username = "tadmin";
+	protected String admin_password = "pw-tadmin";
 
-	protected int userId_user = -1;
-	protected String sessionId_user = null;
-	protected String username_user = "tuser";
-	protected String password_user = "pw-tuser";
+	protected int user_userId = -1;
+	protected String user_sessionId = null;
+	protected String user_username = "tuser";
+	protected String user_password = "pw-tuser";
 
 	@Before
 	public void setUp() throws Exception {
 		startServer();
 
+		Assert.assertFalse(hasUsers());
+
 		// create admin-level user
-		String ret = this.addUser(username_admin, password_admin, "1", null);
+		String ret = this.addUser(admin_username, admin_password, "1", null);
 		JSONObject o = new JSONObject(ret);
 		JSONObject user = o.getJSONObject("user");
-		this.userId_admin = user.getInt("id");
-		Assert.assertEquals(this.username_admin, user.getString("username"));
+		this.admin_userId = user.getInt("id");
+		Assert.assertEquals(this.admin_username, user.getString("username"));
 
 		// login admin
-		ret = this.login(username_admin, password_admin);
+		ret = this.login(admin_username, admin_password);
 		o = new JSONObject(ret);
-		Assert.assertEquals(this.userId_admin, o.getInt("userId"));
-		this.sessionId_admin = o.getString("sessionId");
+		Assert.assertEquals(this.admin_userId, o.getInt("userId"));
+		this.admin_sessionId = o.getString("sessionId");
 
 		// create user-level user
-		ret = this.addUser(username_user, password_user, "2", sessionId_admin);
+		ret = this.addUser(user_username, user_password, "2", admin_sessionId);
 		o = new JSONObject(ret);
 		user = o.getJSONObject("user");
-		this.userId_user = user.getInt("id");
-		Assert.assertEquals(this.username_user, user.getString("username"));
+		this.user_userId = user.getInt("id");
+		Assert.assertEquals(this.user_username, user.getString("username"));
 
 		// login user
-		ret = this.login(username_user, password_user);
+		ret = this.login(user_username, user_password);
 		o = new JSONObject(ret);
-		Assert.assertEquals(this.userId_user, o.getInt("userId"));
-		this.sessionId_user = o.getString("sessionId");
+		Assert.assertEquals(this.user_userId, o.getInt("userId"));
+		this.user_sessionId = o.getString("sessionId");
+
+		Assert.assertTrue(hasUsers());
 	}
 
 	@After
@@ -104,7 +119,7 @@ public class TServer extends TestCase {
 		System.setProperty("wsl.music.path", "");
 		System.setProperty("wsl.log.file.enabled", "false");
 		System.setProperty("wsl.log.stdout.trace", "true");
-		System.setProperty("wsl.log.debug.enabled", "false");
+		//System.setProperty("wsl.log.debug.enabled", "false");
 		System.setProperty("wsl.log.trace.length", "30");
 		System.setProperty("wsl.config", conf.getAbsolutePath());
 
@@ -123,7 +138,16 @@ public class TServer extends TestCase {
 		LogManager.getLogger(BootStrap.class).addAppender(new NullAppender());
 	}
 
-	private String addUser(String username, String password, String auth,
+	protected boolean hasUsers() throws IOException, JSONException {
+		HttpClient c = new HttpClient();
+		GetMethod get = new GetMethod(TServer.URL + "hasusers");
+		c.executeMethod(get);
+		Assert.assertEquals(200, get.getStatusCode());
+		JSONObject obj = new JSONObject(get.getResponseBodyAsString());
+		return obj.getBoolean("hasusers");
+	}
+
+	protected String addUser(String username, String password, String auth,
 			String sessionId) throws IOException {
 		HttpClient c = new HttpClient();
 		PostMethod m = new PostMethod(URL + "user/add");
@@ -138,7 +162,7 @@ public class TServer extends TestCase {
 		return ret;
 	}
 
-	private String login(String username, String password) throws IOException {
+	protected String login(String username, String password) throws IOException {
 		HttpClient c = new HttpClient();
 		PostMethod m = new PostMethod(URL + "login");
 		m.addParameter("username", username);
