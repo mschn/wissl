@@ -335,11 +335,16 @@ public class REST {
 		Session sess = Session.check(sid, request.getRemoteAddr(), true);
 		int uid = sess.getUserId();
 
+		if (user_ids.length == 0) {
+			throw new IllegalArgumentException("No user specified");
+		}
+
 		for (int user_id : user_ids) {
 			if (uid == user_id) {
 				throw new IllegalArgumentException(
 						"You cannot remove your own user.");
 			}
+
 			DB.get().removeUser(user_id);
 			RuntimeStats.addUserCount(-1);
 		}
