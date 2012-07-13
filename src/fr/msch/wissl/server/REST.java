@@ -143,10 +143,11 @@ public class REST {
 	public void logout() throws SecurityError {
 		long t = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session removed = Session.remove(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session.remove(sess);
 
 		nocache();
-		log(removed, t);
+		log(sess, t);
 	}
 
 	@GET
@@ -345,6 +346,10 @@ public class REST {
 						"You cannot remove your own user.");
 			}
 
+			Session s = Session.getSession(user_id);
+			if (s != null) {
+				Session.remove(s);
+			}
 			DB.get().removeUser(user_id);
 			RuntimeStats.addUserCount(-1);
 		}

@@ -182,14 +182,11 @@ public class Session {
 
 	/**
 	 * Destroy given session
-	 * @param id unique session id
-	 * @param origin
+	 * @param sess session to destroy
 	 * @throws SecurityError
 	 */
-	public static Session remove(String id, String origin) throws SecurityError {
-		check(id, origin);
-		UUID uid = UUID.fromString(id);
-		return sessions.remove(uid);
+	public static void remove(Session sess) throws SecurityError {
+		sessions.remove(sess.id);
 	}
 
 	/**
