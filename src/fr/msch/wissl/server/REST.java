@@ -244,10 +244,10 @@ public class REST {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
 
-		if (username.trim().length() == 0) {
+		if (username == null || username.trim().length() == 0) {
 			throw new IllegalArgumentException("Empty user name");
 		}
-		if (password.trim().length() < 4) {
+		if (password == null || password.trim().length() < 4) {
 			throw new IllegalArgumentException("Password too short");
 		}
 
