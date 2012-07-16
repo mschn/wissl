@@ -15,6 +15,7 @@
  */
 package fr.msch.wissl.server;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
@@ -35,30 +36,73 @@ public class Album {
 	public String genre = "";
 	/** number of songs */
 	public int songs = 0;
-	/** DB unique artist id */
-	public int artist_id = 0;
 	/** playtime in seconds */
 	public long playtime = 0;
-	/** path to the artwork image on the local FS */
-	public String artwork_path = null;
 	/** artist name */
 	public String artist_name = null;
+	/** DB unique artist id */
+	public int artist_id = 0;
+	/** path to the artwork image on the local FS */
+	public String artwork_path = null;
+
+	public boolean has_art = false;
+
+	public Album() {
+	}
+
+	public Album(String json) {
+		try {
+			JSONObject o = new JSONObject(json);
+			id = o.getInt("id");
+			name = o.getString("name");
+			date = o.getString("date");
+			genre = o.getString("genre");
+			songs = o.getInt("songs");
+			playtime = o.getInt("playtime");
+			artist_id = o.getInt("artist");
+			artist_name = o.getString("artist_name");
+			has_art = o.getBoolean("artwork");
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Invalid JSON", e);
+		}
+	}
 
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
+		boolean hasArt = (artwork_path != null && artwork_path.trim().length() > 0);
 		str.append('{');
 		str.append("\"id\":" + id + ",");
-		str.append("\"artist\":" + artist_id + ",");
-		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
 		str.append("\"name\":" + JSONObject.quote(name) + ",");
 		str.append("\"date\":" + JSONObject.quote(date) + ",");
 		str.append("\"genre\":" + JSONObject.quote(genre) + ",");
 		str.append("\"songs\":" + songs + ",");
-		str.append("\"playtime\":" + playtime);
-		if (artwork_path != null && artwork_path.trim().length() > 0) {
-			str.append(",\"artwork\":true");
-		}
+		str.append("\"playtime\":" + playtime + ",");
+		str.append("\"artist\":" + artist_id + ",");
+		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
+		str.append("\"artwork\":" + hasArt);
 		str.append('}');
 		return str.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Album) {
+			boolean ret = true;
+			Album a = (Album) o;
+			ret |= this.name.equals(a.name);
+			ret |= this.date.equals(a.date);
+			ret |= this.genre.equals(a.genre);
+			ret |= this.songs == a.songs;
+			ret |= this.playtime == a.playtime;
+			ret |= this.artist_name == a.artist_name;
+			return ret;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return toJSON();
 	}
 }

@@ -15,6 +15,7 @@
  */
 package fr.msch.wissl.server;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
@@ -27,21 +28,8 @@ import org.codehaus.jettison.json.JSONObject;
 public class Song {
 	/** DB unique id */
 	public int id = 0;
-	/** DB album unique id */
-	public int album_id = 0;
-	/** DB artist unique id */
-	public int artist_id = 0;
-
-	/** absolute file path on the local filesystem */
-	public String filepath = "";
-	/** MD5 hash of filePath */
-	public String hash = "";
 	/** song title */
 	public String title = "";
-	/** album name */
-	public String album_name = "";
-	/**artist name */
-	public String artist_name = "";
 	/** song position in album */
 	public int position = 0;
 	/** song duration in seconds */
@@ -51,26 +39,83 @@ public class Song {
 	/** multiple CDs that mess with song position in album */
 	public int disc_no = 0;
 
+	/** DB album unique id */
+	public int album_id = 0;
+	/** album name */
+	public String album_name = "";
+	/** DB artist unique id */
+	public int artist_id = 0;
+	/**artist name */
+	public String artist_name = "";
+
+	/** absolute file path on the local filesystem */
+	public String filepath = "";
+	/** MD5 hash of filePath */
+	public String hash = "";
+
 	/** album containing this song */
 	public Album album = null;
 	/** artist who authored this song */
 	public Artist artist = null;
 
+	public Song() {
+	}
+
+	public Song(String json) {
+		try {
+			JSONObject o = new JSONObject(json);
+			id = o.getInt("id");
+			title = o.getString("title");
+			position = o.getInt("position");
+			duration = o.getInt("duration");
+			format = o.getString("format");
+			disc_no = o.getInt("disc_no");
+			album_id = o.getInt("album_id");
+			album_name = o.getString("album_name");
+			artist_id = o.getInt("artist_id");
+			artist_name = o.getString("artist_name");
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Invalid JSON", e);
+		}
+	}
+
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		str.append('{');
 		str.append("\"id\":" + id + ",");
-		str.append("\"album_id\":" + album_id + ",");
-		str.append("\"artist_id\":" + artist_id + ",");
 		str.append("\"title\": " + JSONObject.quote(title) + ",");
-		str.append("\"album_name\": " + JSONObject.quote(album_name) + ",");
-		str.append("\"artist_name\": " + JSONObject.quote(artist_name) + ",");
 		str.append("\"position\":" + position + ",");
-		str.append("\"disc_no\":" + disc_no + ",");
 		str.append("\"duration\":" + duration + ",");
-		str.append("\"format\":" + JSONObject.quote(format));
+		str.append("\"format\":" + JSONObject.quote(format) + ",");
+		str.append("\"disc_no\":" + disc_no + ",");
+		str.append("\"album_id\":" + album_id + ",");
+		str.append("\"album_name\": " + JSONObject.quote(album_name) + ",");
+		str.append("\"artist_id\":" + artist_id + ",");
+		str.append("\"artist_name\": " + JSONObject.quote(artist_name));
 		str.append('}');
 		return str.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Song) {
+			boolean ret = true;
+			Song s = (Song) o;
+			ret |= this.title.equals(s.title);
+			ret |= this.position == s.position;
+			ret |= this.duration == s.duration;
+			ret |= this.disc_no == s.disc_no;
+			ret |= this.album_name.equals(s.album_name);
+			ret |= this.artist_name.equals(s.artist_name);
+			return ret;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return toJSON();
 	}
 
 }

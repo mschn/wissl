@@ -15,6 +15,7 @@
  */
 package fr.msch.wissl.server;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 /**
@@ -35,6 +36,22 @@ public class Artist {
 	/** playtime in seconds */
 	public long playtime = 0;
 
+	public Artist() {
+	}
+
+	public Artist(String json) {
+		try {
+			JSONObject o = new JSONObject(json);
+			id = o.getInt("id");
+			name = o.getString("name");
+			albums = o.getInt("albums");
+			songs = o.getInt("songs");
+			playtime = o.getLong("playtime");
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Invalid JSON", e);
+		}
+	}
+
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		str.append('{');
@@ -47,4 +64,23 @@ public class Artist {
 		return str.toString();
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof Artist) {
+			boolean ret = true;
+			Artist a = (Artist) o;
+			ret |= this.name.equals(a.name);
+			ret |= this.albums == a.albums;
+			ret |= this.songs == a.songs;
+			ret |= this.playtime == a.playtime;
+			return ret;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return toJSON();
+	}
 }
