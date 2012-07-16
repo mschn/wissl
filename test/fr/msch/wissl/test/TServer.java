@@ -53,7 +53,7 @@ import org.junit.Before;
  */
 public class TServer extends TestCase {
 
-	public static final String URL = "http://localhost:8080/wissl/";
+	public static final String URL = "http://localhost:8888/wissl/";
 
 	protected Server srv = null;
 
@@ -121,10 +121,13 @@ public class TServer extends TestCase {
 		System.setProperty("wsl.log.stdout.trace", "true");
 		//System.setProperty("wsl.log.debug.enabled", "false");
 		System.setProperty("wsl.log.trace.length", "30");
+		System.setProperty("wsl.log.file.path", "$TMP/wsl-test/wsl.log.txt");
+		System.setProperty("wsl.db.path", "$TMP/wsl-test/H2");
 		System.setProperty("wsl.config", conf.getAbsolutePath());
 
 		Map<String, String> srvArgs = new HashMap<String, String>();
-		srvArgs.put("httpPort", "8080");
+		srvArgs.put("httpPort", "8888");
+		srvArgs.put("ajp13Port", "-1");
 		srvArgs.put("warfile", warFile.getAbsolutePath());
 
 		this.srv = new BootStrap(srvArgs).boot();
@@ -171,4 +174,15 @@ public class TServer extends TestCase {
 		String ret = m.getResponseBodyAsString();
 		return ret;
 	}
+
+	protected void addMusicFolder() throws IOException {
+		HttpClient c = new HttpClient();
+		PostMethod post = new PostMethod(URL + "folders/add");
+		post.addRequestHeader("sessionId", this.admin_sessionId);
+		File folder = new File("test/data/");
+		post.addParameter("directory", folder.getAbsolutePath());
+		c.executeMethod(post);
+		Assert.assertEquals(204, post.getStatusCode());
+	}
+
 }
