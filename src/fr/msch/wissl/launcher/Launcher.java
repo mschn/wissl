@@ -197,6 +197,7 @@ public class Launcher {
 	static Server startServer(File warFile, File configFile, int port) {
 		Map<String, String> srvArgs = new HashMap<String, String>();
 		srvArgs.put("httpPort", "" + port);
+		srvArgs.put("ajp13Port", "-1");
 		srvArgs.put("warfile", warFile.getAbsolutePath());
 
 		Server srv = new BootStrap(srvArgs).boot();
