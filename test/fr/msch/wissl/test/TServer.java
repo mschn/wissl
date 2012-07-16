@@ -35,6 +35,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 
+import fr.msch.wissl.common.Config;
+
 /**
  * Helper class for rest server testing
  * <p>
@@ -133,6 +135,8 @@ public class TServer extends TestCase {
 		this.srv = new BootStrap(srvArgs).boot();
 		this.srv.start();
 
+		Config.setNowrite(true);
+
 		LogManager.resetConfiguration();
 		LogManager.getRootLogger().removeAllAppenders();
 		LogManager.getRootLogger().addAppender(new NullAppender());
@@ -184,5 +188,4 @@ public class TServer extends TestCase {
 		c.executeMethod(post);
 		Assert.assertEquals(204, post.getStatusCode());
 	}
-
 }

@@ -39,6 +39,7 @@ public class Config {
 
 	/** singleton instance */
 	private static Config instance = null;
+	private static boolean nowrite = false;
 
 	/** will expand as tmpdir for file paths */
 	private static String tmpMacro = "$TMP";
@@ -87,6 +88,13 @@ public class Config {
 	 */
 	public static void create() throws IOException {
 		instance = new Config();
+	}
+
+	/**
+	 * @param b when true, never write config back to file
+	 */
+	public static void setNowrite(boolean b) {
+		nowrite = b;
 	}
 
 	private Config() throws IOException {
@@ -142,6 +150,10 @@ public class Config {
 	}
 
 	public static synchronized void write() throws IOException {
+		if (nowrite) {
+			return;
+		}
+
 		PrintWriter pw = new PrintWriter(new FileOutputStream(
 				instance.configFile, false));
 		// not using Properties#store(),
