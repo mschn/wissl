@@ -31,11 +31,14 @@ import fr.msch.wissl.common.Config;
 public class DateHelper {
 
 	private final static String defaultFormat = "yy-MM-dd hh:mm:ss.SSS";
+	private final static String compactFormat = "yyMMddhhmmss";
 
 	/**
 	 * Timestamps formatter
 	 */
 	private static DateFormat timeStamps = null;
+	private static DateFormat compactStamps = null;
+
 	/**
 	 * Singleton instance
 	 */
@@ -48,6 +51,7 @@ public class DateHelper {
 	 */
 	private DateHelper() {
 		String format = Config.getLogDateFormat();
+		compactStamps = new SimpleDateFormat(compactFormat);
 		try {
 			timeStamps = new SimpleDateFormat(format);
 		} catch (Exception e) {
@@ -73,6 +77,14 @@ public class DateHelper {
 
 		Date now = new Date();
 		return timeStamps.format(now);
+	}
+
+	/**
+	 * @return current time formatted as a compact String
+	 */
+	public static String getCompactFormat() {
+		init();
+		return compactStamps.format(new Date());
 	}
 
 	/**

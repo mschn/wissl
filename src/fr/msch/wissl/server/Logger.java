@@ -194,18 +194,19 @@ public class Logger {
 		if (this.linesAppended >= Config.getLogMaxlines()) {
 			this.linesAppended = 0;
 
+			this.out.close();
+
 			File old = new File(this.outPath);
 			File dir = old.getParentFile();
 			File moved = new File(dir.getAbsolutePath() + File.separatorChar
-					+ old.getName() + "-"
-					+ DateHelper.getTimeStamps().replace(' ', '-'));
-			boolean ret = old.renameTo(moved);
+					+ old.getName() + "-" + DateHelper.getCompactFormat());
 
+			boolean ret = old.renameTo(moved);
 			if (!ret) {
-				this.out.println("Failed to rotate logs. Could not move old file.");
+				openLogFile(this.outPath, false);
+				Logger.error("Failed to rotate logs");
+				Logger.debug("Target was: " + moved.getAbsolutePath());
 			} else {
-				this.out.println("Log continues in another file");
-				this.out.close();
 				openLogFile(this.outPath, false);
 				this.out.println("Log has been rotated. Previous log file is "
 						+ moved.getAbsolutePath());
