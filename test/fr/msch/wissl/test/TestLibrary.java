@@ -40,6 +40,7 @@ import fr.msch.wissl.server.Song;
  * <li>/song/id
  * <li>/song/id/stream
  * <li>/art/id
+ * <li>/search
  * </ul>
  * 
  * @author mathieu.schnoor@gmail.com
@@ -145,8 +146,10 @@ public class TestLibrary extends TServer {
 							get.getResponseHeader("Content-Type").getValue());
 				}
 			}
-
 		}
+
+		// test searching
+
 	}
 
 	private List<Album> getAlbums(Artist artist) throws Exception {
@@ -331,7 +334,7 @@ public class TestLibrary extends TServer {
 			s.position = 1;
 			s.duration = 1;
 			s.format = "audio/mp3";
-			s.disc_no = 0;
+			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
 			s.filepath = "test/data/10.mp3";
@@ -339,7 +342,7 @@ public class TestLibrary extends TServer {
 			s.position = 2;
 			s.duration = 1;
 			s.format = "audio/mp3";
-			s.disc_no = 0;
+			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
 			s.filepath = "test/data/11.mp3";
@@ -347,23 +350,23 @@ public class TestLibrary extends TServer {
 			s.position = 3;
 			s.duration = 1;
 			s.format = "audio/mp3";
-			s.disc_no = 0;
+			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
 			s.filepath = "test/data/12.mp3";
 		} else if (title.equals("Thirteen")) {
-			s.position = 4;
+			s.position = 1;
 			s.duration = 1;
 			s.format = "audio/mp3";
-			s.disc_no = 0;
+			s.disc_no = 2;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
 			s.filepath = "test/data/13.mp3";
 		} else if (title.equals("Fourteen")) {
-			s.position = 5;
+			s.position = 2;
 			s.duration = 1;
 			s.format = "audio/mp3";
-			s.disc_no = 0;
+			s.disc_no = 2;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
 			s.filepath = "test/data/14.mp3";
