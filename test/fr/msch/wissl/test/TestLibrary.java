@@ -148,7 +148,74 @@ public class TestLibrary extends TServer {
 			}
 		}
 
-		// test searching
+		// search/ should be 404
+		get = new GetMethod(URL + "search/");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(404, get.getStatusCode());
+
+		// search/foo should return only artist 'Foo'
+		get = new GetMethod(URL + "search/foo?sessionId=" + user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals(0, obj.getJSONArray("albums").length());
+		assertEquals(0, obj.getJSONArray("songs").length());
+		artists = obj.getJSONArray("artists");
+		assertEquals(1, artists.length());
+		assertEquals(getArtist("Foo"), new Artist(artists.get(0).toString()));
+
+		// search/y should return nothing
+		get = new GetMethod(URL + "search/y");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals(0, obj.getJSONArray("albums").length());
+		assertEquals(0, obj.getJSONArray("artists").length());
+		assertEquals(0, obj.getJSONArray("songs").length());
+
+		// search/te should return 4 songs: ten,thirteen,fourteen,fifteen
+		get = new GetMethod(URL + "search/te");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals(0, obj.getJSONArray("albums").length());
+		assertEquals(0, obj.getJSONArray("artists").length());
+		JSONArray songs = obj.getJSONArray("songs");
+		assertEquals(4, songs.length());
+		for (int i = 0; i < songs.length(); i++) {
+			Song s = new Song(songs.get(i).toString());
+			assertTrue(s.title.equals("Ten") || s.title.equals("Thirteen")
+					|| s.title.equals("Fourteen") || s.title.equals("Fifteen"));
+			assertEquals(getSong(s.title), s);
+		}
+
+		// search/o shoud return 1 album, 2 artists, 4 songs
+		get = new GetMethod(URL + "search/o");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		JSONArray albums = obj.getJSONArray("albums");
+		artists = obj.getJSONArray("artists");
+		songs = obj.getJSONArray("songs");
+		assertEquals(1, albums.length());
+		assertEquals(getAlbum("Ok"), new Album(albums.get(0).toString()));
+		assertEquals(2, artists.length());
+		for (int i = 0; i < artists.length(); i++) {
+			Artist a = new Artist(artists.get(i).toString());
+			assertTrue(a.name.equals("Bob") || a.name.equals("Foo"));
+			assertEquals(getArtist(a.name), a);
+		}
+		assertEquals(4, songs.length());
+		for (int i = 0; i < songs.length(); i++) {
+			Song s = new Song(songs.get(i).toString());
+			assertTrue(s.title.equals("Fourteen") || s.title.equals("Four")
+					|| s.title.equals("Two") || s.title.equals("One"));
+			assertEquals(getSong(s.title), s);
+		}
 
 	}
 
