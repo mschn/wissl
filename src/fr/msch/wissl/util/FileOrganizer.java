@@ -248,22 +248,30 @@ public class FileOrganizer {
 	 * 
 	 * @param song The song containing the information
 	 * @return The correct and complete directory path
+	 * @throws FileOrganizerException Due to missing song information
 	 */
-	private String buildDestinationDirectory(Song song) {
+	private String buildDestinationDirectory(Song song)
+			throws FileOrganizerException {
 		String result = DEFAULT_DIRECTORY_FORMAT;
 
-		if (song.artist_name.isEmpty()) {
-			result = result.replaceAll("%artist%", "Artiste inconnu");
-		} else {
+		if (!song.artist_name.isEmpty()) {
 			result = result.replaceAll("%artist%",
 					this.formatPath(song.artist_name));
+		} else if (Config.allowFileOrganizeMissingTag()) {
+			result = result.replaceAll("%artist%", "Artiste inconnu");
+		} else {
+			throw new FileOrganizerException("Missing artist tag for file : "
+					+ song.filepath);
 		}
 
-		if (song.album_name.isEmpty()) {
-			result = result.replaceAll("%album%", "Album inconnu");
-		} else {
+		if (!song.album_name.isEmpty()) {
 			result = result.replaceAll("%album%",
 					this.formatPath(song.album_name));
+		} else if (Config.allowFileOrganizeMissingTag()) {
+			result = result.replaceAll("%album%", "Album inconnu");
+		} else {
+			throw new FileOrganizerException("Missing album tag for file : "
+					+ song.filepath);
 		}
 
 		return result;
@@ -274,11 +282,11 @@ public class FileOrganizer {
 	 * 
 	 * @param song The song containing the information
 	 * @return The correct and complete file name
-	 * @throws FileOrganizerException The song doesn't contain a title
+	 * @throws FileOrganizerException Due to missing song information
 	 */
 	private String buildSongFilename(Song song) throws FileOrganizerException {
 		if (song.title.isEmpty()) {
-			throw new FileOrganizerException("Song title is empty "
+			throw new FileOrganizerException("Missing title tag for file "
 					+ song.filepath);
 		}
 
@@ -287,8 +295,11 @@ public class FileOrganizer {
 		if (song.position > 0) {
 			result = result.replaceAll("%position%",
 					String.format("%02d", song.position));
-		} else {
+		} else if (Config.allowFileOrganizeMissingTag()) {
 			result = result.replaceAll("%position%[ ]*", "");
+		} else {
+			throw new FileOrganizerException("Missing position tag for file : "
+					+ song.filepath);
 		}
 
 		result = result.replaceAll("%title%", song.title);
@@ -347,7 +358,8 @@ public class FileOrganizer {
 
 		str.append('{');
 		str.append("\"enabled\":" + Config.isFileOrganizerEnabled() + ", ");
-		str.append("\"library\":" + JSONObject.quote(Config.getFileOrganizerLibrary()));
+		str.append("\"library\":"
+				+ JSONObject.quote(Config.getFileOrganizerLibrary()));
 		str.append('}');
 
 		str.append('}');

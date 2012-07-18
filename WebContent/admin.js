@@ -27,7 +27,7 @@ var wsl = wsl || {};
 		wsl.lockUI();
 
 		cb = function () {
-			var i, content, fileOrganizerModule = null, fileorganizerlibraries = null, defaultLibrary = 'No default library';
+			var i, content, fileOrganizerModule = null, fileorganizerlibraries = null, defaultLibrary = 'Use default file library';
 			;
 
 			if (!users || !folders) {
@@ -93,28 +93,31 @@ var wsl = wsl || {};
 					defaultLibrary = fileOrganizerModule.library;
 				}
 
+				content += '<h3>File oragnizer</h3>';
 				content += '<ul>';
 				content += '<li id="fileOragnizerEnable" class="selectable">';
 				content += '<span onclick="wsl.enableFileOrganizer(this.parentNode)" ';
 				content += 'class="select-box">&nbsp</span>';
-				content += '<span>File oragnizer</span>';
+				content += '<span>Enable</span>';
 				content += '</li>';
 				content += '<li>';
 				content += '<span>' + defaultLibrary + '</span>';
-				content += '<span onclick="wsl.showSelectFileOrganizerLibraryFolder()" ';
-				content += 'class="button">...</span>';
+
 				content += '</li>';
 				content += '</ul>';
+				
+				content += '<span onclick="wsl.showSelectFileOrganizerLibraryFolder()" ';
+				content += 'class="button">Select default library...</span>';
 
 				fileorganizerlibraries = '<div>';
 				fileorganizerlibraries += '<input type="radio" id="null" name="fileorganizerlibrary" value="null" required="required"';
 
-				if (defaultLibrary == 'No default library') {
+				if (defaultLibrary == 'Use default file library') {
 					fileorganizerlibraries += 'checked';
 				}
 
 				fileorganizerlibraries += '/>';
-				fileorganizerlibraries += '<label class="radio-label" for="null">No default library</label>';
+				fileorganizerlibraries += '<label class="radio-label" for="null">Use default file library</label>';
 				fileorganizerlibraries += '</div>';
 
 				for (i = 0; i < folders.length; i += 1) {
@@ -490,7 +493,7 @@ var wsl = wsl || {};
 		});
 
 	};
-
+	
 	wsl.showSelectFileOrganizerLibraryFolder = function () {
 		wsl.showDialog('fileorganizerlibrary-dialog');
 	};

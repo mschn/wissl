@@ -86,6 +86,8 @@ public class Config {
 	private boolean fileOrganizerEnabled = true;
 	/** File organizer module default library */
 	private String fileOrganizerLibrary = null;
+	/** File organizer is applied even if tags are missing */
+	private boolean allowFileOrganizeMissingTag = false;
 
 	/**
 	 * Create and initialize
@@ -141,6 +143,8 @@ public class Config {
 				props);
 		this.fileOrganizerLibrary = getString("wsl.fileoragnizer.library",
 				props);
+		this.allowFileOrganizeMissingTag = getBoolean(
+				"wsl.fileoragnizer.missing.tags.allowed", props);
 
 		if (dbClean) {
 			deleteRecursive(new File(this.artworkPath));
@@ -195,6 +199,8 @@ public class Config {
 		pw.println("wsl.fileoragnizer.enabled=" + isFileOrganizerEnabled());
 		pw.println("wsl.fileoragnizer.library="
 				+ getFileOrganizerLibrary().replace("\\", "\\\\"));
+		pw.println("wsl.fileoragnizer.missing.tags.allowed="
+				+ allowFileOrganizeMissingTag());
 
 		pw.println();
 
@@ -427,6 +433,14 @@ public class Config {
 		instance.fileOrganizerLibrary = library;
 	}
 
+	public static void setAllowFileOrganizeMissingTag(boolean allow) {
+		instance.allowFileOrganizeMissingTag = allow;
+	}
+
+	public static boolean allowFileOrganizeMissingTag() {
+		return instance.allowFileOrganizeMissingTag;
+	}
+
 	public static void deleteRecursive(File f) {
 		if (f.isDirectory()) {
 			for (File c : f.listFiles())
@@ -434,4 +448,5 @@ public class Config {
 		}
 		f.delete();
 	}
+
 }
