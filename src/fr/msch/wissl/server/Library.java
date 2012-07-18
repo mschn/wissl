@@ -547,6 +547,10 @@ public class Library {
 
 			String discNo = tag.getFirst(FieldKey.DISC_NO);
 			if (discNo != null && discNo.trim().length() > 0) {
+				mat = positionPattern.matcher(discNo);
+				if (mat.matches() && mat.groupCount() == 1) {
+					song.disc_no = Integer.parseInt(mat.group(1));
+				}
 				try {
 					song.disc_no = Integer.parseInt(discNo);
 				} catch (Throwable t) {
