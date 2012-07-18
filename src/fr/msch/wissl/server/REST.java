@@ -958,7 +958,7 @@ public class REST {
 			}
 		};
 
-		Logger.info("GET art/" + album_id + " " + request.getRemoteAddr());
+		Logger.debug("GET art/" + album_id + " " + request.getRemoteAddr());
 		return Response.status(200) //
 				.type("image/jpeg") //
 				.header("Content-Length", f.length()) //
