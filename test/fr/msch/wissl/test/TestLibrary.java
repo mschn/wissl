@@ -15,6 +15,7 @@
  */
 package fr.msch.wissl.test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,9 @@ import fr.msch.wissl.server.Song;
  * <li>/artists
  * <li>/albums/id
  * <li>/songs/id
+ * <li>/song/id
+ * <li>/song/id/stream
+ * <li>/art/id
  * </ul>
  * 
  * @author mathieu.schnoor@gmail.com
@@ -99,8 +103,46 @@ public class TestLibrary extends TServer {
 				}
 				assertEquals(album.has_art, art);
 
+				// check artwork is present
+				get = new GetMethod(URL + "art/" + album.id);
+				client.executeMethod(get);
+				if (art) {
+					Assert.assertEquals(200, get.getStatusCode());
+					Assert.assertEquals("image/jpeg",
+							get.getResponseHeader("Content-Type").getValue());
+				} else {
+					Assert.assertEquals(404, get.getStatusCode());
+				}
+
 				for (Song song : getSongs(album, artist)) {
-					assertEquals(getSong(song.title), song);
+					Song ex_song = getSong(song.title);
+					assertEquals(ex_song, song);
+
+					get = new GetMethod(URL + "song/" + song.id);
+					get.addRequestHeader("sessionId", user_sessionId);
+					client.executeMethod(get);
+					Assert.assertEquals(200, get.getStatusCode());
+
+					obj = new JSONObject(get.getResponseBodyAsString());
+					Song s = new Song(obj.getJSONObject("song").toString());
+					Album al = new Album(obj.getJSONObject("album").toString());
+					Artist ar = new Artist(obj.getJSONObject("artist")
+							.toString());
+					Assert.assertEquals(ex_song, s);
+					Assert.assertEquals(getArtist(artist.name), ar);
+					Assert.assertEquals(getAlbum(album.name), al);
+
+					// check that the stream works
+					get = new GetMethod(URL + "song/" + song.id
+							+ "/stream?sessionId=" + user_sessionId);
+					client.executeMethod(get);
+					Assert.assertEquals(200, get.getStatusCode());
+					int len = (int) new File(ex_song.filepath).length();
+					int len2 = Integer.parseInt(get.getResponseHeader(
+							"Content-Length").getValue());
+					Assert.assertEquals(len, len2);
+					Assert.assertEquals("audio/mpeg",
+							get.getResponseHeader("Content-Type").getValue());
 				}
 			}
 
@@ -220,6 +262,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/1.mp3";
 		} else if (title.equals("Two")) {
 			s.position = 2;
 			s.duration = 1;
@@ -227,6 +270,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/2.mp3";
 		} else if (title.equals("Three")) {
 			s.position = 3;
 			s.duration = 1;
@@ -234,6 +278,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/3.mp3";
 		} else if (title.equals("Four")) {
 			s.position = 4;
 			s.duration = 1;
@@ -241,6 +286,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/4.mp3";
 		} else if (title.equals("Five")) {
 			s.position = 1;
 			s.duration = 1;
@@ -248,6 +294,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/5.mp3";
 		} else if (title.equals("Six")) {
 			s.position = 2;
 			s.duration = 1;
@@ -255,6 +302,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/6.mp3";
 		} else if (title.equals("Seven")) {
 			s.position = 3;
 			s.duration = 1;
@@ -262,6 +310,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
+			s.filepath = "test/data/7.mp3";
 		} else if (title.equals("Eight")) {
 			s.position = 1;
 			s.duration = 1;
@@ -269,6 +318,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Qux";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/8.mp3";
 		} else if (title.equals("Nine")) {
 			s.position = 2;
 			s.duration = 1;
@@ -276,6 +326,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Qux";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/9.mp3";
 		} else if (title.equals("Ten")) {
 			s.position = 1;
 			s.duration = 1;
@@ -283,6 +334,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/10.mp3";
 		} else if (title.equals("Eleven")) {
 			s.position = 2;
 			s.duration = 1;
@@ -290,6 +342,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/11.mp3";
 		} else if (title.equals("Twelve")) {
 			s.position = 3;
 			s.duration = 1;
@@ -297,6 +350,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/12.mp3";
 		} else if (title.equals("Thirteen")) {
 			s.position = 4;
 			s.duration = 1;
@@ -304,6 +358,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/13.mp3";
 		} else if (title.equals("Fourteen")) {
 			s.position = 5;
 			s.duration = 1;
@@ -311,6 +366,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/14.mp3";
 		} else if (title.equals("Fifteen")) {
 			s.position = 1;
 			s.duration = 1;
@@ -318,6 +374,7 @@ public class TestLibrary extends TServer {
 			s.disc_no = 0;
 			s.album_name = "Ok";
 			s.artist_name = "Bob";
+			s.filepath = "test/data/15.mp3";
 		} else {
 			throw new IllegalArgumentException("Unknown song " + title);
 		}
