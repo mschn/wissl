@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import fr.msch.wissl.server.Album;
 import fr.msch.wissl.server.Artist;
+import fr.msch.wissl.server.RuntimeStats;
 import fr.msch.wissl.server.Song;
 
 /**
@@ -51,32 +52,15 @@ public class TestLibrary extends TServer {
 	public void test() throws Exception {
 		HttpClient client = new HttpClient();
 
+		RuntimeStats rt = new RuntimeStats();
+		rt.songCount.set(15);
+		rt.albumCount.set(5);
+		rt.artistCount.set(2);
+		rt.playlistCount.set(2);
+		rt.playtime.set(2);
+		rt.downloaded.set(0);
 		// add mp3 folder to server indexer
-		this.addMusicFolder();
-
-		// wait for indexer to finish
-		boolean done = false;
-		do {
-			GetMethod get = new GetMethod(URL + "stats");
-			get.addRequestHeader("sessionId", this.user_sessionId);
-			client.executeMethod(get);
-			Assert.assertEquals(200, get.getStatusCode());
-			JSONObject obj = new JSONObject(get.getResponseBodyAsString());
-			JSONObject stats = obj.getJSONObject("stats");
-
-			// song count is updated when indexer finishes
-			if (stats.getInt("songs") > 0) {
-				done = true;
-				Assert.assertEquals(15, stats.getInt("songs"));
-				Assert.assertEquals(5, stats.getInt("albums"));
-				Assert.assertEquals(2, stats.getInt("artists"));
-				Assert.assertEquals(0, stats.getInt("playlists"));
-				Assert.assertEquals(2, stats.getInt("users"));
-				Assert.assertEquals(15, stats.getInt("playtime"));
-				Assert.assertEquals(0, stats.getInt("downloaded"));
-			}
-			Thread.sleep(100);
-		} while (!done);
+		this.addMusicFolder("test/data", rt);
 
 		// get artists list
 		GetMethod get = new GetMethod(URL + "artists");

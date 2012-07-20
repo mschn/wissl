@@ -36,6 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import fr.msch.wissl.common.Config;
+import fr.msch.wissl.server.RuntimeStats;
 
 /**
  * Helper class for rest server testing
@@ -179,13 +180,38 @@ public class TServer extends TestCase {
 		return ret;
 	}
 
-	protected void addMusicFolder() throws IOException {
+	protected void addMusicFolder(String path, RuntimeStats rtStats)
+			throws Exception {
 		HttpClient c = new HttpClient();
 		PostMethod post = new PostMethod(URL + "folders/add");
 		post.addRequestHeader("sessionId", this.admin_sessionId);
-		File folder = new File("test/data/");
+		File folder = new File(path);
 		post.addParameter("directory", folder.getAbsolutePath());
 		c.executeMethod(post);
 		Assert.assertEquals(204, post.getStatusCode());
+
+		// wait for indexer to finish
+		boolean done = false;
+		do {
+			GetMethod get = new GetMethod(URL + "indexer/status");
+			get.addRequestHeader("sessionId", this.admin_sessionId);
+			c.executeMethod(get);
+			Assert.assertEquals(200, get.getStatusCode());
+			JSONObject obj = new JSONObject(get.getResponseBodyAsString());
+
+			if (!obj.getBoolean("running")) {
+				done = true;
+
+				get = new GetMethod(URL + "stats");
+				get.addRequestHeader("sessionId", this.user_sessionId);
+				c.executeMethod(get);
+				Assert.assertEquals(200, get.getStatusCode());
+				obj = new JSONObject(get.getResponseBodyAsString());
+				RuntimeStats ret = new RuntimeStats(obj.getJSONObject("stats")
+						.toString());
+				assertEquals(rtStats, ret);
+			}
+			Thread.sleep(100);
+		} while (!done);
 	}
 }

@@ -422,13 +422,17 @@ public class Library {
 					long dbUpdateTime = (System.currentTimeMillis() - u1);
 
 					try {
-						RuntimeStats.setSongCount(DB.get().getSongCount());
-						RuntimeStats.setAlbumCount(DB.get().getAlbumCount());
-						RuntimeStats.setArtistCount(DB.get().getArtistCount());
-						RuntimeStats.setPlaylistCount(DB.get()
+						RuntimeStats.get().songCount.set(DB.get()
+								.getSongCount());
+						RuntimeStats.get().albumCount.set(DB.get()
+								.getAlbumCount());
+						RuntimeStats.get().artistCount.set(DB.get()
+								.getArtistCount());
+						RuntimeStats.get().playlistCount.set(DB.get()
 								.getPlaylistCount());
-						RuntimeStats.setUserCount(DB.get().getUserCount());
-						RuntimeStats.setPlaytime(DB.get()
+						RuntimeStats.get().userCount.set(DB.get()
+								.getUserCount());
+						RuntimeStats.get().playtime.set(DB.get()
 								.getTotalSongDuration());
 					} catch (SQLException e) {
 						Logger.error("Failed to update runtime statistics", e);

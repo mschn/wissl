@@ -297,7 +297,7 @@ public class REST {
 		ret.append(u.toJSON());
 		ret.append("}");
 
-		RuntimeStats.addUserCount(1);
+		RuntimeStats.get().userCount.addAndGet(1);
 
 		nocache();
 		log(s, l);
@@ -351,7 +351,7 @@ public class REST {
 				Session.remove(s);
 			}
 			DB.get().removeUser(user_id);
-			RuntimeStats.addUserCount(-1);
+			RuntimeStats.get().userCount.addAndGet(-1);
 		}
 
 		nocache();
@@ -369,7 +369,7 @@ public class REST {
 
 		StringBuilder sb = new StringBuilder();
 		Playlist pl = DB.get().addPlaylist(uid, name);
-		RuntimeStats.addPlaylistCount(1);
+		RuntimeStats.get().playlistCount.addAndGet(1);
 		sb.append("{\"playlist\":");
 		sb.append(pl.toJSON());
 		sb.append("}");
@@ -404,8 +404,7 @@ public class REST {
 			count += DB.get().addAlbumsToPlaylist(pl.id, album_ids, uid);
 		}
 		pl = DB.get().getPlaylist(pl.id);
-
-		RuntimeStats.setPlaylistCount(DB.get().getPlaylistCount());
+		RuntimeStats.get().playlistCount.set(DB.get().getPlaylistCount());
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ \"added\":" + count + ",");
@@ -452,8 +451,7 @@ public class REST {
 		}
 		DB.get().addSongsToPlaylist(pl.id, ids, uid);
 		pl = DB.get().getPlaylist(pl.id);
-
-		RuntimeStats.setPlaylistCount(DB.get().getPlaylistCount());
+		RuntimeStats.get().playlistCount.set(DB.get().getPlaylistCount());
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ \"added\":" + number + ",");
@@ -592,7 +590,7 @@ public class REST {
 			throw new IllegalArgumentException("No playlist ids provided");
 
 		int ret = DB.get().removePlaylists(playlist_ids, uid);
-		RuntimeStats.addPlaylistCount(-ret);
+		RuntimeStats.get().playlistCount.addAndGet(-ret);
 
 		nocache();
 		log(sess, l);
@@ -874,7 +872,7 @@ public class REST {
 				} catch (Throwable t) {
 					return;
 				} finally {
-					RuntimeStats.addDownloaded(totalBytes);
+					RuntimeStats.get().downloaded.addAndGet(totalBytes);
 					try {
 						DB.get().updateDownloadedBytes(s.getUserId(),
 								totalBytes);
@@ -952,7 +950,7 @@ public class REST {
 				} catch (Throwable t) {
 					return;
 				} finally {
-					RuntimeStats.addDownloaded(totalBytes);
+					RuntimeStats.get().downloaded.addAndGet(totalBytes);
 					in.close();
 				}
 			}
@@ -1199,7 +1197,7 @@ public class REST {
 		Session s = Session.check(sid, request.getRemoteAddr(), false);
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("{\"stats\":" + RuntimeStats.toJSON() + "}");
+		sb.append("{\"stats\":" + RuntimeStats.get().toJSON() + "}");
 
 		nocache();
 		log(s, l1);

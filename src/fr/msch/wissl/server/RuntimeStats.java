@@ -17,6 +17,10 @@ package fr.msch.wissl.server;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 /**
  * Holds and exposes very simple runtime statistics
@@ -31,154 +35,94 @@ public class RuntimeStats {
 
 	private static RuntimeStats instance = null;
 
-	/** total number of songs known */
-	private long songCount;
-	private long albumCount;
-	private long artistCount;
-	private long playlistCount;
-	private long userCount;
-	private long playtime;
-	private long downloaded;
+	public AtomicLong songCount;
+	public AtomicLong albumCount;
+	public AtomicLong artistCount;
+	public AtomicLong playlistCount;
+	public AtomicLong userCount;
+	public AtomicLong playtime;
+	public AtomicLong downloaded;
 
 	private Date uptime;
 
-	private RuntimeStats() {
-		this.uptime = Calendar.getInstance().getTime();
+	/**
+	 * @return global singleton instance
+	 */
+	static RuntimeStats get() {
+		if (instance == null) {
+			instance = new RuntimeStats();
+		}
+		return instance;
 	}
 
-	static void create() {
-		instance = new RuntimeStats();
+	public RuntimeStats() {
+		this.uptime = Calendar.getInstance().getTime();
+		songCount = new AtomicLong();
+		albumCount = new AtomicLong();
+		artistCount = new AtomicLong();
+		playlistCount = new AtomicLong();
+		userCount = new AtomicLong();
+		playtime = new AtomicLong();
+		downloaded = new AtomicLong();
+	}
+
+	public RuntimeStats(String json) {
+		this();
+		try {
+			JSONObject o = new JSONObject(json);
+			songCount.set(o.getInt("songs"));
+			albumCount.set(o.getInt("albums"));
+			artistCount.set(o.getInt("artists"));
+			playlistCount.set(o.getInt("playlists"));
+			userCount.set(o.getInt("users"));
+			playtime.set(o.getInt("playtime"));
+			downloaded.set(o.getInt("downloaded"));
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Invalid JSON", e);
+		}
 	}
 
 	/**
 	 * @return a JSON representation of this object
 	 */
-	public static String toJSON() {
+	public String toJSON() {
 		StringBuilder sb = new StringBuilder();
 
 		long dt = Calendar.getInstance().getTime().getTime()
-				- instance.uptime.getTime();
+				- this.uptime.getTime();
 
-		sb.append("{\"songs\":" + instance.songCount);
-		sb.append(",\"albums\":" + instance.albumCount);
-		sb.append(",\"artists\":" + instance.artistCount);
-		sb.append(",\"playlists\":" + instance.playlistCount);
-		sb.append(",\"users\":" + instance.userCount);
-		sb.append(",\"playtime\":" + instance.playtime);
-		sb.append(",\"downloaded\":" + instance.downloaded);
+		sb.append("{\"songs\":" + this.songCount);
+		sb.append(",\"albums\":" + this.albumCount);
+		sb.append(",\"artists\":" + this.artistCount);
+		sb.append(",\"playlists\":" + this.playlistCount);
+		sb.append(",\"users\":" + this.userCount);
+		sb.append(",\"playtime\":" + this.playtime);
+		sb.append(",\"downloaded\":" + this.downloaded);
 		sb.append(",\"uptime\":" + dt + "}");
 
 		return sb.toString();
 	}
 
-	public static long getSongCount() {
-		return instance.songCount;
-	}
-
-	public static void setSongCount(long songCount) {
-		synchronized (instance) {
-			instance.songCount = songCount;
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof RuntimeStats) {
+			boolean ret = true;
+			RuntimeStats r = (RuntimeStats) o;
+			ret |= this.songCount.equals(r.songCount);
+			ret |= this.albumCount.equals(r.albumCount);
+			ret |= this.artistCount.equals(r.artistCount);
+			ret |= this.playlistCount.equals(r.playlistCount);
+			ret |= this.userCount.equals(r.userCount);
+			ret |= this.playtime.equals(r.playtime);
+			return ret;
+		} else {
+			return false;
 		}
 	}
 
-	public static void addSongCount(long add) {
-		synchronized (instance) {
-			instance.songCount += add;
-		}
-	}
-
-	public static long getAlbumCount() {
-		return instance.albumCount;
-	}
-
-	public static void setAlbumCount(long albumCount) {
-		synchronized (instance) {
-			instance.albumCount = albumCount;
-		}
-	}
-
-	public static void addAlbumCount(long add) {
-		synchronized (instance) {
-			instance.albumCount += add;
-		}
-	}
-
-	public static long getArtistCount() {
-		return instance.artistCount;
-	}
-
-	public static void setArtistCount(long artistCount) {
-		synchronized (instance) {
-			instance.artistCount = artistCount;
-		}
-	}
-
-	public static void addArtistCount(long add) {
-		synchronized (instance) {
-			instance.artistCount += add;
-		}
-	}
-
-	public static long getPlaylistCount() {
-		return instance.playlistCount;
-	}
-
-	public static void setPlaylistCount(long playlists) {
-		synchronized (instance) {
-			instance.playlistCount = playlists;
-		}
-	}
-
-	public static void addPlaylistCount(int add) {
-		synchronized (instance) {
-			instance.playlistCount += add;
-		}
-	}
-
-	public static long getPlaytime() {
-		return instance.playtime;
-	}
-
-	public static void setPlaytime(long playtime) {
-		synchronized (instance) {
-			instance.playtime = playtime;
-		}
-	}
-
-	public static long getUserCount() {
-		return instance.userCount;
-	}
-
-	public static void setUserCount(long users) {
-		synchronized (instance) {
-			instance.userCount = users;
-		}
-	}
-
-	public static void addUserCount(int add) {
-		synchronized (instance) {
-			instance.userCount += add;
-		}
-	}
-
-	public static long getDownloaded() {
-		return instance.downloaded;
-	}
-
-	public static void setDownloaded(long downloaded) {
-		synchronized (instance) {
-			instance.downloaded = downloaded;
-		}
-	}
-
-	public static void addDownloaded(int add) {
-		synchronized (instance) {
-			instance.downloaded += add;
-		}
-	}
-
-	public static long getUptime() {
-		return instance.uptime.getTime();
+	@Override
+	public String toString() {
+		return toJSON();
 	}
 
 }
