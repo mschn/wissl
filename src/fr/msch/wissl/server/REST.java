@@ -1095,7 +1095,7 @@ public class REST {
 			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), true);
 
 		if (directory != null) {
 			for (String dir : directory) {
