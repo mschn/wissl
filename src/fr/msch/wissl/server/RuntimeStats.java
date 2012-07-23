@@ -106,15 +106,15 @@ public class RuntimeStats {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof RuntimeStats) {
-			boolean ret = true;
 			RuntimeStats r = (RuntimeStats) o;
-			ret |= this.songCount.equals(r.songCount);
-			ret |= this.albumCount.equals(r.albumCount);
-			ret |= this.artistCount.equals(r.artistCount);
-			ret |= this.playlistCount.equals(r.playlistCount);
-			ret |= this.userCount.equals(r.userCount);
-			ret |= this.playtime.equals(r.playtime);
-			return ret;
+
+			return (this.songCount.intValue() == r.songCount.intValue()
+					&& this.albumCount.intValue() == r.albumCount.intValue()
+					&& this.artistCount.intValue() == r.artistCount.intValue()
+					&& this.playlistCount.intValue() == r.playlistCount
+							.intValue()
+					&& this.userCount.intValue() == r.userCount.intValue() && this.playtime
+						.intValue() == r.playtime.intValue());
 		} else {
 			return false;
 		}

@@ -189,8 +189,11 @@ public class TServer extends TestCase {
 		post.addParameter("directory", folder.getAbsolutePath());
 		c.executeMethod(post);
 		Assert.assertEquals(204, post.getStatusCode());
+		checkStats(rtStats);
+	}
 
-		// wait for indexer to finish
+	protected void checkStats(RuntimeStats rtStats) throws Exception {
+		HttpClient c = new HttpClient();
 		boolean done = false;
 		do {
 			GetMethod get = new GetMethod(URL + "indexer/status");

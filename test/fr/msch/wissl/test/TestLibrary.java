@@ -56,8 +56,9 @@ public class TestLibrary extends TServer {
 		rt.songCount.set(15);
 		rt.albumCount.set(5);
 		rt.artistCount.set(2);
-		rt.playlistCount.set(2);
-		rt.playtime.set(2);
+		rt.userCount.set(2);
+		rt.playlistCount.set(0);
+		rt.playtime.set(15);
 		rt.downloaded.set(0);
 		// add mp3 folder to server indexer
 		this.addMusicFolder("test/data", rt);
