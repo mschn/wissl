@@ -722,11 +722,9 @@ The folders currently indexed can be listed with the method `/folders`.
 * ex: `curl -X POST -H 'sessionId:UUID' http://localhost/wissl/indexer/rescan`
 * does not return anything
 
-Gets music library indexation system status.
+Forces library indexer to rescan all folders now.
 
-Indexation is triggered when adding or removing a folder.
-This method allows an administrator to know if the indexer is running,
-and have an estimate of the time left before finishing.
+If it is currently already running, it will be stopped and restarted.
 
 ### <a id="logs"></a>`/logs`
 * method: `POST`
