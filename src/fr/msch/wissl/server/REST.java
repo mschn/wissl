@@ -1123,6 +1123,31 @@ public class REST {
 	}
 
 	@GET
+	@Path("indexer/status")
+	public String getIndexerStatus() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		String ret = Library.getIndexerStatusAsJSON();
+
+		log(s, l1);
+		return ret;
+	}
+
+	@POST
+	@Path("indexer/rescan")
+	public void rescan() throws SecurityError {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		Library.interrupt();
+
+		log(s, l1);
+	}
+
+	@GET
 	@Path("logs")
 	public Response getLogs() throws SecurityError {
 		long l1 = System.nanoTime();
@@ -1174,19 +1199,6 @@ public class REST {
 		Bootstrap.shutdown();
 		log(s, l1);
 		System.exit(0);
-	}
-
-	@GET
-	@Path("indexer/status")
-	public String getIndexerStatus() throws SecurityError {
-		long l1 = System.nanoTime();
-		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
-
-		String ret = Library.getIndexerStatusAsJSON();
-
-		log(s, l1);
-		return ret;
 	}
 
 	@GET

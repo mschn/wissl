@@ -48,7 +48,8 @@ var wsl = wsl || {};
 				content += '<p>No music folders!</p>';
 			}
 			content += '<div><span class="button button-add" onclick="wsl.showAddMusicFolder()">Add</span>';
-			content += '<span class="button button-cancel" onclick="wsl.removeMusicFolder()">Remove</span><div>';
+			content += '<span class="button button-cancel" onclick="wsl.removeMusicFolder()">Remove</span>';
+			content += '<span class="button button-rescan" onclick="wsl.rescan()">Rescan</span></div>';
 
 			content += '<p id="admin-indexer-status">&nbsp;</p>';
 
@@ -98,7 +99,7 @@ var wsl = wsl || {};
 			content += '<div><span class="button button-add" onclick="wsl.showAddUser()">Add</span>';
 			content += '<span class="button button-cancel" onclick="wsl.removeUser()">Remove</span><div>';
 
-			content += '<h3>Other</h3>';
+			content += '<h3>Server</h3>';
 			cb = 'window.open(\'/wissl/logs?&sessionId=' + wsl.sessionId + '\',\'_blank\')';
 			content += '<p><span class="button button-logs" onclick="' + cb + '">Server logs</span></p>';
 			content += '<p><span class="button button-shutdown" onclick="wsl.shutdown()">Shutdown server</p>';
@@ -354,6 +355,25 @@ var wsl = wsl || {};
 	wsl.cancelAddMusicFolder = function () {
 		$('#dialog-mask').hide();
 		$('#addmusic-dialog').hide();
+	};
+
+	wsl.rescan = function () {
+		wsl.lockUI();
+		$.ajax({
+			url : 'wissl/indexer/rescan',
+			type : 'POST',
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			success : function () {
+				wsl.unlockUI();
+				wsl.displayAdmin();
+			},
+			error : function (xhr, textStatus, errorThrown) {
+				wsl.ajaxError("Rescan folders failed", xhr);
+				wsl.unlockUI();
+			}
+		});
 	};
 
 	wsl.shutdown = function () {

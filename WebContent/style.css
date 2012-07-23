@@ -162,7 +162,16 @@ body {
 	background-image: url("img/logs_24.png");
 }
 
+.button-rescan {
+	background-image: url("img/refresh_24.png");
+}
+
+.button-password {
+	background-image: url("img/lock_24.png");
+}
+
 .button-shutdown {
+	background-color: rgb(255, 220, 220);
 	background-image: url("img/shutdown_24.png");
 }
 

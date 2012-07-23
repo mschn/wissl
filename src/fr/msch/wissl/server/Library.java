@@ -147,6 +147,11 @@ public class Library {
 		instance.thread.interrupt();
 	}
 
+	/**
+	 * Interrupt indexer thread.
+	 * This causes the indexer to rescan from start immediately,
+	 * whether it is currently scanning or sleeping.
+	 */
 	public static void interrupt() {
 		instance.thread.interrupt();
 	}

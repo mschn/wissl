@@ -47,6 +47,7 @@ Summary
   * [`/folders/add`](#foldersadd)
   * [`/folders/remove`](#foldersremove)
   * [`/indexer/status`](#indexerstatus)
+  * [`/indexer/rescan`](#indexerrescan)
   * [`/logs`](#logs)
   * [`/stats`](#stats)
   * [`/info`](#info)
@@ -713,6 +714,13 @@ The folders currently indexed can be listed with the method `/folders`.
       "songsTodo": INT
     }
 </pre>
+
+### <a id="indexerrescan"></a>`/indexer/rescan`
+* method: `POST`
+* no parameter
+* requires admin privileges
+* ex: `curl -X POST -H 'sessionId:UUID' http://localhost/wissl/indexer/rescan`
+* does not return anything
 
 Gets music library indexation system status.
 
