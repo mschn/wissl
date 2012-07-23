@@ -83,14 +83,28 @@ body {
 	background: 0 0 no-repeat url('img/logo_80.png');
 }
 
+.login .greet {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: rgb(140, 140, 140);
+	text-shadow: 0 1px 1px white;
+}
+
+.error em {
+	color: rgb(240, 140, 80);
+	border: 1px solid rgb(240, 210, 190);
+	background: rgb(255, 230, 210);
+	padding: 5px;
+	font-style: normal;
+}
+
 .error {
 	display: none;
-	border: 1px solid rgb(200, 150, 100);
-	background-color: rgb(255, 220, 210);
-	color: rgb(70, 40, 0);
+	color: rgb(140, 140, 140);
+	font-weight: bold;
 	font-size: 1em;
-	padding: 5px;
-	margin: 10px;
+	padding: 10px;
+	text-shadow: 0 1px 1px white;
 }
 
 .login fieldset {
@@ -1333,8 +1347,8 @@ span.users-connected {
 	height: 40px;
 	width: 40px;
 	border: 0;
-	background: 4px 4px no-repeat url("img/search_32.png"); display :
-	inline-block;
+	background: 4px 4px no-repeat url("img/search_32.png");
+	display: inline-block;
 	color: transparent;
 	display: inline-block;
 }

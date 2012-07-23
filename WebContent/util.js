@@ -66,10 +66,10 @@ var wsl = wsl || {};
 
 		console.log(xhr, xhr.responseText, status);
 		if (e) {
-			errorMsg = "<strong>Error " + status + "</strong><br>";
+			errorMsg = "<em>Error " + status + "</em> ";
 			errorMsg += message + ": " + e.message;
 		} else {
-			errorMsg = "Could not connect to server";
+			errorMsg = "<em>Could not connect to server</em>";
 		}
 		if (status === 0 || status === 401 || status === 503) {
 			if (errorElementId) {
@@ -82,9 +82,9 @@ var wsl = wsl || {};
 				$('#' + errorElementId).html(errorMsg).show();
 			} else {
 				wsl.error(errorMsg);
-			}
-			if (wsl.pageLoaded === false) {
-				wsl.displayArtists();
+				if (wsl.pageLoaded === false) {
+					wsl.displayHome();
+				}
 			}
 		}
 	};
