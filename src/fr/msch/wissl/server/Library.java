@@ -160,17 +160,13 @@ public class Library {
 	 * @return indexer status as JSON object
 	 */
 	public static String getIndexerStatusAsJSON() {
-		if (instance.working) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("{\"running\": true,");
-			sb.append("\"percentDone\":" + instance.percentDone + ",");
-			sb.append("\"secondsLeft\":" + instance.secondsLeft + ",");
-			sb.append("\"songsDone\":" + instance.songsDone + ",");
-			sb.append("\"songsTodo\":" + instance.songsTodo + "}");
-			return sb.toString();
-		} else {
-			return "{\"running\": false}";
-		}
+		StringBuilder sb = new StringBuilder();
+		sb.append("{\"running\": " + instance.working + ",");
+		sb.append("\"percentDone\":" + instance.percentDone + ",");
+		sb.append("\"secondsLeft\":" + instance.secondsLeft + ",");
+		sb.append("\"songsDone\":" + instance.songsDone + ",");
+		sb.append("\"songsTodo\":" + instance.songsTodo + "}");
+		return sb.toString();
 	}
 
 	private Library() {
