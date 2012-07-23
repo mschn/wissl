@@ -641,7 +641,7 @@ These folders are relative to the server's local filesystem.
 * method: `GET`
 * param: `directory` optional directory to list, or `$ROOT` to view filesystem root
 * requires admin privileges
-* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders/listing&directory=/tmp/`
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/folders/listing?directory=/tmp/`
 * returns:<pre>
     {
       // directory listed
