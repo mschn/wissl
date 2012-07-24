@@ -87,15 +87,11 @@ public class Album {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Album) {
-			boolean ret = true;
 			Album a = (Album) o;
-			ret |= this.name.equals(a.name);
-			ret |= this.date.equals(a.date);
-			ret |= this.genre.equals(a.genre);
-			ret |= this.songs == a.songs;
-			ret |= this.playtime == a.playtime;
-			ret |= this.artist_name == a.artist_name;
-			return ret;
+			return (this.name.equals(a.name) && this.date.equals(a.date)
+					&& this.genre.equals(a.genre) && this.songs == a.songs
+					&& this.playtime == a.playtime && this.artist_name
+						.equals(a.artist_name));
 		} else {
 			return false;
 		}

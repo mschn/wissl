@@ -67,13 +67,9 @@ public class Artist {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Artist) {
-			boolean ret = true;
 			Artist a = (Artist) o;
-			ret |= this.name.equals(a.name);
-			ret |= this.albums == a.albums;
-			ret |= this.songs == a.songs;
-			ret |= this.playtime == a.playtime;
-			return ret;
+			return (this.name.equals(a.name) && this.albums == a.albums
+					&& this.songs == a.songs && this.playtime == a.playtime);
 		} else {
 			return false;
 		}

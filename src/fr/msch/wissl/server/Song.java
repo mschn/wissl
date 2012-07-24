@@ -99,15 +99,11 @@ public class Song {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Song) {
-			boolean ret = true;
 			Song s = (Song) o;
-			ret |= this.title.equals(s.title);
-			ret |= this.position == s.position;
-			ret |= this.duration == s.duration;
-			ret |= this.disc_no == s.disc_no;
-			ret |= this.album_name.equals(s.album_name);
-			ret |= this.artist_name.equals(s.artist_name);
-			return ret;
+			return (this.title.equals(s.title) && this.position == s.position
+					&& this.duration == s.duration && this.disc_no == s.disc_no
+					&& this.album_name.equals(s.album_name) && this.artist_name
+						.equals(s.artist_name));
 		} else {
 			return false;
 		}

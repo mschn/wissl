@@ -313,7 +313,7 @@ public class TestLibrary extends TServer {
 		if (title.equals("One")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
@@ -321,7 +321,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Two")) {
 			s.position = 2;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
@@ -329,7 +329,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Three")) {
 			s.position = 3;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
@@ -337,7 +337,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Four")) {
 			s.position = 4;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Bar";
 			s.artist_name = "Foo";
@@ -345,7 +345,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Five")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
@@ -353,7 +353,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Six")) {
 			s.position = 2;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
@@ -361,7 +361,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Seven")) {
 			s.position = 3;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Baz";
 			s.artist_name = "Foo";
@@ -369,7 +369,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Eight")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Qux";
 			s.artist_name = "Bob";
@@ -377,7 +377,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Nine")) {
 			s.position = 2;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Qux";
 			s.artist_name = "Bob";
@@ -385,7 +385,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Ten")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
@@ -393,7 +393,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Eleven")) {
 			s.position = 2;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
@@ -401,7 +401,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Twelve")) {
 			s.position = 3;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 1;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
@@ -409,7 +409,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Thirteen")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 2;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
@@ -417,7 +417,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Fourteen")) {
 			s.position = 2;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 2;
 			s.album_name = "Gni";
 			s.artist_name = "Bob";
@@ -425,7 +425,7 @@ public class TestLibrary extends TServer {
 		} else if (title.equals("Fifteen")) {
 			s.position = 1;
 			s.duration = 1;
-			s.format = "audio/mp3";
+			s.format = "audio/mpeg";
 			s.disc_no = 0;
 			s.album_name = "Ok";
 			s.artist_name = "Bob";
