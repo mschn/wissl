@@ -349,6 +349,9 @@ You can not remove the last admin user account.
 
 Create a new empty playlist.
 
+If a playlist with the same name already exists for this user,
+no playlist is created and the existing playlist is returned instead.
+
 ### <a id="playlistcreate-add"></a>`/playlist/create-add`
 * method: `POST`
 * param: `name` name of the new playlist
