@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import fr.msch.wissl.server.exception.BadRequestMapper;
+import fr.msch.wissl.server.exception.ForbiddenExceptionMapper;
 import fr.msch.wissl.server.exception.IllegalArgumentMapper;
 import fr.msch.wissl.server.exception.MethodNotAllowedMapper;
 import fr.msch.wissl.server.exception.NotAcceptableMapper;
@@ -45,6 +46,7 @@ public class Application extends javax.ws.rs.core.Application {
 		set.add(NotAcceptableMapper.class);
 		set.add(SecurityErrorMapper.class);
 		set.add(IllegalArgumentMapper.class);
+		set.add(ForbiddenExceptionMapper.class);
 		return set;
 	}
 
