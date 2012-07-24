@@ -73,6 +73,12 @@ public class TestIndexer extends TServer {
 		client.executeMethod(post);
 		Assert.assertEquals(401, post.getStatusCode());
 
+		// /indexer/rescan as amdin
+		post = new PostMethod(URL + "indexer/rescan");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(post);
+		Assert.assertEquals(204, post.getStatusCode());
+
 		// /folders as user: 401
 		get = new GetMethod(URL + "folders");
 		get.addRequestHeader("sessionId", user_sessionId);
@@ -185,13 +191,43 @@ public class TestIndexer extends TServer {
 		this.addMusicFolder(f.getAbsolutePath(), rt);
 
 		// check /folders
-		get = new GetMethod(URL + "folders?directory=" + f.getAbsolutePath());
+		get = new GetMethod(URL + "folders");
 		get.addRequestHeader("sessionId", admin_sessionId);
 		client.executeMethod(get);
 		assertEquals(200, get.getStatusCode());
 		obj = new JSONObject(get.getResponseBodyAsString());
 		assertEquals(f.getAbsolutePath(), obj.getJSONArray("folders")
 				.getString(0));
+
+		// /folders/add "/test/data2/sub1"
+		f = new File("test/data2/sub1");
+		rt.songCount.addAndGet(3);
+		rt.albumCount.addAndGet(1);
+		rt.artistCount.addAndGet(1);
+		rt.playtime.addAndGet(3);
+		this.addMusicFolder(f.getAbsolutePath(), rt);
+
+		// /folders/add "/test/data2/"
+		f = new File("test/data2/");
+		rt.songCount.addAndGet(6);
+		rt.playtime.addAndGet(6);
+		this.addMusicFolder(f.getAbsolutePath(), rt);
+
+		// check /folders
+		get = new GetMethod(URL + "folders");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("folders");
+		assertEquals(3, arr.length());
+		for (int i = 0; i < 3; i++) {
+			String s = new File(arr.getString(i)).getAbsolutePath();
+			String s1 = new File("test/data").getAbsolutePath();
+			String s2 = new File("test/data2/sub1").getAbsolutePath();
+			String s3 = new File("test/data2").getAbsolutePath();
+			assertTrue(s.equals(s1) || s.equals(s2) || s.equals(s3));
+		}
 
 		// /folders/remove as user: 401
 		post = new PostMethod(URL + "folders/remove");
@@ -200,8 +236,34 @@ public class TestIndexer extends TServer {
 		client.executeMethod(post);
 		Assert.assertEquals(401, post.getStatusCode());
 
-		// /folders/remove "/test/data"
+		// /folders/remove unknown dir: 400
 		post = new PostMethod(URL + "folders/remove");
+		post.addParameter("directory[]", "/does/not/exist");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(post);
+		Assert.assertEquals(400, post.getStatusCode());
+
+		// /folders/remove "/test/data","test/data2"
+		post = new PostMethod(URL + "folders/remove");
+		f = new File("test/data");
+		post.addParameter("directory[]", f.getAbsolutePath());
+		f = new File("test/data2");
+		post.addParameter("directory[]", f.getAbsolutePath());
+		post.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		rt.songCount.set(3);
+		rt.albumCount.set(1);
+		rt.artistCount.set(1);
+		rt.userCount.set(2);
+		rt.playtime.set(3);
+		rt.downloaded.set(0);
+		this.checkStats(rt);
+
+		// /folders/remove "/test/data/sub1"
+		post = new PostMethod(URL + "folders/remove");
+		f = new File("test/data2/sub1");
 		post.addParameter("directory[]", f.getAbsolutePath());
 		post.addRequestHeader("sessionId", admin_sessionId);
 		client.executeMethod(post);
