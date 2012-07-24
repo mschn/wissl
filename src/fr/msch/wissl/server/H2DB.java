@@ -1346,6 +1346,8 @@ public class H2DB extends DB {
 				s.disc_no = rs.getInt("disc_no");
 				s.duration = rs.getInt("duration");
 				s.format = rs.getString("format");
+				s.album_name = rs.getString("album_name");
+				s.artist_name = rs.getString("artist_name");
 				ret.add(s);
 			}
 		} finally {
