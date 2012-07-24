@@ -1227,6 +1227,7 @@ public class H2DB extends DB {
 				a.playtime = rs.getInt("playtime");
 				a.artwork_path = rs.getString("artwork_path");
 				a.genre = rs.getString("genre");
+				a.artist_name = rs.getString("artist_name");
 				ret.add(a);
 			}
 
