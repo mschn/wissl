@@ -1098,11 +1098,17 @@ public class REST {
 		Session sess = Session.check(sid, request.getRemoteAddr(), true);
 
 		if (directory != null) {
+			List<String> music = Config.getMusicPath();
+			for (String dir : directory) {
+				if (!music.contains(dir)) {
+					throw new IllegalArgumentException("Directory '" + dir
+							+ "' is not a music folder");
+				}
+			}
+
 			for (String dir : directory) {
 				File toDelete = new File(dir);
-
-				for (Iterator<String> it = Config.getMusicPath().iterator(); it
-						.hasNext();) {
+				for (Iterator<String> it = music.iterator(); it.hasNext();) {
 					File f = new File(it.next());
 					if (f.equals(toDelete)) {
 						it.remove();
