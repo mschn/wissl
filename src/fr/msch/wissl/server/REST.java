@@ -367,6 +367,10 @@ public class REST {
 		Session s = Session.check(sid, request.getRemoteAddr());
 		int uid = s.getUserId();
 
+		if (name == null || name.trim().length() == 0) {
+			throw new IllegalArgumentException("Empty playlist name");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		Playlist pl = DB.get().addPlaylist(uid, name);
 		RuntimeStats.get().playlistCount.addAndGet(1);
