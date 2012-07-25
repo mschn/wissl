@@ -20,10 +20,12 @@ import java.io.File;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 
 import fr.msch.wissl.server.Playlist;
 import fr.msch.wissl.server.RuntimeStats;
+import fr.msch.wissl.server.Song;
 
 /**
  * Functional test for the following rest server endpoints:
@@ -158,5 +160,186 @@ public class TestPlaylist extends TServer {
 		obj = new JSONObject(get.getResponseBodyAsString());
 		assertEquals(0, obj.getJSONArray("playlists").length());
 
+		// playlist/create-add with no name : 400
+		post = new PostMethod(URL + "playlist/create-add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(post);
+		assertEquals(400, post.getStatusCode());
+
+		// playlist/create-add 'bar' with no songs
+		post = new PostMethod(URL + "playlist/create-add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("name", "bar");
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(0, obj.getInt("added"));
+		Playlist bar = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals("bar", bar.name);
+		assertEquals(0, bar.playtime);
+		assertEquals(0, bar.songs);
+
+		int[] song_ids = new int[4];
+		int album_id;
+
+		// search for 'o': 4 songs, 1 album with 1 song
+		get = new GetMethod(URL + "search/o");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		JSONArray songs = obj.getJSONArray("songs");
+		for (int i = 0; i < 4; i++) {
+			song_ids[i] = songs.getJSONObject(i).getInt("id");
+		}
+		JSONObject ok = obj.getJSONArray("albums").getJSONObject(0);
+		album_id = ok.getInt("id");
+
+		// playlist/create-add 'bar' with songs
+		post = new PostMethod(URL + "playlist/create-add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("name", "bar");
+		post.addParameter("song_ids[]", "" + song_ids[0]);
+		post.addParameter("song_ids[]", "" + song_ids[1]);
+		post.addParameter("song_ids[]", "" + song_ids[2]);
+		post.addParameter("song_ids[]", "" + song_ids[3]);
+		post.addParameter("album_ids[]", "" + album_id);
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(5, obj.getInt("added"));
+		bar = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals("bar", bar.name);
+		assertEquals(5, bar.playtime);
+		assertEquals(5, bar.songs);
+
+		// check song list in 'bar'
+		get = new GetMethod(URL + "playlist/" + bar.id + "/songs");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals("bar", obj.getString("name"));
+		JSONArray arr = obj.getJSONArray("playlist");
+		assertEquals(5, arr.length());
+		for (int i = 0; i < 4; i++) {
+			assertEquals(new Song(songs.getJSONObject(i).toString()), new Song(
+					arr.getJSONObject(i).toString()));
+		}
+		Song s5 = new Song(arr.getJSONObject(4).toString());
+		assertEquals("Ok", s5.album_name);
+
+		// playlist/remove song as wrong user
+		post = new PostMethod(URL + "playlist/" + bar.id + "/remove");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + song_ids[0]);
+		client.executeMethod(post);
+		assertEquals(403, post.getStatusCode());
+
+		// playlist/remove 2 songs
+		post = new PostMethod(URL + "playlist/" + bar.id + "/remove");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("song_ids[]", "" + song_ids[1]);
+		post.addParameter("song_ids[]", "" + song_ids[2]);
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// check song list
+		get = new GetMethod(URL + "playlist/" + bar.id + "/songs");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals("bar", obj.getString("name"));
+		arr = obj.getJSONArray("playlist");
+		assertEquals(3, arr.length());
+		assertEquals(new Song(songs.getJSONObject(0).toString()), new Song(arr
+				.getJSONObject(0).toString()));
+		assertEquals(new Song(songs.getJSONObject(3).toString()), new Song(arr
+				.getJSONObject(1).toString()));
+		assertEquals(s5, new Song(arr.getJSONObject(2).toString()));
+
+		// re-check with song/id/pos
+		get = new GetMethod(URL + "playlist/" + bar.id + "/song/0");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song");
+		assertEquals(new Song(songs.getJSONObject(0).toString()),
+				new Song(obj.toString()));
+
+		// 2nd song
+		get = new GetMethod(URL + "playlist/" + bar.id + "/song/1");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song");
+		assertEquals(new Song(songs.getJSONObject(3).toString()),
+				new Song(obj.toString()));
+
+		// 3rd song
+		get = new GetMethod(URL + "playlist/" + bar.id + "/song/2");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song");
+		assertEquals(s5, new Song(obj.toString()));
+
+		// no more song in playlist
+		get = new GetMethod(URL + "playlist/" + bar.id + "/song/3");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(404, get.getStatusCode());
+
+		// playlist/create-add 'bar' with other songs and clear
+		post = new PostMethod(URL + "playlist/create-add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("name", "bar");
+		post.addParameter("clear", "true");
+		post.addParameter("album_ids[]", "" + album_id);
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(1, obj.getInt("added"));
+		bar = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals("bar", bar.name);
+		assertEquals(1, bar.playtime);
+		assertEquals(1, bar.songs);
+
+		// playlist/add as admin: 403
+		post = new PostMethod(URL + "playlist/" + bar.id + "/add");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("clear", "true");
+		post.addParameter("song_ids", "" + s5.id);
+		client.executeMethod(post);
+		assertEquals(403, post.getStatusCode());
+
+		// playlist/add with duplicate songs: 400
+		post = new PostMethod(URL + "playlist/" + bar.id + "/add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("clear", "true");
+		post.addParameter("song_ids[]", "" + song_ids[0]);
+		post.addParameter("song_ids[]", "" + song_ids[0]);
+		post.addParameter("album_ids[]", "" + album_id);
+		client.executeMethod(post);
+		assertEquals(500, post.getStatusCode());
+
+		// playlist/add a couple songs w/ clear
+		post = new PostMethod(URL + "playlist/" + bar.id + "/add");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("clear", "true");
+		post.addParameter("song_ids[]", "" + song_ids[0]);
+		post.addParameter("song_ids[]", "" + song_ids[2]);
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(2, obj.getInt("added"));
+		pl = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals(2, pl.playtime);
+		assertEquals(2, pl.songs);
+		assertEquals("bar", pl.name);
 	}
 }
