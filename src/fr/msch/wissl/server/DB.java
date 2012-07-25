@@ -148,18 +148,15 @@ public abstract class DB {
 			ForbiddenException;
 
 	/**
-	 * Add all songs from albums into the playlist
-	 * @param playlist_id unique id of the playlist
+	 * Returns the ids of all songs contained in the given albums
 	 * @param album_ids unique ids of the albums in DB
 	 * @param userId id of the user requesting songs to be added
-	 * @return number of inserted songs
+	 * @return array of unique song ids
 	 * @throws SQLException
-	 * @throws ForbiddenException 
 	 * @throws NotFoundException 
 	 */
-	public abstract int addAlbumsToPlaylist(int playlist_id, int[] album_ids,
-			int user_id) throws SQLException, NotFoundException,
-			ForbiddenException;
+	public abstract int[] getSongIds(int[] album_ids) throws SQLException,
+			NotFoundException;
 
 	/**
 	 * Remove songs from the given playlist

@@ -375,6 +375,8 @@ exists, it will be cleared before adding the songs specified by the parameters.
 
 Both parameters `song_ids` and `album_ids` are optional and can be used simultaneously.
 
+Duplicate song records are not allowed.
+
 ### <a id="playlistrandom"></a>`/playlist/random`
 * method: `POST`
 * param: `name` name of the random playlist
@@ -424,6 +426,8 @@ Both parameters `song_ids` and `album_ids` are optional and can be used simultan
 
 An user can only alter a playlist that it has created.
 
+Duplicate song records are not allowed.
+
 ### <a id="playlistplaylist_idremove"></a>`/playlist/{playlist_id}/remove`
 * method: `POST`
 * param: `playlist_id` unique playlist id
@@ -438,7 +442,7 @@ An user can only alter a playlist that it has created.
 ### <a id="playlistplaylist_idsongs"></a>`/playlist/{playlist_id}/songs`
 * method: `GET`
 * param: `playlist_id` unique playlist id
-* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlist/3songs`
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/playlist/3/songs`
 * returns:<pre>
     {
       // playlist name

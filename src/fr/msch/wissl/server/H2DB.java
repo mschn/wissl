@@ -48,7 +48,7 @@ public class H2DB extends DB {
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 
 	 * the DB can be recovered or needs to be erased */
-	private static final long SCHEMA_VERSION = 5L;
+	private static final long SCHEMA_VERSION = 6L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -243,7 +243,8 @@ public class H2DB extends DB {
 					"CONSTRAINT fk_playlist FOREIGN KEY (playlist_id)" + //
 					" REFERENCES playlist(playlist_id) ON DELETE CASCADE," + //
 					"CONSTRAINT fk_song FOREIGN KEY (song_id)" + //
-					" REFERENCES song(song_id) ON DELETE CASCADE" + //
+					" REFERENCES song(song_id) ON DELETE CASCADE," + //
+					"CONSTRAINT u_song UNIQUE (song_id, playlist_id)" + //
 					")");
 
 			// song(hash) is used very frequently by the indexer to check if a file is already present in DB
@@ -697,12 +698,13 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public int addAlbumsToPlaylist(int playlist_id, int[] album_ids, int user_id)
-			throws SQLException, NotFoundException, ForbiddenException {
+	public int[] getSongIds(int[] album_ids) throws SQLException,
+			NotFoundException {
 
 		Connection conn = getConnection();
 		PreparedStatement st = null;
-		int songCount = 0;
+		int[] ret = new int[0];
+
 		try {
 			String ids = "";
 			for (int i = 0; i < album_ids.length; i++) {
@@ -727,7 +729,7 @@ public class H2DB extends DB {
 			for (int i = 0; i < arr.length; i++) {
 				arr[i] = song_ids.get(i);
 			}
-			songCount = this.addSongsToPlaylist(playlist_id, arr, user_id);
+			ret = arr;
 
 		} finally {
 			if (st != null)
@@ -735,7 +737,7 @@ public class H2DB extends DB {
 			if (conn != null)
 				conn.close();
 		}
-		return songCount;
+		return ret;
 	}
 
 	@Override

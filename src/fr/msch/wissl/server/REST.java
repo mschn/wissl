@@ -405,12 +405,15 @@ public class REST {
 		}
 
 		int count = 0;
-		if (song_ids != null && song_ids.length > 0) {
-			count += DB.get().addSongsToPlaylist(pl.id, song_ids, uid);
-		}
-		if (album_ids != null && album_ids.length > 0) {
-			count += DB.get().addAlbumsToPlaylist(pl.id, album_ids, uid);
-		}
+
+		int[] arr = DB.get().getSongIds(album_ids);
+		int[] s = new int[arr.length + song_ids.length];
+		System.arraycopy(song_ids, 0, s, 0, song_ids.length);
+		System.arraycopy(arr, 0, s, song_ids.length, arr.length);
+
+		checkDuplicates(s);
+		count = DB.get().addSongsToPlaylist(pl.id, s, uid);
+
 		pl = DB.get().getPlaylist(pl.id);
 		RuntimeStats.get().playlistCount.set(DB.get().getPlaylistCount());
 
@@ -490,12 +493,18 @@ public class REST {
 			DB.get().clearPlaylist(playlist_id, uid);
 		}
 
-		if (song_ids != null && song_ids.length > 0) {
-			count += DB.get().addSongsToPlaylist(playlist_id, song_ids, uid);
+		int[] arr = DB.get().getSongIds(album_ids);
+		int[] s = new int[arr.length + song_ids.length];
+		System.arraycopy(song_ids, 0, s, 0, song_ids.length);
+		System.arraycopy(arr, 0, s, song_ids.length, arr.length);
+
+		if (s.length == 0) {
+			throw new IllegalArgumentException("No song or album provided");
 		}
-		if (album_ids != null && album_ids.length > 0) {
-			count += DB.get().addAlbumsToPlaylist(playlist_id, album_ids, uid);
-		}
+
+		checkDuplicates(s);
+
+		count = DB.get().addSongsToPlaylist(playlist_id, s, uid);
 		Playlist pl = DB.get().getPlaylist(playlist_id);
 
 		StringBuilder sb = new StringBuilder();
@@ -1251,5 +1260,16 @@ public class REST {
 		log(s, l1);
 
 		return sb.toString();
+	}
+
+	private void checkDuplicates(int[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			for (int j = 0; j < arr.length; j++) {
+				if (j != i && arr[i] == arr[j]) {
+					throw new IllegalStateException("Duplicate id: " + arr[i]);
+				}
+			}
+
+		}
 	}
 }
