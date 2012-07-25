@@ -16,12 +16,14 @@
 package fr.msch.wissl.test;
 
 import java.io.File;
+import java.util.HashSet;
 
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -131,17 +133,22 @@ public class TestIndexer extends TServer {
 		assertEquals("", obj.getString("directory"));
 		assertEquals("$ROOT", obj.getString("parent"));
 		JSONArray arr = obj.getJSONArray("listing");
-		assertEquals(dirs.length, arr.length());
-		for (int i = 0; i < dirs.length; i++) {
-			// assumes the order is the same... is this always true?
-			File dd = new File(arr.getString(i));
-			assertEquals(dirs[i].getAbsolutePath(), dd.getAbsolutePath());
+		HashSet<String> hs = new HashSet<String>(arr.length());
+		for (int i = 0; i < arr.length(); i++) {
+			hs.add(new File(arr.getString(i)).getAbsolutePath());
 		}
+		for (File d : dirs) {
+			// on windows, listRoots returns a bunch of drive names that don't exist
+			if (d.exists()) {
+				assertTrue(hs.remove(d.getAbsolutePath()));
+			}
+		}
+		assertTrue(hs.isEmpty());
 
 		// lists test resources folder
 		File f = new File("test/data2");
 		get = new GetMethod(URL + "folders/listing?directory="
-				+ f.getAbsolutePath());
+				+ URIUtil.encodeQuery(f.getAbsolutePath()));
 		get.addRequestHeader("sessionId", admin_sessionId);
 		client.executeMethod(get);
 		obj = new JSONObject(get.getResponseBodyAsString());
