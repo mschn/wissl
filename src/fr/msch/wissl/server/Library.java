@@ -554,8 +554,6 @@ public class Library {
 				int genreId = Integer.parseInt(album.genre.substring(1,
 						album.genre.length() - 1));
 				album.genre = GenreTypes.getInstanceOf().getValueForId(genreId);
-				Logger.info("converted '" + tag.getFirst(FieldKey.GENRE)
-						+ "' to '" + album.genre + "'");
 			}
 
 			String discNo = tag.getFirst(FieldKey.DISC_NO);
