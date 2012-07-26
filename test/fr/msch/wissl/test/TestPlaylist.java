@@ -16,6 +16,7 @@
 package fr.msch.wissl.test;
 
 import java.io.File;
+import java.util.HashSet;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -341,5 +342,190 @@ public class TestPlaylist extends TServer {
 		assertEquals(2, pl.playtime);
 		assertEquals(2, pl.songs);
 		assertEquals("bar", pl.name);
+
+		// check song list
+		get = new GetMethod(URL + "playlist/" + pl.id + "/songs");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals("bar", obj.getString("name"));
+		arr = obj.getJSONArray("playlist");
+		assertEquals(2, arr.length());
+		assertEquals(new Song(songs.getJSONObject(0).toString()), new Song(arr
+				.getJSONObject(0).toString()));
+		assertEquals(new Song(songs.getJSONObject(2).toString()), new Song(arr
+				.getJSONObject(1).toString()));
+
+		// re-check with song/id/pos
+		get = new GetMethod(URL + "playlist/" + pl.id + "/song/0");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song");
+		assertEquals(new Song(songs.getJSONObject(0).toString()),
+				new Song(obj.toString()));
+
+		// 2nd song
+		get = new GetMethod(URL + "playlist/" + pl.id + "/song/1");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song");
+		assertEquals(new Song(songs.getJSONObject(2).toString()),
+				new Song(obj.toString()));
+
+		// no more song in playlist
+		get = new GetMethod(URL + "playlist/" + pl.id + "/song/2");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(404, get.getStatusCode());
+
+		// random playlist with no name : 400
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(post);
+		assertEquals(400, post.getStatusCode());
+
+		// random playlist with no song number : 400
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("name", "toto");
+		client.executeMethod(post);
+		assertEquals(400, post.getStatusCode());
+
+		// random playlist with too many songs: 400
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("number", "60");
+		post.addParameter("name", "toto");
+		client.executeMethod(post);
+		assertEquals(400, post.getStatusCode());
+
+		// random playlist 'toto'
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("number", "15");
+		post.addParameter("name", "toto");
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(15, obj.getInt("added"));
+		Playlist rand = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals(15, rand.playtime);
+		assertEquals(15, rand.songs);
+		assertEquals("toto", rand.name);
+
+		// get first song
+		get = new GetMethod(URL + "playlist/" + rand.id + "/song/0");
+		get.addRequestHeader("sessionId", admin_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		Song s = new Song(new JSONObject(get.getResponseBodyAsString())
+				.getJSONObject("song").toString());
+		assertEquals(s.id, obj.getInt("first_song"));
+
+		// all random songs should fit in this hashset
+		HashSet<Song> randSet = new HashSet<Song>(15);
+		get = new GetMethod(URL + "playlist/" + rand.id + "/songs");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals("toto", obj.get("name"));
+		arr = obj.getJSONArray("playlist");
+		assertEquals(15, arr.length());
+		for (int i = 0; i < arr.length(); i++) {
+			Song ss = new Song(arr.getJSONObject(i).toString());
+			assertFalse(randSet.contains(ss));
+			randSet.add(ss);
+		}
+
+		// there are 24 songs total in library, try to create a 30 songs playlist
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("number", "30");
+		post.addParameter("name", "titi");
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(24, obj.getInt("added"));
+		rand = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals(24, rand.playtime);
+		assertEquals(24, rand.songs);
+		assertEquals("titi", rand.name);
+
+		// all 24 random songs should fit in this hashset
+		randSet = new HashSet<Song>(24);
+		get = new GetMethod(URL + "playlist/" + rand.id + "/songs");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals("titi", obj.get("name"));
+		arr = obj.getJSONArray("playlist");
+		assertEquals(24, arr.length());
+		for (int i = 0; i < arr.length(); i++) {
+			Song ss = new Song(arr.getJSONObject(i).toString());
+			assertFalse(randSet.contains(ss));
+			randSet.add(ss);
+		}
+
+		// re-create 'titi' with 10 songs
+		post = new PostMethod(URL + "playlist/random");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("number", "10");
+		post.addParameter("name", "titi");
+		client.executeMethod(post);
+		assertEquals(200, post.getStatusCode());
+		obj = new JSONObject(post.getResponseBodyAsString());
+		assertEquals(10, obj.getInt("added"));
+		rand = new Playlist(obj.getJSONObject("playlist").toString());
+		assertEquals(10, rand.playtime);
+		assertEquals(10, rand.songs);
+		assertEquals("titi", rand.name);
+
+		// playlists for user: 'foo', 'bar', 'toto', 'titi'
+		get = new GetMethod(URL + "playlists");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals(4, obj.getJSONArray("playlists").length());
+		foo = new Playlist(obj.getJSONArray("playlists").get(0).toString());
+		bar = new Playlist(obj.getJSONArray("playlists").get(1).toString());
+		Playlist toto = new Playlist(obj.getJSONArray("playlists").get(2)
+				.toString());
+		Playlist titi = new Playlist(obj.getJSONArray("playlists").get(3)
+				.toString());
+		assertEquals("foo", foo.name);
+		assertEquals(0, foo.songs);
+		assertEquals("bar", bar.name);
+		assertEquals(2, bar.songs);
+		assertEquals("toto", toto.name);
+		assertEquals(15, toto.songs);
+		assertEquals("titi", titi.name);
+		assertEquals(10, titi.songs);
+
+		// remove all 4 user playlists
+		post = new PostMethod(URL + "playlists/remove");
+		post.addRequestHeader("sessionId", user_sessionId);
+		post.addParameter("playlist_ids[]", "" + foo.id);
+		post.addParameter("playlist_ids[]", "" + bar.id);
+		post.addParameter("playlist_ids[]", "" + toto.id);
+		post.addParameter("playlist_ids[]", "" + titi.id);
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// check there are no more user playlists
+		get = new GetMethod(URL + "playlists");
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		assertEquals(0, obj.getJSONArray("playlists").length());
+
 	}
 }
