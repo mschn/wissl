@@ -438,6 +438,10 @@ public class REST {
 		Session sess = Session.check(sid, request.getRemoteAddr());
 		int uid = sess.getUserId();
 
+		if (name == null || name.trim().length() == 0) {
+			throw new IllegalArgumentException("Empty playlist name");
+		}
+
 		if (number < 1)
 			throw new IllegalArgumentException(
 					"Cannot create random playlist with 0 songs");
