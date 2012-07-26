@@ -469,7 +469,7 @@ public class REST {
 		RuntimeStats.get().playlistCount.set(DB.get().getPlaylistCount());
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("{ \"added\":" + number + ",");
+		sb.append("{ \"added\":" + songs.size() + ",");
 		sb.append("\"first_song\":" + ids[0] + ",");
 		sb.append("\"playlist\":");
 		sb.append(pl.toJSON());
