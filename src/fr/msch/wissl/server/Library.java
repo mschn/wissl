@@ -51,6 +51,7 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.reference.GenreTypes;
 import org.jboss.util.file.Files;
 
 import fr.msch.wissl.common.Config;
@@ -548,6 +549,13 @@ public class Library {
 			album.genre = tag.getFirst(FieldKey.GENRE);
 			if (album.genre.length() > 63) {
 				album.genre = album.genre.substring(0, 63);
+			}
+			if (album.genre.matches("[(][0-9]+[)]")) {
+				int genreId = Integer.parseInt(album.genre.substring(1,
+						album.genre.length() - 1));
+				album.genre = GenreTypes.getInstanceOf().getValueForId(genreId);
+				Logger.info("converted '" + tag.getFirst(FieldKey.GENRE)
+						+ "' to '" + album.genre + "'");
 			}
 
 			String discNo = tag.getFirst(FieldKey.DISC_NO);
