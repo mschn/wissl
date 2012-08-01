@@ -1,5 +1,6 @@
 Wissl
 =====
+http://msch.fr/wissl
 
 Wissl allows you to play your music over the internet using a web interface,
 without uploading it to a third-party.
@@ -12,23 +13,18 @@ web application that can play music on the server using HTML5 or Flash audio.
 
 Wissl is designed with home users in mind and aims to be simple and easy to use.
 
-Howto
------
+Quickstart
+----------
 
-Wissl runs on Java 6+.
-It requires Apache Ant to be built. To build, simply run `ant` in the root
-directory.
+To build Wissl, you need Java 6+ and Maven.
+In the root directory, run `mvn package`.
 
-To run, either click on the file `wissl.jar` using a file explorer,
-or run the command `java -jar wissl.jar`.
+The generated file `target/wissl-VER.war` is a self executable webapp archive.
+You can run it with `java -jar wissl.jar`, it will run the server on `http://localhost:8080`.
+To use a different HTTP port, use the following switch: `java -jar wissl.jar -Dwsl.http.port=1234`.
 
-A web browser should open. If it does not, simply point it to `http://localhost:8080/`.
-You will be asked to create a new administrator account. When this is done,
-you can go to the 'Admin' section to add music to you library.
-
-Wissl runs by default on port 8080, which can be tuned by editing the file
-`config.ini`.
-
+If you want a higher degree of control over deployment, you can also use this WAR file within
+any application server such as tomcat.
 
 Libraries used
 --------------
@@ -37,7 +33,7 @@ Libraries used
  * [RESTEasy](http://www.jboss.org/resteasy) - JAX-RS framework (LGPL)
  * [H2](http://www.h2database.com/) - Embedded RDBMS (MPL)
  * [c3p0](http://sourceforge.net/projects/c3p0/) - JDBC connection pool (LGPL)
- * [Winstone](http://code.google.com/p/winstone/) - Embedded servlet container (LGPL)
+ * [Jetty](http://www.eclipse.org/jetty/) - Embedded servlet container (LGPL)
  * [Jaudiotagger](http://www.jthink.net/jaudiotagger/) - Audio tagging (LGPL)
 
 * Client
