@@ -145,7 +145,7 @@ public class Launcher {
 				PrintStream ps = new PrintStream(File.createTempFile("wissl",
 						".stdout"));
 				System.setOut(ps);
-				//System.setErr(ps);
+				System.setErr(ps);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -194,9 +194,6 @@ public class Launcher {
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();
 
-		// Set some timeout options to make debugging easier.
-		connector.setMaxIdleTime(1000 * 60 * 60);
-		connector.setSoLingerTime(-1);
 		connector.setPort(port);
 		server.setConnectors(new Connector[] { connector });
 
@@ -212,11 +209,6 @@ public class Launcher {
 		server.setHandler(context);
 		try {
 			server.start();
-			/*
-			System.in.read();
-			server.stop();
-			server.join();
-			 */
 		} catch (Exception e) {
 			e.printStackTrace();
 			error("Failed to start server");
