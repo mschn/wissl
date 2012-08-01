@@ -45,9 +45,6 @@ public class Config {
 	private static String tmpMacro = "$TMP";
 	private static String tmpdir = System.getProperty("java.io.tmpdir");
 
-	/** default admin pw */
-	public static final byte[] defaultAdminPw = { 'a', 'd', 'm', 'i', 'n' };
-
 	/** property file backing this config instance */
 	private File configFile = null;
 
