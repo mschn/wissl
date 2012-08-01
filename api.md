@@ -1,6 +1,6 @@
 API
 ===
-4
+
 The Wissl server exposes a REST API that allows interaction with any client
 able to send simple HTTP requests and parse JSON responses.
 
