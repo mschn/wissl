@@ -31,7 +31,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.After;
 import org.junit.Before;
 
-import fr.msch.wissl.common.Config;
 import fr.msch.wissl.server.RuntimeStats;
 
 /**
@@ -144,21 +143,6 @@ public class TServer extends TestCase {
 			e.printStackTrace();
 			throw new RuntimeException("failed to start jetty", e);
 		}
-
-		Config.setNowrite(true);
-
-		/*
-		this.srv = new BootStrap(srvArgs).boot();
-		this.srv.start();
-
-
-		LogManager.resetConfiguration();
-		LogManager.getRootLogger().removeAllAppenders();
-		LogManager.getRootLogger().addAppender(new NullAppender());
-
-		LogManager.getLogger(BootStrap.class).removeAllAppenders();
-		LogManager.getLogger(BootStrap.class).addAppender(new NullAppender());
-		*/
 	}
 
 	protected boolean hasUsers() throws IOException, JSONException {

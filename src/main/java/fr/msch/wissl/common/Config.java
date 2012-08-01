@@ -17,12 +17,9 @@ package fr.msch.wissl.common;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -35,18 +32,12 @@ import java.util.StringTokenizer;
  */
 public class Config {
 
-	public static final String configPathProperty = "wsl.config";
-
 	/** singleton instance */
 	private static Config instance = null;
-	private static boolean nowrite = false;
 
 	/** will expand as tmpdir for file paths */
 	private static String tmpMacro = "$TMP";
 	private static String tmpdir = System.getProperty("java.io.tmpdir");
-
-	/** property file backing this config instance */
-	private File configFile = null;
 
 	private String version = null;
 	private String buildInfo = null;
@@ -87,21 +78,12 @@ public class Config {
 		instance = new Config();
 	}
 
-	/**
-	 * @param b when true, never write config back to file
-	 */
-	public static void setNowrite(boolean b) {
-		nowrite = b;
-	}
-
 	private Config() throws IOException {
 		String configPath = System.getProperty("wsl.config");
 		Properties props = new Properties();
+
 		if (configPath != null && configPath.trim().length() > 0) {
-			this.configFile = new File(configPath);
-			props.load(new FileInputStream(configFile));
-		} else {
-			nowrite = true;
+			props.load(new FileInputStream(new File(configPath)));
 		}
 
 		this.version = getString("wsl.version", props);
@@ -143,63 +125,6 @@ public class Config {
 		new File(this.logFilePath).getParentFile().mkdirs();
 		new File(this.dbPath).getParentFile().mkdirs();
 		new File(this.artworkPath).mkdirs();
-	}
-
-	public static synchronized void write() throws IOException {
-		if (nowrite) {
-			return;
-		}
-
-		PrintWriter pw = new PrintWriter(new FileOutputStream(
-				instance.configFile, false));
-		// not using Properties#store(),
-		// it writes properties in a random order
-
-		pw.println("wsl.http.port=" + getHttpPort());
-		pw.println();
-		pw.println("wsl.log.file.path="
-				+ getLogFilePath().replace(tmpdir, tmpMacro).replace("\\",
-						"\\\\"));
-		pw.println("wsl.log.file.enabled=" + isLogFileEnabled());
-		pw.println("wsl.log.file.overwrite=" + isLogFileOverwrite());
-		pw.println("wsl.log.stdout.enabled=" + isLogStdoutEnabled());
-		pw.println("wsl.log.stdout.trace=" + isLogStdoutTrace());
-		pw.println("wsl.log.debug.enabled=" + isLogStdoutDebug());
-		pw.println("wsl.log.trace.length=" + getLogTraceLength());
-		pw.println("wsl.log.date.format=" + getLogDateFormat());
-		pw.println("wsl.log.maxlines=" + getLogMaxlines());
-		pw.println();
-		pw.println("wsl.music.path="
-				+ listAsString(getMusicPath()).replace("\\", "\\\\"));
-		pw.println("wsl.music.refresh.rate=" + getMusicRefreshRate());
-		pw.println("wsl.music.formats=" + listAsString(getMusicFormats()));
-		pw.println();
-		pw.println("wsl.db.path="
-				+ getDbPath().replace(tmpdir, tmpMacro).replace("\\", "\\\\"));
-		pw.println("wsl.db.clean=" + isDbClean());
-		pw.println("wsl.db.user=" + getDbUser());
-		pw.println("wsl.db.password=" + getDbPassword());
-		pw.println();
-		pw.println("wsl.session.expiration.delay="
-				+ getSessionExpirationDelay());
-		pw.println();
-		pw.println("wsl.artwork.regex=" + getArtworkRegex());
-		pw.println("wsl.artwork.path="
-				+ getArtworkPath().replace(tmpdir, tmpMacro).replace("\\",
-						"\\\\"));
-		pw.println();
-
-		pw.close();
-	}
-
-	private static String listAsString(List<String> list) {
-		StringBuilder sb = new StringBuilder();
-		for (Iterator<String> it = list.iterator(); it.hasNext();) {
-			sb.append(it.next());
-			if (it.hasNext())
-				sb.append(';');
-		}
-		return sb.toString();
 	}
 
 	private String getString(String property, Properties props) {

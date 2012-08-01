@@ -1099,11 +1099,6 @@ public class REST {
 		}
 
 		Config.getMusicPath().add(directory);
-		try {
-			Config.write();
-		} catch (IOException e) {
-			Logger.error("Failed to write configuration", e);
-		}
 		Library.interrupt();
 
 		nocache();
@@ -1136,12 +1131,6 @@ public class REST {
 					}
 				}
 			}
-		}
-
-		try {
-			Config.write();
-		} catch (IOException e) {
-			Logger.error("Failed to write configuration", e);
 		}
 		Library.interrupt();
 

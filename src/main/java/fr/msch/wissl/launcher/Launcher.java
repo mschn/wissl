@@ -18,15 +18,13 @@ package fr.msch.wissl.launcher;
 import java.awt.Desktop;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.RandomAccessFile;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.security.ProtectionDomain;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -64,17 +62,6 @@ public class Launcher {
 				} else {
 					configFile = new File(args[i]);
 				}
-			} else if ("-p".equals(str)) {
-				i++;
-				if (args.length == i) {
-					error("Option -p requires an argument");
-				} else {
-					try {
-						port = Integer.parseInt(args[i]);
-					} catch (NumberFormatException e) {
-						port = -1;
-					}
-				}
 			} else if ("-v".equals(str)) {
 				verbose = true;
 			} else {
@@ -104,8 +91,6 @@ public class Launcher {
 					System.out.println("Options:");
 					System.out.println("-c CONF  Configuration file path [="
 							+ configFile.getAbsolutePath() + "]");
-					System.out.println("-p PORT  HTTP listening port [=" + port
-							+ "]");
 					System.out.println("-v       Verbose stdout");
 					System.out.println("-Dx=y    JVM system property");
 
@@ -114,29 +99,40 @@ public class Launcher {
 			}
 		}
 
-		if (configFile == null) {
+		String pp = System.getProperty("wsl.http.port");
+
+		if (configFile != null) {
+			if (configFile.exists()) {
+				System.setProperty("wsl.config", configFile.getAbsolutePath());
+				Properties props = new Properties();
+				try {
+					props.load(new FileInputStream(configFile));
+					port = Integer.parseInt(props.getProperty("wsl.http.port"));
+				} catch (IOException e) {
+					e.printStackTrace();
+					error("Failed to read port from config");
+				}
+			} else {
+				error("Config file does not exist:"
+						+ configFile.getAbsolutePath());
+			}
+		} else {
 			InputStream is = Launcher.class.getResourceAsStream("/config.ini");
 			Properties properties = new Properties();
-
 			try {
 				properties.load(is);
 			} catch (IOException e) {
-				System.out.println("Failed to load config");
+				System.out.println("Failed to load default config");
 				e.printStackTrace();
 			}
-
 			for (Entry<Object, Object> prop : properties.entrySet()) {
 				System.setProperty(prop.getKey().toString(), prop.getValue()
 						.toString());
 			}
-		} else if (!configFile.exists()) {
-			error("Configuration file does not exist at: " + configFile);
-		} else {
-			System.setProperty("wsl.config", configFile.getAbsolutePath());
 		}
 
-		if (port == -1) {
-			error("Invalid port number");
+		if (pp != null && pp.trim().length() > 0) {
+			port = Integer.parseInt(pp);
 		}
 
 		PrintStream sysout = System.out;
@@ -230,32 +226,6 @@ public class Launcher {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private static void checkLock(String dir) {
-		boolean locked = false;
-		RandomAccessFile raf = null;
-		try {
-			File lock = new File(dir + "lock");
-			if (!lock.exists()) {
-				lock.createNewFile();
-				lock.deleteOnExit();
-			}
-			raf = new RandomAccessFile(lock, "rw");
-			FileChannel chan = raf.getChannel();
-			FileLock fl = chan.tryLock();
-			if (fl == null) {
-				locked = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			locked = true;
-		} finally {
-		}
-
-		if (locked) {
-			error("Another process is already running");
 		}
 	}
 
