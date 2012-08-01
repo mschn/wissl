@@ -110,6 +110,7 @@ public class Config {
 		}
 
 		this.version = getString("wsl.version", props);
+		this.buildInfo = getString("wsl.buildinfo", props);
 
 		this.httpPort = getInt("wsl.http.port", props);
 
@@ -159,8 +160,6 @@ public class Config {
 		// not using Properties#store(),
 		// it writes properties in a random order
 
-		pw.println("wsl.version=" + getVersion());
-		pw.println();
 		pw.println("wsl.http.port=" + getHttpPort());
 		pw.println();
 		pw.println("wsl.log.file.path="
@@ -302,6 +301,10 @@ public class Config {
 
 	public static String getVersion() {
 		return instance.version;
+	}
+
+	public static void setVersion(String version) {
+		instance.version = version;
 	}
 
 	public static int getHttpPort() {

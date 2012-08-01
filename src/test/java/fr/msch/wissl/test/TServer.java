@@ -116,6 +116,9 @@ public class TServer extends TestCase {
 	private void startServer() {
 		final File conf = new File("config.ini");
 
+		System.setProperty("wsl.buildinfo", "testing");
+		System.setProperty("wsl.version", "testing");
+
 		System.setProperty("java.awt.headless", "true");
 		System.setProperty("wsl.db.clean", "true");
 		System.setProperty("wsl.music.path", "");
@@ -129,21 +132,21 @@ public class TServer extends TestCase {
 
 		this.srv = new Server(8888);
 		WebAppContext context = new WebAppContext();
-        context.setDescriptor("src/main/webapp/WEB-INF/web.xml");
-        context.setResourceBase("src/main/webapp");
-        context.setContextPath("/");
-        context.setParentLoaderPriority(true);
- 
-        srv.setHandler(context);
-        try {
+		context.setDescriptor("src/main/webapp/WEB-INF/web.xml");
+		context.setResourceBase("src/main/webapp");
+		context.setContextPath("/");
+		context.setParentLoaderPriority(true);
+
+		srv.setHandler(context);
+		try {
 			srv.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("failed to start jetty", e);
 		}
-        
-        Config.setNowrite(true);
-        
+
+		Config.setNowrite(true);
+
 		/*
 		this.srv = new BootStrap(srvArgs).boot();
 		this.srv.start();

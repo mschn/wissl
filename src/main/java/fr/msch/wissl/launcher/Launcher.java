@@ -24,10 +24,10 @@ import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.ProtectionDomain;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,10 +35,10 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-//import net.winstone.Server;
-//import net.winstone.boot.BootStrap;
-import fr.msch.wissl.common.Config;
-import fr.msch.wissl.server.Logger;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * 
@@ -49,35 +49,14 @@ import fr.msch.wissl.server.Logger;
 public class Launcher {
 
 	public static void main(String[] args) {
-		String jarPath = null;
-		try {
-			// that's obviously ugly. if you know better email me :)
-			jarPath = Launcher.class.getProtectionDomain().getCodeSource()
-					.getLocation().toURI().getPath();
-		} catch (URISyntaxException e1) {
-			throw new Error(e1);
-		}
-		String baseDir = jarPath.substring(0,
-				jarPath.lastIndexOf(File.separator) + 1);
-
-		checkLock(baseDir);
-
-		File warFile = new File(baseDir + "dist" + File.separator + "wissl.war");
-		File configFile = new File(baseDir + "config.ini");
+		File configFile = null;
 		int port = 8080;
 		boolean verbose = false;
 
 		for (int i = 0; i < args.length; i++) {
 			String str = args[i];
 
-			if ("-w".equals(str)) {
-				i++;
-				if (args.length == i) {
-					error("Option -w requires an argument");
-				} else {
-					warFile = new File(args[i]);
-				}
-			} else if ("-c".equals(str)) {
+			if ("-c".equals(str)) {
 				i++;
 				if (args.length == i) {
 					error("Option -c requires an argument");
@@ -122,8 +101,6 @@ public class Launcher {
 					System.out.println("Usage: java "
 							+ Launcher.class.getCanonicalName() + " [opts]");
 					System.out.println("Options:");
-					System.out.println("-w WAR   WAR file path [="
-							+ warFile.getAbsolutePath() + "]");
 					System.out.println("-c CONF  Configuration file path [="
 							+ configFile.getAbsolutePath() + "]");
 					System.out.println("-p PORT  HTTP listening port [=" + port
@@ -135,11 +112,8 @@ public class Launcher {
 				}
 			}
 		}
-		System.setProperty("wsl.config", configFile.getAbsolutePath());
 
-		if (!warFile.exists()) {
-			error("WAR file does not exist at: " + warFile);
-		} else if (!configFile.exists()) {
+		if (!configFile.exists()) {
 			error("Configuration file does not exist at: " + configFile);
 		} else if (port == -1) {
 			error("Invalid port number");
@@ -158,25 +132,27 @@ public class Launcher {
 		}
 
 		setLF();
-	//	startServer(warFile, configFile, port);
 
-		// read build info if running from jar
+		// read build info from war
 		try {
 			InputStream is = Launcher.class
-					.getResourceAsStream("/META-INF/MANIFEST.MF");
+					.getResourceAsStream("/WEB-INF/classes/version");
 			if (is != null) {
 				Properties props = new Properties();
 				props.load(is);
-				String info = props.getProperty("Implementation-Version");
-				Config.setBuildInfo(info);
+				System.setProperty("wsl.version", props.getProperty("version"));
+				System.setProperty("wsl.buildinfo",
+						props.getProperty("buildinfo"));
 			}
 		} catch (Exception e) {
-			Logger.warn("Failed to read build info. Not running from jar ?", e);
+			e.printStackTrace(sysout);
 		}
+
+		startServer(configFile, port);
 
 		URI uri = null;
 		try {
-			uri = new URI("http://localhost:" + Config.getHttpPort());
+			uri = new URI("http://localhost:" + port);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -193,18 +169,43 @@ public class Launcher {
 		}
 
 	}
-/*
-	static Server startServer(File warFile, File configFile, int port) {
-		Map<String, String> srvArgs = new HashMap<String, String>();
-		srvArgs.put("httpPort", "" + port);
-		srvArgs.put("ajp13Port", "-1");
-		srvArgs.put("warfile", warFile.getAbsolutePath());
 
-		Server srv = new BootStrap(srvArgs).boot();
-		srv.start();
-		return srv;
+	static void startServer(File configFile, int port) {
+		System.setProperty("wsl.config", configFile.getAbsolutePath());
+
+		Server server = new Server();
+		SocketConnector connector = new SocketConnector();
+
+		// Set some timeout options to make debugging easier.
+		connector.setMaxIdleTime(1000 * 60 * 60);
+		connector.setSoLingerTime(-1);
+		connector.setPort(port);
+		server.setConnectors(new Connector[] { connector });
+
+		WebAppContext context = new WebAppContext();
+		context.setServer(server);
+		context.setContextPath("/");
+
+		ProtectionDomain protectionDomain = Launcher.class
+				.getProtectionDomain();
+		URL location = protectionDomain.getCodeSource().getLocation();
+		context.setWar(location.toExternalForm());
+
+		server.setHandler(context);
+		try {
+			server.start();
+			/*
+			System.in.read();
+			server.stop();
+			server.join();
+			 */
+		} catch (Exception e) {
+			e.printStackTrace();
+			error("Failed to start server");
+		}
+
 	}
-*/
+
 	private static void setLF() {
 		if (GraphicsEnvironment.isHeadless())
 			return;
