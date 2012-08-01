@@ -114,7 +114,7 @@ public class TServer extends TestCase {
 	}
 
 	private void startServer() {
-		final File conf = new File("config.ini");
+		final File conf = new File("src/main/webapp/config.ini");
 
 		System.setProperty("wsl.buildinfo", "testing");
 		System.setProperty("wsl.version", "testing");

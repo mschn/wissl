@@ -99,14 +99,12 @@ public class Config {
 
 	private Config() throws IOException {
 		String configPath = System.getProperty("wsl.config");
-		Properties props = null;
-		if (configPath == null) {
-			throw new IOException("Property " + configPathProperty
-					+ " is not defined, cannot load configuration");
-		} else {
+		Properties props = new Properties();
+		if (configPath != null && configPath.trim().length() > 0) {
 			this.configFile = new File(configPath);
-			props = new Properties();
 			props.load(new FileInputStream(configFile));
+		} else {
+			nowrite = true;
 		}
 
 		this.version = getString("wsl.version", props);

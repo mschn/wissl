@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.security.ProtectionDomain;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,9 +114,28 @@ public class Launcher {
 			}
 		}
 
-		if (!configFile.exists()) {
+		if (configFile == null) {
+			InputStream is = Launcher.class.getResourceAsStream("/config.ini");
+			Properties properties = new Properties();
+
+			try {
+				properties.load(is);
+			} catch (IOException e) {
+				System.out.println("Failed to load config");
+				e.printStackTrace();
+			}
+
+			for (Entry<Object, Object> prop : properties.entrySet()) {
+				System.setProperty(prop.getKey().toString(), prop.getValue()
+						.toString());
+			}
+		} else if (!configFile.exists()) {
 			error("Configuration file does not exist at: " + configFile);
-		} else if (port == -1) {
+		} else {
+			System.setProperty("wsl.config", configFile.getAbsolutePath());
+		}
+
+		if (port == -1) {
 			error("Invalid port number");
 		}
 
@@ -148,7 +168,7 @@ public class Launcher {
 			e.printStackTrace(sysout);
 		}
 
-		startServer(configFile, port);
+		startServer(port);
 
 		URI uri = null;
 		try {
@@ -170,9 +190,7 @@ public class Launcher {
 
 	}
 
-	static void startServer(File configFile, int port) {
-		System.setProperty("wsl.config", configFile.getAbsolutePath());
-
+	static void startServer(int port) {
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();
 
