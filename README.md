@@ -26,6 +26,11 @@ To use a different HTTP port, use the following switch: `java -jar wissl.jar -Dw
 If you want a higher degree of control over deployment, you can also use this WAR file within
 any application server such as tomcat.
 
+Screenshot
+----------
+
+![screenshot](https://raw.github.com/mschn/wissl/master/screen.jpg)
+
 Libraries used
 --------------
 
