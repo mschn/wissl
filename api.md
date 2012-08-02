@@ -219,7 +219,7 @@ The password is sent in clear-text.
 To prevent eavesdropping, configure the server to use SSL.
 
 Use the session id provided in the response to authenticate for each further call.
-The session id can be user either as an HTTP header or an HTTP query parameter,
+The session id can be used either as an HTTP header or an HTTP query parameter,
 both named `sessionId`.
 
 If a session associated with the same user already exists, the previous session
