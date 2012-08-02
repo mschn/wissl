@@ -67,7 +67,7 @@ var wsl = wsl || {};
 
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/user/password',
+			url : 'wissl/user/password',
 			type : 'POST',
 			headers : {
 				"sessionId" : wsl.sessionId

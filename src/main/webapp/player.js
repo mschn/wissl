@@ -58,7 +58,7 @@ var player = {};
 		player.playing = playing;
 
 		$.ajax({
-			url : "/wissl/song/" + playing.song_id,
+			url : "wissl/song/" + playing.song_id,
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -87,7 +87,7 @@ var player = {};
 				$('#playing').show();
 
 				if (album.artwork) {
-					art = '<img src="/wissl/art/' + album.id + '" />';
+					art = '<img src="wissl/art/' + album.id + '" />';
 				} else {
 					art = '<img src="img/no-artwork.jpg" />';
 				}
@@ -113,7 +113,7 @@ var player = {};
 
 				player.sound = soundManager.createSound({
 					id : "song_" + song.id,
-					url : "/wissl/song/" + song.id + "/stream?sessionId=" + wsl.sessionId,
+					url : "wissl/song/" + song.id + "/stream?sessionId=" + wsl.sessionId,
 					type : data.song.format,
 					autoPlay : true,
 					onfinish : function () {
@@ -252,7 +252,7 @@ var player = {};
 			player.sound.destruct();
 			var p = player.playing;
 			$.ajax({
-				url : "/wissl/playlist/" + p.playlist_id + "/song/" + (p.position - 1),
+				url : "wissl/playlist/" + p.playlist_id + "/song/" + (p.position - 1),
 				headers : {
 					"sessionId" : wsl.sessionId
 				},
@@ -285,7 +285,7 @@ var player = {};
 			player.sound.destruct();
 			var p = player.playing;
 			$.ajax({
-				url : "/wissl/playlist/" + p.playlist_id + "/song/" + (p.position + 1),
+				url : "wissl/playlist/" + p.playlist_id + "/song/" + (p.position + 1),
 				headers : {
 					"sessionId" : wsl.sessionId
 				},

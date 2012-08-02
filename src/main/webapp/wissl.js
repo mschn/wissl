@@ -49,7 +49,7 @@ var wsl = wsl || {};
 	wsl.doLogin = function (username, password) {
 		wsl.lockUI();
 		$.ajax({
-			url : "/wissl/login",
+			url : "wissl/login",
 			type : "POST",
 			data : {
 				"username" : username,
@@ -95,7 +95,7 @@ var wsl = wsl || {};
 
 			wsl.lockUI();
 			$.ajax({
-				url : "/wissl/logout",
+				url : "wissl/logout",
 				type : "POST",
 				headers : {
 					"sessionId" : sid
@@ -131,7 +131,7 @@ var wsl = wsl || {};
 
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/user/add',
+			url : 'wissl/user/add',
 			type : 'POST',
 			dataType : 'json',
 			data : {
@@ -439,7 +439,7 @@ var wsl = wsl || {};
 
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/playlist/create-add',
+			url : 'wissl/playlist/create-add',
 			headers : {
 				'sessionId' : wsl.sessionId
 			},
@@ -461,7 +461,7 @@ var wsl = wsl || {};
 				}
 
 				$.ajax({
-					url : '/wissl/playlist/' + playlist.id + '/song/0',
+					url : 'wissl/playlist/' + playlist.id + '/song/0',
 					headers : {
 						'sessionId' : wsl.sessionId
 					},
@@ -491,7 +491,7 @@ var wsl = wsl || {};
 	wsl.displayAbout = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/info',
+			url : 'wissl/info',
 			type : 'GET',
 			headers : {
 				sessionId : wsl.sessionId
@@ -562,7 +562,7 @@ var wsl = wsl || {};
 
 		if (!sid) {
 			$.ajax({
-				url : '/wissl/hasusers',
+				url : 'wissl/hasusers',
 				type : 'GET',
 				dataType : "json",
 				success : function (data) {

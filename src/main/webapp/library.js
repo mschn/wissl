@@ -24,7 +24,7 @@ var wsl = wsl || {};
 	wsl.displayArtists = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
-			url : "/wissl/artists",
+			url : "wissl/artists",
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -60,7 +60,7 @@ var wsl = wsl || {};
 					content += '</div>';
 					content += '<div class="artists-artworks">';
 					for (j = 0; j < artworks.length && j < 10; j += 1) {
-						content += '<img src="/wissl/art/' + artworks[j] + '" />';
+						content += '<img src="wissl/art/' + artworks[j] + '" />';
 					}
 					content += '</div>';
 					content += '</li>';
@@ -85,7 +85,7 @@ var wsl = wsl || {};
 	wsl.displayAlbums = function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
-			url : "/wissl/albums/" + id,
+			url : "wissl/albums/" + id,
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -118,7 +118,7 @@ var wsl = wsl || {};
 					content += '<span class="before">' + album.date + '</span>';
 					content += '<span onclick="wsl.load(\'?songs/' + album.id + '\')" class="' + clazz + '">';
 					if (album.artwork) {
-						content += '<img src="/wissl/art/' + album.id + '" />';
+						content += '<img src="wissl/art/' + album.id + '" />';
 					} else {
 						if (hastag) {
 							content += '<img src="img/no-artwork.jpg" />';
@@ -153,7 +153,7 @@ var wsl = wsl || {};
 	wsl.displaySongs = function (id, scroll) {
 		wsl.lockUI();
 		$.ajax({
-			url : "/wissl/songs/" + id,
+			url : "wissl/songs/" + id,
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -170,7 +170,7 @@ var wsl = wsl || {};
 
 				content = '<div id="library-heading">';
 				if (album.artwork) {
-					content += '<img src="/wissl/art/' + album.id + '" />';
+					content += '<img src="wissl/art/' + album.id + '" />';
 				} else {
 					content += '<img src="img/no-artwork.jpg" />';
 				}
@@ -233,7 +233,7 @@ var wsl = wsl || {};
 		wsl.showDialog('add-to-playlist-dialog');
 		wsl.lockUI();
 		$.ajax({
-			url : "/wissl/playlists",
+			url : "wissl/playlists",
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -299,7 +299,7 @@ var wsl = wsl || {};
 
 			wsl.lockUI();
 			$.ajax({
-				url : '/wissl/playlist/create-add',
+				url : 'wissl/playlist/create-add',
 				headers : {
 					"sessionId" : wsl.sessionId
 				},
@@ -323,7 +323,7 @@ var wsl = wsl || {};
 
 			wsl.lockUI();
 			$.ajax({
-				url : '/wissl/playlist/' + playlist_id + '/add',
+				url : 'wissl/playlist/' + playlist_id + '/add',
 				headers : {
 					"sessionId" : wsl.sessionId
 				},

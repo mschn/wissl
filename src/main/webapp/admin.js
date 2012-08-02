@@ -100,7 +100,7 @@ var wsl = wsl || {};
 			content += '<span class="button button-cancel" onclick="wsl.removeUser()">Remove</span><div>';
 
 			content += '<h3>Server</h3>';
-			cb = 'window.open(\'/wissl/logs?&sessionId=' + wsl.sessionId + '\',\'_blank\')';
+			cb = 'window.open(\'wissl/logs?&sessionId=' + wsl.sessionId + '\',\'_blank\')';
 			content += '<p><span class="button button-logs" onclick="' + cb + '">Server logs</span></p>';
 			content += '<p><span class="button button-shutdown" onclick="wsl.shutdown()">Shutdown server</p>';
 
@@ -115,7 +115,7 @@ var wsl = wsl || {};
 		};
 
 		$.ajax({
-			url : '/wissl/folders',
+			url : 'wissl/folders',
 			headers : {
 				'sessionId' : wsl.sessionId
 			},
@@ -131,7 +131,7 @@ var wsl = wsl || {};
 		});
 
 		$.ajax({
-			url : '/wissl/users',
+			url : 'wissl/users',
 			headers : {
 				'sessionId' : wsl.sessionId
 			},
@@ -171,7 +171,7 @@ var wsl = wsl || {};
 
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/user/add',
+			url : 'wissl/user/add',
 			type : 'POST',
 			headers : {
 				"sessionId" : wsl.sessionId
@@ -203,7 +203,7 @@ var wsl = wsl || {};
 		if (sel.length > 0) {
 			wsl.lockUI();
 			$.ajax({
-				url : '/wissl/user/remove',
+				url : 'wissl/user/remove',
 				type : 'POST',
 				headers : {
 					sessionId : wsl.sessionId
@@ -231,7 +231,7 @@ var wsl = wsl || {};
 	wsl.updateAddMusicFolderListing = function (dir) {
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/folders/listing',
+			url : 'wissl/folders/listing',
 			headers : {
 				"sessionId" : wsl.sessionId
 			},
@@ -302,7 +302,7 @@ var wsl = wsl || {};
 		if (sel[0]) {
 			dir = sel[0].innerHTML;
 			$.ajax({
-				url : '/wissl/folders/add',
+				url : 'wissl/folders/add',
 				type : 'POST',
 				headers : {
 					"sessionId" : wsl.sessionId
@@ -333,7 +333,7 @@ var wsl = wsl || {};
 		if (sel.length > 0) {
 			wsl.lockUI();
 			$.ajax({
-				url : '/wissl/folders/remove',
+				url : 'wissl/folders/remove',
 				type : 'POST',
 				headers : {
 					sessionId : wsl.sessionId

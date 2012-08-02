@@ -30,7 +30,7 @@ var wsl = wsl || {};
 	wsl.displayHome = function () {
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/stats',
+			url : 'wissl/stats',
 			headers : {
 				sessionId : wsl.sessionId
 			},
@@ -95,7 +95,7 @@ var wsl = wsl || {};
 	wsl.displaySearch = function (query) {
 		wsl.lockUI();
 		$.ajax({
-			url : '/wissl/search/' + encodeURIComponent(query),
+			url : 'wissl/search/' + encodeURIComponent(query),
 			headers : {
 				sessionId : wsl.sessionId
 			},

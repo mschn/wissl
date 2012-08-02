@@ -25,7 +25,7 @@ var wsl = wsl || {};
 		wsl.lockUI();
 
 		$.ajax({
-			url : '/wissl/users',
+			url : 'wissl/users',
 			headers : {
 				sessionId : wsl.sessionId
 			},
@@ -79,7 +79,7 @@ var wsl = wsl || {};
 		wsl.lockUI();
 
 		$.ajax({
-			url : '/wissl/user/' + uid,
+			url : 'wissl/user/' + uid,
 			headers : {
 				sessionId : wsl.sessionId
 			},
