@@ -18,6 +18,7 @@ package fr.msch.wissl.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,16 +75,50 @@ public class Config {
 	/**
 	 * Create and initialize
 	 */
-	public static void create() throws IOException {
-		instance = new Config();
+	public static void create(String servletPath) throws IOException {
+		instance = new Config(servletPath);
 	}
 
-	private Config() throws IOException {
+	private Config(String servletPath) throws IOException {
 		String configPath = System.getProperty("wsl.config");
 		Properties props = new Properties();
 
+		// read build info from version file
+		try {
+			// if we are running from jar it will be here
+			InputStream is = Config.class
+					.getResourceAsStream("/WEB-INF/classes/version");
+			// running from extracted war, /WEB-INF/classes/ will be the top folder
+			if (is == null) {
+				is = Config.class.getResourceAsStream("/version");
+			}
+			// actually we don't really care about this :)
+			if (is == null) {
+				System.setProperty("wsl.version", "0");
+				System.setProperty("wsl.buildinfo", "0");
+			} else {
+				Properties p = new Properties();
+				p.load(is);
+				System.setProperty("wsl.version", p.getProperty("version"));
+				System.setProperty("wsl.buildinfo", p.getProperty("buildinfo"));
+			}
+		} catch (Exception e) {
+			throw new IOException("failed to read version file", e);
+		}
+
+		// user specified config using -Dwsl.config=path
 		if (configPath != null && configPath.trim().length() > 0) {
 			props.load(new FileInputStream(new File(configPath)));
+		}
+		// default config file should be provided within application
+		else {
+			// running from jar: file is at the root of the jar
+			InputStream is = Config.class.getResourceAsStream("/config.ini");
+			if (is == null) {
+				// running from extracted war: file is in servlet root path
+				is = new FileInputStream(new File(servletPath + "/config.ini"));
+			}
+			props.load(is);
 		}
 
 		this.version = getString("wsl.version", props);

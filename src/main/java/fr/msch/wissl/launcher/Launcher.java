@@ -20,13 +20,11 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.ProtectionDomain;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,19 +114,6 @@ public class Launcher {
 				error("Config file does not exist:"
 						+ configFile.getAbsolutePath());
 			}
-		} else {
-			InputStream is = Launcher.class.getResourceAsStream("/config.ini");
-			Properties properties = new Properties();
-			try {
-				properties.load(is);
-			} catch (IOException e) {
-				System.out.println("Failed to load default config");
-				e.printStackTrace();
-			}
-			for (Entry<Object, Object> prop : properties.entrySet()) {
-				System.setProperty(prop.getKey().toString(), prop.getValue()
-						.toString());
-			}
 		}
 
 		if (pp != null && pp.trim().length() > 0) {
@@ -148,21 +133,6 @@ public class Launcher {
 		}
 
 		setLF();
-
-		// read build info from war
-		try {
-			InputStream is = Launcher.class
-					.getResourceAsStream("/WEB-INF/classes/version");
-			if (is != null) {
-				Properties props = new Properties();
-				props.load(is);
-				System.setProperty("wsl.version", props.getProperty("version"));
-				System.setProperty("wsl.buildinfo",
-						props.getProperty("buildinfo"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace(sysout);
-		}
 
 		startServer(port);
 

@@ -37,7 +37,7 @@ public class Bootstrap extends ResteasyBootstrap {
 		super.contextInitialized(event);
 
 		try {
-			Config.create();
+			Config.create(event.getServletContext().getRealPath("/"));
 		} catch (IOException e) {
 			throw new Error("Failed to load configuration", e);
 		}
