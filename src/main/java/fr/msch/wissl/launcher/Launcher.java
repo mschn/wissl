@@ -139,7 +139,12 @@ public class Launcher {
 			error("Wissl is already running on http://localhost:" + port);
 		}
 
-		startServer(port);
+		final int fport = port;
+		new Thread(new Runnable() {
+			public void run() {
+				startServer(fport);
+			}
+		}).start();
 
 		URI uri = null;
 		try {

@@ -55,7 +55,7 @@
               <tasks>
                 <move todir="${project.build.directory}/${project.artifactId}-${project.version}/">
                   <fileset dir="${project.build.directory}/classes/">
-                    <include name="fr/msch/wissl/launcher/Launcher.class" />
+                    <include name="fr/msch/wissl/launcher/Launcher*.class" />
                   </fileset>
                 </move>
               </tasks>
