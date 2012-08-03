@@ -301,27 +301,30 @@ var wsl = wsl || {};
 		sel = $('#addmusic-dialog-content .dir-selected .dir-name');
 		if (sel[0]) {
 			dir = sel[0].innerHTML;
-			$.ajax({
-				url : 'wissl/folders/add',
-				type : 'POST',
-				headers : {
-					"sessionId" : wsl.sessionId
-				},
-				data : {
-					directory : dir
-				},
-				success : function (data) {
-					wsl.unlockUI();
-					wsl.cancelAddMusicFolder();
-					wsl.displayAdmin();
-				},
-				error : function (xhr) {
-					wsl.unlockUI();
-					wsl.cancelAddMusicFolder();
-					wsl.ajaxError("Failed to add music directory", xhr);
-				}
-			});
+		} else {
+			dir = $('#addmusic-dialog-dirname').val();
 		}
+
+		$.ajax({
+			url : 'wissl/folders/add',
+			type : 'POST',
+			headers : {
+				"sessionId" : wsl.sessionId
+			},
+			data : {
+				directory : dir
+			},
+			success : function (data) {
+				wsl.unlockUI();
+				wsl.cancelAddMusicFolder();
+				wsl.displayAdmin();
+			},
+			error : function (xhr) {
+				wsl.unlockUI();
+				wsl.cancelAddMusicFolder();
+				wsl.ajaxError("Failed to add music directory", xhr);
+			}
+		});
 	};
 
 	wsl.removeMusicFolder = function () {
