@@ -28,7 +28,6 @@ var wsl = wsl || {};
 
 		cb = function () {
 			var i, content, fileOrganizerModule = null, fileorganizerlibraries = null, defaultLibrary = 'Use default file library';
-			;
 
 			if (!users || !folders) {
 				return;

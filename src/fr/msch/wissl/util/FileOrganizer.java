@@ -137,7 +137,11 @@ public class FileOrganizer {
 			this.putFileToNotRemove(libPath, destDir);
 			this.putFileToRemove(musicPath, sourceFile.getParentFile());
 		} catch (FileOrganizerException e) {
-			Logger.error("FileOrganizer : cannot organize file", e);
+			Logger.debug("FileOrganizer : cannot organize song "
+					+ song.filepath, e);
+		} catch (Throwable e) {
+			Logger.error("FileOrganizer : cannot organize song "
+					+ song.filepath, e);
 		}
 	}
 
@@ -170,7 +174,11 @@ public class FileOrganizer {
 				this.moveFile(sourceFile, destFile);
 			}
 		} catch (FileOrganizerException e) {
-			Logger.error("FileOrganizer : cannot organize artwork", e);
+			Logger.debug("FileOrganizer : cannot organize artwork "
+					+ song.album.artwork_path, e);
+		} catch (Throwable e) {
+			Logger.error("FileOrganizer : cannot organize artwork "
+					+ song.album.artwork_path, e);
 		}
 	}
 
@@ -224,16 +232,22 @@ public class FileOrganizer {
 		Set<File> newFilesToRemove = new HashSet<File>();
 
 		for (File folder : folderList) {
-			if (folder.exists() && !folder.getAbsoluteFile().equals(musicPath)) {
+			if (folder.exists() && !folder.getAbsolutePath().equals(musicPath)) {
 				File parent = folder.getParentFile();
 				if (parent != null) {
 					newFilesToRemove.add(parent);
 				}
 
+				boolean deleted = false;
+
 				if (removeAll) {
-					Config.deleteRecursive(folder);
+					deleted = Config.deleteRecursive(folder);
 				} else {
-					folder.delete();
+					deleted = folder.delete();
+				}
+
+				if (!deleted) {
+					Logger.error("Unable to remove " + folder.getAbsolutePath());
 				}
 			}
 		}
@@ -255,20 +269,20 @@ public class FileOrganizer {
 		String result = DEFAULT_DIRECTORY_FORMAT;
 
 		if (!song.artist_name.isEmpty()) {
-			result = result.replaceAll("%artist%",
+			result = result.replace("%artist%",
 					this.formatPath(song.artist_name));
 		} else if (Config.allowFileOrganizeMissingTag()) {
-			result = result.replaceAll("%artist%", "Artiste inconnu");
+			result = result.replace("%artist%", "Artiste inconnu");
 		} else {
 			throw new FileOrganizerException("Missing artist tag for file : "
 					+ song.filepath);
 		}
 
 		if (!song.album_name.isEmpty()) {
-			result = result.replaceAll("%album%",
-					this.formatPath(song.album_name));
+			result = result
+					.replace("%album%", this.formatPath(song.album_name));
 		} else if (Config.allowFileOrganizeMissingTag()) {
-			result = result.replaceAll("%album%", "Album inconnu");
+			result = result.replace("%album%", "Album inconnu");
 		} else {
 			throw new FileOrganizerException("Missing album tag for file : "
 					+ song.filepath);
@@ -296,15 +310,15 @@ public class FileOrganizer {
 			result = result.replaceAll("%position%",
 					String.format("%02d", song.position));
 		} else if (Config.allowFileOrganizeMissingTag()) {
-			result = result.replaceAll("%position%[ ]*", "");
+			result = result.replace("%position%[ ]*", "");
 		} else {
 			throw new FileOrganizerException("Missing position tag for file : "
 					+ song.filepath);
 		}
 
-		result = result.replaceAll("%title%", song.title);
+		result = result.replace("%title%", song.title);
 
-		result = result.replaceAll("%format%",
+		result = result.replace("%format%",
 				song.filepath.substring(song.filepath.lastIndexOf('.')));
 
 		return this.formatPath(result);
@@ -319,10 +333,10 @@ public class FileOrganizer {
 	private String formatPath(String path) {
 		String result = path;
 
-		result = result.replaceAll("[?:\\/*'\"<>|]", "_");
-		result = result.replaceAll(" +", " ");
-		result = result.replaceAll("^ ", "");
-		result = result.replaceAll("$ ", "");
+		result = result.replaceAll("[?:\\/*\"<>|]", " ");
+		result = result.replaceAll("\\s+", " ");
+		result = result.replaceAll("^\\s", "");
+		result = result.replaceAll("\\s$", "");
 
 		return result;
 	}
@@ -406,8 +420,6 @@ public class FileOrganizer {
 			throw new FileOrganizerException("Unable to create directory "
 					+ destDir.getAbsolutePath());
 		}
-
-		destDir.mkdirs();
 	}
 
 	/**
@@ -466,7 +478,7 @@ public class FileOrganizer {
 			sb.append("\n");
 		}
 
-		if (sourceFile == null || musicPath.isEmpty()) {
+		if (sourceFile == null || !sourceFile.exists()) {
 			sb.append("MusicFile is NULL");
 			sb.append("\n");
 		}

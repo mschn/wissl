@@ -441,12 +441,15 @@ public class Config {
 		return instance.allowFileOrganizeMissingTag;
 	}
 
-	public static void deleteRecursive(File f) {
+	public static boolean deleteRecursive(File f) {
+		boolean result = true;
+
 		if (f.isDirectory()) {
 			for (File c : f.listFiles())
-				deleteRecursive(c);
+				result &= deleteRecursive(c);
 		}
-		f.delete();
+
+		return result && f.delete();
 	}
 
 }
