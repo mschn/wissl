@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -134,6 +135,10 @@ public class Launcher {
 
 		setLF();
 
+		if (isRunning(port)) {
+			error("Wissl is already running on http://localhost:" + port);
+		}
+
 		startServer(port);
 
 		URI uri = null;
@@ -180,6 +185,21 @@ public class Launcher {
 			error("Failed to start server");
 		}
 
+	}
+
+	static boolean isRunning(int port) {
+		String endpoint = "http://localhost:" + port + "/wissl/hasusers";
+		try {
+			// can't use commons httpclient, don't have the jar inside the launcher
+			HttpURLConnection get = (HttpURLConnection) new URL(endpoint)
+					.openConnection();
+
+			if (get.getResponseCode() == 200) {
+				return true;
+			}
+		} catch (IOException e) {
+		}
+		return false;
 	}
 
 	private static void setLF() {
