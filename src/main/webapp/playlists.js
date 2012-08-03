@@ -169,7 +169,7 @@ var wsl = wsl || {};
 					song_id : song_id,
 					playlist_id : playlist.id,
 					playlist_name : playlist.name,
-					position : position - 1
+					position : position
 				});
 				wsl.unlockUI();
 			},

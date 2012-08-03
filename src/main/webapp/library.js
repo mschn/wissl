@@ -201,7 +201,7 @@ var wsl = wsl || {};
 					content += '<span ' + events + ' class="select-box">&nbsp</span>';
 					content += '<span class="song-id">' + song.id + '</span>';
 					content += '<span class="before">' + song.position + '</span>';
-					content += '<span class="title" onclick="wsl.playAlbum(' + album.id + ',' + song.id + ',' + song.position + ')">' + song.title + '</span>';
+					content += '<span class="title" onclick="wsl.playAlbum(' + album.id + ',' + song.id + ',' + i + ')">' + song.title + '</span>';
 					content += '<span class="duration">' + wsl.formatSeconds(song.duration) + '</span></li>';
 				}
 				content += "</ul>";
