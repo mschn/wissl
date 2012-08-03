@@ -237,7 +237,8 @@ Destroys the session associated with the UUID in the request.
 ### <a id="hasusers"></a>`/hasusers`
 * method: `GET`
 * no parameter
-* ex: `curl -H 'sessionId:UUID http://localhost/wissl/hasusers`
+* does not requires authentication
+* ex: `curl http://localhost/wissl/hasusers`
 * returns:<pre>
     {
       "hasusers": BOOL
