@@ -33,7 +33,12 @@ var player = {};
 	// currently playing sound
 	player.sound = null;
 
+	// preload for next sound in playlist
+	player.nextSound = null;
+
 	player.playing = null;
+
+	player.nextPlaying = null;
 
 	player.volume = 100;
 
@@ -43,6 +48,12 @@ var player = {};
 		if (!playing) {
 			return;
 		}
+		if (player.nextSound !== null) {
+			player.nextSound.destruct();
+			player.nextSound = null;
+			player.nextPlaying = null;
+		}
+
 		if (player.playing && player.playing.playlist_id !== playing.playlist_id) {
 			var msg = 'A song is currently playing from another playlist.<br>Continue?';
 			wsl.confirmDialog('New playlist', msg, function () {
@@ -110,75 +121,117 @@ var player = {};
 					wsl.error("Cannot play " + song.title + ": no sound");
 					return;
 				}
-
-				player.sound = soundManager.createSound({
-					id : "song_" + song.id,
-					url : "wissl/song/" + song.id + "/stream?sessionId=" + wsl.sessionId,
-					type : data.song.format,
-					autoPlay : true,
-					onfinish : function () {
-						player.next();
-					},
-					onplay : function () {
-					},
-					whileplaying : function () {
-						var width, w1, w2, d1, d2, t, kbps, vol;
-
-						if (player.sound.muted !== player.mute) {
-							if (player.mute) {
-								player.sound.mute();
-							} else {
-								player.sound.unmute();
-							}
-						}
-						$('#volume-slider-full').height(player.volume * $('#volume-slider').height() / 100);
-						player.sound.setVolume(Math.pow(player.volume / 100, 3) * 100);
-						vol = $('#volume-icon');
-						vol.removeClass();
-						if (player.mute) {
-							vol.addClass('volume-mute');
-						} else {
-							if (player.volume > 75) {
-								vol.addClass('volume-high');
-							} else if (player.volume > 50) {
-								vol.addClass('volume-medium');
-							} else if (player.volume > 25) {
-								vol.addClass('volume-low');
-							} else {
-								vol.addClass('volume-zero');
-							}
-						}
-
-						player.song.duration = player.sound.durationEstimate / 1000;
-						width = $("#progress").width();
-						w1 = (player.sound.position / (player.song.duration * 1000)) * width;
-						w2 = (player.sound.bytesLoaded / player.sound.bytesTotal) * width;
-						d1 = wsl.formatSeconds(player.sound.position / 1000);
-						d2 = wsl.formatSeconds(player.song.duration);
-						$("#progress-played").width(w1);
-						$("#progress-download").width(w2);
-						$("#position").html('<strong>' + d1 + "</strong> / " + d2);
-
-						if (player.sound.bytesLoaded !== player.sound.bytesTotal) {
-							t = new Date().getTime();
-							if (!player.sound.t) {
-								player.sound.t = t;
-								player.sound.bytesAtT = player.sound.bytesLoaded;
-							}
-							if (t - player.sound.t > 1000) {
-								kbps = Math.ceil((player.sound.bytesLoaded - player.sound.bytesAtT) / 1024);
-								$('#download-rate').empty().html(kbps + 'Kbps').show();
-								player.sound.t = t;
-								player.sound.bytesAtT = player.sound.bytesLoaded;
-							}
-						} else {
-							$('#download-rate').hide();
-						}
-					}
-				});
+				if (player.nextSound === null) {
+					player.sound = player.createSound(data);
+				} else {
+					player.sound = player.nextSound;
+					player.nextSound = null;
+					player.nextPlaying = null;
+				}
+				player.sound.play();
 			},
 			error : function (xhr) {
 				wsl.ajaxError("failed to get song " + playing.song_id, xhr);
+			}
+		});
+	};
+
+	player.createSound = function (data) {
+		return soundManager.createSound({
+			id : "song_" + data.song.id,
+			url : "wissl/song/" + data.song.id + "/stream?sessionId=" + wsl.sessionId,
+			type : data.song.format,
+			autoPlay : false,
+			autoLoad : true,
+			onfinish : function () {
+				player.next();
+			},
+			onplay : function () {
+				if (this.loaded) {
+					this._iO.onload();
+				}
+			},
+			onload : function () {
+				if (player.nextSound === null) {
+					var p = player.playing;
+					$.ajax({
+						url : "wissl/playlist/" + p.playlist_id + "/song/" + (p.position + 1),
+						headers : {
+							"sessionId" : wsl.sessionId
+						},
+						dataType : "json",
+						success : function (data) {
+							if (data.song && data.song.id) {
+								player.nextPlaying = {
+									song_id : data.song.id,
+									playlist_id : p.playlist_id,
+									playlist_name : p.playlist_name,
+									position : p.position + 1
+								};
+								player.nextSound = player.createSound(data);
+							}
+						},
+						error : function (xhr) {
+							if (xhr.status !== 404) {
+								wsl.ajaxError("Failed to get next song in playlist", xhr);
+							}
+						}
+					});
+				}
+			},
+			whileplaying : function () {
+				var width, w1, w2, d1, d2, t, kbps, vol;
+
+				if (player.sound.muted !== player.mute) {
+					if (player.mute) {
+						player.sound.mute();
+					} else {
+						player.sound.unmute();
+					}
+				}
+				$('#volume-slider-full').height(player.volume * $('#volume-slider').height() / 100);
+				player.sound.setVolume(Math.pow(player.volume / 100, 3) * 100);
+				vol = $('#volume-icon');
+				vol.removeClass();
+				if (player.mute) {
+					vol.addClass('volume-mute');
+				} else {
+					if (player.volume > 75) {
+						vol.addClass('volume-high');
+					} else if (player.volume > 50) {
+						vol.addClass('volume-medium');
+					} else if (player.volume > 25) {
+						vol.addClass('volume-low');
+					} else {
+						vol.addClass('volume-zero');
+					}
+				}
+
+				player.song.duration = player.sound.durationEstimate / 1000;
+				width = $("#progress").width();
+				w1 = (player.sound.position / (player.song.duration * 1000)) * width;
+				w2 = (player.sound.bytesLoaded / player.sound.bytesTotal) * width;
+				d1 = wsl.formatSeconds(player.sound.position / 1000);
+				d2 = wsl.formatSeconds(player.song.duration);
+				$("#progress-played").width(w1);
+				$("#progress-download").width(w2);
+				$("#position").html('<strong>' + d1 + "</strong> / " + d2);
+
+				if (player.sound.bytesLoaded !== player.sound.bytesTotal) {
+					t = new Date().getTime();
+					if (!player.sound.t) {
+						player.sound.t = t;
+						player.sound.bytesAtT = player.sound.bytesLoaded;
+					}
+					if (t - player.sound.t > 1000) {
+						kbps = Math.ceil((player.sound.bytesLoaded - player.sound.bytesAtT) / 1024);
+						$('#download-rate').empty().html(kbps + 'Kbps').show();
+						player.sound.t = t;
+						player.sound.bytesAtT = player.sound.bytesLoaded;
+					}
+				} else {
+					$('#download-rate').hide();
+				}
 			}
 		});
 	};
@@ -250,6 +303,12 @@ var player = {};
 	player.previous = function () {
 		if (player.playing) {
 			player.sound.destruct();
+			if (player.nextSound !== null) {
+				player.nextSound.destruct();
+				player.nextSound = null;
+				player.nextPlaying = null;
+			}
+
 			var p = player.playing;
 			$.ajax({
 				url : "wissl/playlist/" + p.playlist_id + "/song/" + (p.position - 1),
@@ -259,7 +318,7 @@ var player = {};
 				dataType : "json",
 				success : function (data) {
 					if (data.song && data.song.id) {
-						player.play({
+						player.internalPlay({
 							song_id : data.song.id,
 							playlist_id : p.playlist_id,
 							playlist_name : p.playlist_name,
@@ -281,7 +340,14 @@ var player = {};
 	};
 
 	player.next = function () {
+
 		if (player.playing) {
+			if (player.nextSound !== null && player.nextPlaying !== null) {
+				player.internalPlay(player.nextPlaying);
+				player.nextPlaying = null;
+				return;
+			}
+
 			player.sound.destruct();
 			var p = player.playing;
 			$.ajax({
@@ -292,7 +358,7 @@ var player = {};
 				dataType : "json",
 				success : function (data) {
 					if (data.song && data.song.id) {
-						player.play({
+						player.internalPlay({
 							song_id : data.song.id,
 							playlist_id : p.playlist_id,
 							playlist_name : p.playlist_name,
