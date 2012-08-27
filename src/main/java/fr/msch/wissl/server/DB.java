@@ -252,14 +252,6 @@ public abstract class DB {
 	public abstract Artist getArtist(int id) throws SQLException;
 
 	/**
-	 * @param album_id unique DB id of an artist
-	 * @return list of file paths for all individual songs for this artist
-	 * @throws SQLException
-	 */
-	public abstract List<String> getArtistSongPaths(int album_id)
-			throws SQLException;
-
-	/**
 	 * @param artist_id valid value for artist.artist_id in DB 
 	 * @return all albums from the artist corresponding the id, or an empty list
 	 * @throws SQLException
@@ -333,6 +325,30 @@ public abstract class DB {
 	public abstract String getSongFilePath(int song_id) throws SQLException;
 
 	/**
+	 * @param artist_id unique DB artist ids
+	 * @return list of file paths for all individual songs for these artists
+	 * @throws SQLException
+	 */
+	public abstract List<String> getArtistSongPaths(int[] artist_id)
+			throws SQLException;
+
+	/**
+	 * @param album_id unique DB album ids
+	 * @return list of file paths for all individual songs in this album
+	 * @throws SQLException
+	 */
+	public abstract List<String> getAlbumSongPaths(int[] album_id)
+			throws SQLException;
+
+	/**
+	 * @param song_id unique DB song ids
+	 * @return list of all file paths for these songs
+	 * @throws SQLException
+	 */
+	public abstract List<String> getSongPaths(int[] song_id)
+			throws SQLException;
+
+	/**
 	 * @return total number of songs
 	 * @throws SQLException
 	 */
@@ -399,10 +415,25 @@ public abstract class DB {
 			throws SQLException;
 
 	/**
-	 * Permanently remove an artist from DB, along with asociated
+	 * Permanently remove multiple artists from DB, along with associated
 	 * albums, songs and playlist entries 
-	 * @param artist_id id of the artist to remove from DB
+	 * @param artist_id ids of the artists to remove from DB
 	 * @throws SQLException
 	 */
-	public abstract void removeArtist(int artist_id) throws SQLException;
+	public abstract void removeArtists(int[] artist_ids) throws SQLException;
+
+	/**
+	 * Permanently remove multiple albums from DB, along with associated 
+	 * songs and playlist entries
+	 * @param album_id ids of the albums to remove from DB
+	 * @throws SQLException
+	 */
+	public abstract void removeAlbums(int[] album_id) throws SQLException;
+
+	/**
+	 * Permanently remove multiple songs from DB, along with associated playlist entries
+	 * @param song_id ids id the songs to remove from DB
+	 * @throws SQLException
+	 */
+	public abstract void removeSongs(int[] song_id) throws SQLException;
 }

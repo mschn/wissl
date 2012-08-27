@@ -1164,31 +1164,73 @@ public class REST {
 	}
 
 	@POST
-	@Path("edit/artist/{artist_id}")
-	public void editArtist(@PathParam("artist_id") int artist_id,
+	@Path("edit/artist")
+	public void editArtist(@FormParam("artist_ids[]") int[] artist_ids,
 			@FormParam("artist_name") String artist_name) throws SecurityError,
 			SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
 		Session s = Session.check(sid, request.getRemoteAddr(), true);
 
-		if (artist_name == null || artist_name.trim().length() == 0) {
-			throw new IllegalArgumentException("Empty parameter 'artist_name' ");
-		}
-
-		// file paths to rewrite
-		List<String> files = DB.get().getArtistSongPaths(artist_id);
+		List<String> files = DB.get().getArtistSongPaths(artist_ids);
 		if (files.isEmpty()) {
-			throw new NotFoundException("Artist not found: " + artist_id);
+			throw new NotFoundException("No artist found");
 		}
 
-		// write new name in ID3
 		Library.editArtist(files, artist_name);
+		DB.get().removeArtists(artist_ids);
+		Library.interrupt();
 
-		// delete artist from DB
-		DB.get().removeArtist(artist_id);
+		log(s, l1);
+	}
 
-		// force rescan
+	@POST
+	@Path("edit/album")
+	public void editAlbum(@FormParam("album_ids[]") int[] album_ids,
+			@FormParam("album_name") String album_name,
+			@FormParam("artist_name") String artist_name,
+			@FormParam("date") int date, @FormParam("genre") String genre,
+			@FormParam("artwork") byte[] artwork) throws SecurityError,
+			SQLException {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		List<String> files = DB.get().getAlbumSongPaths(album_ids);
+		if (files.isEmpty()) {
+			throw new NotFoundException("No album found ");
+		}
+
+		Library.editAlbum(files, album_name, artist_name, date, genre, artwork);
+		DB.get().removeAlbums(album_ids);
+		Library.interrupt();
+
+		log(s, l1);
+	}
+
+	@POST
+	@Path("edit/song")
+	public void editSong(@FormParam("song_ids[]") int[] song_ids,
+			@FormParam("song_name") String song_name,
+			@FormParam("position") int position,
+			@FormParam("disc_no") int disc_no,
+			@FormParam("album_name") String album_name,
+			@FormParam("artist_name") String artist_name,
+			@FormParam("date") int date, @FormParam("genre") String genre,
+			@FormParam("artwork") byte[] artwork) throws SecurityError,
+			SQLException {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		List<String> files = DB.get().getSongPaths(song_ids);
+		if (files.isEmpty()) {
+			throw new NotFoundException("No song found ");
+		}
+
+		Library.editSong(files, song_name, position, disc_no, album_name,
+				artist_name, date, genre, artwork);
+		DB.get().removeSongs(song_ids);
 		Library.interrupt();
 
 		log(s, l1);

@@ -1208,15 +1208,88 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public List<String> getArtistSongPaths(int album_id) throws SQLException {
+	public List<String> getArtistSongPaths(int[] artist_id) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
 		List<String> ret = new ArrayList<String>();
 
 		try {
+			String ids = "";
+			for (int i = 0; i < artist_id.length; i++) {
+				ids += '?';
+				if (i < artist_id.length - 1)
+					ids += ',';
+			}
 			st = conn
-					.prepareStatement("SELECT filepath FROM song WHERE artist_id=?");
-			st.setInt(1, album_id);
+					.prepareStatement("SELECT filepath FROM song WHERE artist_id "
+							+ "IN (" + ids + ")");
+			for (int i = 0; i < artist_id.length; i++) {
+				st.setInt(i + 1, artist_id[i]);
+			}
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				ret.add(rs.getString("filepath"));
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
+	public List<String> getAlbumSongPaths(int[] album_id) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<String> ret = new ArrayList<String>();
+
+		try {
+			String ids = "";
+			for (int i = 0; i < album_id.length; i++) {
+				ids += '?';
+				if (i < album_id.length - 1)
+					ids += ',';
+			}
+			st = conn
+					.prepareStatement("SELECT filepath FROM song WHERE album_id "
+							+ "IN (" + ids + ")");
+			for (int i = 0; i < album_id.length; i++) {
+				st.setInt(i + 1, album_id[i]);
+			}
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				ret.add(rs.getString("filepath"));
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
+	public List<String> getSongPaths(int[] song_ids) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<String> ret = new ArrayList<String>();
+
+		try {
+			String ids = "";
+			for (int i = 0; i < song_ids.length; i++) {
+				ids += '?';
+				if (i < song_ids.length - 1)
+					ids += ',';
+			}
+			st = conn
+					.prepareStatement("SELECT filepath FROM song WHERE song_id "
+							+ "IN (" + ids + ")");
+			for (int i = 0; i < song_ids.length; i++) {
+				st.setInt(i + 1, song_ids[i]);
+			}
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				ret.add(rs.getString("filepath"));
@@ -1980,14 +2053,76 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public void removeArtist(int artist_id) throws SQLException {
+	public void removeArtists(int[] artist_ids) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
 		try {
-			getArtist(artist_id);
+			String ids = "";
+			for (int i = 0; i < artist_ids.length; i++) {
+				ids += '?';
+				if (i < artist_ids.length - 1)
+					ids += ',';
+			}
+			st = conn.prepareStatement("DELETE from artist WHERE " + //
+					"artist_id IN (" + ids + ")");
+			for (int i = 0; i < artist_ids.length; i++) {
+				st.setInt(i + 1, artist_ids[i]);
+			}
 
-			st = conn.prepareStatement("DELETE from artist WHERE artist_id=?");
-			st.setInt(1, artist_id);
+			st.executeUpdate();
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public void removeAlbums(int[] album_ids) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			String ids = "";
+			for (int i = 0; i < album_ids.length; i++) {
+				ids += '?';
+				if (i < album_ids.length - 1)
+					ids += ',';
+			}
+			st = conn.prepareStatement("DELETE from album WHERE " + //
+					"album_id IN (" + ids + ")");
+			for (int i = 0; i < album_ids.length; i++) {
+				st.setInt(i + 1, album_ids[i]);
+			}
+
+			st.executeUpdate();
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public void removeSongs(int[] song_ids) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			String ids = "";
+			for (int i = 0; i < song_ids.length; i++) {
+				ids += '?';
+				if (i < song_ids.length - 1)
+					ids += ',';
+			}
+			st = conn.prepareStatement("DELETE from album WHERE " + //
+					"song_id IN (" + ids + ")");
+			for (int i = 0; i < song_ids.length; i++) {
+				st.setInt(i + 1, song_ids[i]);
+			}
+
 			st.executeUpdate();
 
 		} finally {

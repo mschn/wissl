@@ -52,6 +52,7 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.images.Artwork;
+import org.jaudiotagger.tag.images.ArtworkFactory;
 import org.jaudiotagger.tag.reference.GenreTypes;
 
 import fr.msch.wissl.common.Config;
@@ -739,21 +740,71 @@ public class Library {
 	/**
 	 * Edit artist-related tag records for the given list of songs
 	 * @param files local filesystem path to the songs to edit
-	 * @param artist_name new artist name to set for all songs
 	 */
 	public static void editArtist(List<String> files, String artist_name) {
+		editTags(files, null, 0, 0, null, artist_name, 0, null, null);
+	}
+
+	/**
+	 * Edit album-related tag records for the given list of songs
+	 * @param files local filesystem path to the songs to edit
+	 */
+	public static void editAlbum(List<String> files, String album_name,
+			String artist_name, int date, String genre, byte[] artwork) {
+		editTags(files, null, 0, 0, album_name, artist_name, date, genre,
+				artwork);
+	}
+
+	/**
+	 * Edit song-related tag records for the given list of songs
+	 * @param files local filesystem path to the songs to edit
+	 */
+	public static void editSong(List<String> files, String song_name,
+			int position, int disc_no, String album_name, String artist_name,
+			int date, String genre, byte[] artwork) {
+		editTags(files, song_name, position, disc_no, album_name, artist_name,
+				date, genre, artwork);
+	}
+
+	private static void editTags(List<String> files, String song_name,
+			int position, int disc_no, String album_name, String artist_name,
+			int date, String genre, byte[] artwork) {
 		for (String path : files) {
 			File file = new File(path);
 			try {
 				AudioFile f = AudioFileIO.read(file);
 				Tag tag = f.getTag();
-				tag.setField(FieldKey.ALBUM_ARTIST, artist_name);
-				tag.setField(FieldKey.ARTIST, artist_name);
+
+				if (position > 0) {
+					tag.setField(FieldKey.TRACK, "" + position);
+				}
+				if (disc_no > 0) {
+					tag.setField(FieldKey.DISC_NO, "" + disc_no);
+				}
+				if (album_name != null && album_name.trim().length() > 0) {
+					tag.setField(FieldKey.ALBUM, album_name);
+				}
+				if (artist_name != null && artist_name.trim().length() > 0) {
+					tag.setField(FieldKey.ALBUM_ARTIST, artist_name);
+					tag.setField(FieldKey.ARTIST, artist_name);
+				}
+				if (date != 0) {
+					tag.setField(FieldKey.YEAR, "" + date);
+				}
+				if (genre != null && genre.trim().length() > 0) {
+					tag.setField(FieldKey.GENRE, genre);
+				}
+				if (artwork != null) {
+					File tmpArt = File.createTempFile("wsl.artwork.", ".tmp");
+					FileUtils.writeByteArrayToFile(file, artwork);
+					Artwork a = ArtworkFactory.createArtworkFromFile(tmpArt);
+					tag.setField(a);
+				}
+
 				f.commit();
 			} catch (Exception e) {
 				Logger.error("Failed to edit song " + path, e);
 			}
 		}
-
 	}
 }
