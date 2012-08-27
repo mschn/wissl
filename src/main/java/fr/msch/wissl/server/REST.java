@@ -1163,6 +1163,37 @@ public class REST {
 		log(s, l1);
 	}
 
+	@POST
+	@Path("edit/artist/{artist_id}")
+	public void editArtist(@PathParam("artist_id") int artist_id,
+			@FormParam("artist_name") String artist_name) throws SecurityError,
+			SQLException {
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		if (artist_name == null || artist_name.trim().length() == 0) {
+			throw new IllegalArgumentException("Empty parameter 'artist_name' ");
+		}
+
+		// file paths to rewrite
+		List<String> files = DB.get().getArtistSongPaths(artist_id);
+		if (files.isEmpty()) {
+			throw new NotFoundException("Artist not found: " + artist_id);
+		}
+
+		// write new name in ID3
+		Library.editArtist(files, artist_name);
+
+		// delete artist from DB
+		DB.get().removeArtist(artist_id);
+
+		// force rescan
+		Library.interrupt();
+
+		log(s, l1);
+	}
+
 	@GET
 	@Path("logs")
 	public Response getLogs() throws SecurityError {

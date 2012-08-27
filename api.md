@@ -48,6 +48,7 @@ Summary
   * [`/folders/remove`](#foldersremove)
   * [`/indexer/status`](#indexerstatus)
   * [`/indexer/rescan`](#indexerrescan)
+  * [`/edit/artist/{artist_id}`](#editartistartist_id)
   * [`/logs`](#logs)
   * [`/stats`](#stats)
   * [`/info`](#info)
@@ -733,6 +734,24 @@ The folders currently indexed can be listed with the method `/folders`.
 Forces library indexer to rescan all folders now.
 
 If it is currently already running, it will be stopped and restarted.
+
+### <a id="editartistartist_id"></a>`/edit/artist/{artist_id}`
+* method: `POST`
+* param: `artist_id` unique id of the artist to edit
+* param: `artist_name` required: the new name to apply to the artist
+* requires admin privileges
+* ex: `curl -H "sessionId:UUID" -d "artist_name=foo" http://localhost:8080/wissl/edit/artist/43`
+* does not return anything
+
+Edit artist metadata.
+
+The only field that can be edited at the artist level is the artist name.
+
+An administrator can change the artist name of a given artist, which will be
+repercuted on all albums and songs for this artist.
+
+If the new name is already used by another artist,
+both artists will be considered the same and merged.
 
 ### <a id="logs"></a>`/logs`
 * method: `POST`

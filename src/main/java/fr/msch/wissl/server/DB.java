@@ -252,6 +252,14 @@ public abstract class DB {
 	public abstract Artist getArtist(int id) throws SQLException;
 
 	/**
+	 * @param album_id unique DB id of an artist
+	 * @return list of file paths for all individual songs for this artist
+	 * @throws SQLException
+	 */
+	public abstract List<String> getArtistSongPaths(int album_id)
+			throws SQLException;
+
+	/**
 	 * @param artist_id valid value for artist.artist_id in DB 
 	 * @return all albums from the artist corresponding the id, or an empty list
 	 * @throws SQLException
@@ -390,4 +398,11 @@ public abstract class DB {
 	public abstract List<Song> searchSong(String title, int maxResults)
 			throws SQLException;
 
+	/**
+	 * Permanently remove an artist from DB, along with asociated
+	 * albums, songs and playlist entries 
+	 * @param artist_id id of the artist to remove from DB
+	 * @throws SQLException
+	 */
+	public abstract void removeArtist(int artist_id) throws SQLException;
 }

@@ -48,7 +48,7 @@ public class H2DB extends DB {
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 
 	 * the DB can be recovered or needs to be erased */
-	private static final long SCHEMA_VERSION = 6L;
+	private static final long SCHEMA_VERSION = 7L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -194,7 +194,7 @@ public class H2DB extends DB {
 					"CONSTRAINT pk_album PRIMARY KEY (album_id)," + //
 					"artist_id INTEGER," + //
 					"CONSTRAINT fk_band FOREIGN KEY (artist_id)" + //
-					" REFERENCES artist(artist_id)" + //
+					" REFERENCES artist(artist_id) ON DELETE CASCADE" + //
 					")");
 
 			st.addBatch("CREATE TABLE song (" + //
@@ -212,7 +212,7 @@ public class H2DB extends DB {
 					"album_id INTEGER NOT NULL," + //
 					"artist_id INTEGER NOT NULL," + //
 					"CONSTRAINT fk_album FOREIGN KEY (album_id)" + //
-					" REFERENCES album(album_id)" + //
+					" REFERENCES album(album_id) ON DELETE CASCADE" + //
 					")");
 
 			st.addBatch("CREATE TABLE user (" + //
@@ -1208,6 +1208,29 @@ public class H2DB extends DB {
 	}
 
 	@Override
+	public List<String> getArtistSongPaths(int album_id) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<String> ret = new ArrayList<String>();
+
+		try {
+			st = conn
+					.prepareStatement("SELECT filepath FROM song WHERE artist_id=?");
+			st.setInt(1, album_id);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				ret.add(rs.getString("filepath"));
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
 	public List<Album> getAlbums(int artist_id) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
@@ -1955,4 +1978,24 @@ public class H2DB extends DB {
 		}
 		return ret;
 	}
+
+	@Override
+	public void removeArtist(int artist_id) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		try {
+			getArtist(artist_id);
+
+			st = conn.prepareStatement("DELETE from artist WHERE artist_id=?");
+			st.setInt(1, artist_id);
+			st.executeUpdate();
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
 }

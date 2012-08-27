@@ -735,4 +735,25 @@ public class Library {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Edit artist-related tag records for the given list of songs
+	 * @param files local filesystem path to the songs to edit
+	 * @param artist_name new artist name to set for all songs
+	 */
+	public static void editArtist(List<String> files, String artist_name) {
+		for (String path : files) {
+			File file = new File(path);
+			try {
+				AudioFile f = AudioFileIO.read(file);
+				Tag tag = f.getTag();
+				tag.setField(FieldKey.ALBUM_ARTIST, artist_name);
+				tag.setField(FieldKey.ARTIST, artist_name);
+				f.commit();
+			} catch (Exception e) {
+				Logger.error("Failed to edit song " + path, e);
+			}
+		}
+
+	}
 }
