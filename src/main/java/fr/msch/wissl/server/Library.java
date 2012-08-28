@@ -806,7 +806,7 @@ public class Library {
 				if (genre != null && genre.trim().length() > 0) {
 					tag.setField(FieldKey.GENRE, genre);
 				}
-				if (artwork != null) {
+				if (artwork != null && artwork.length > 0) {
 					File tmpArt = File.createTempFile("wsl.artwork.", ".tmp");
 					FileUtils.writeByteArrayToFile(file, artwork);
 					Artwork a = ArtworkFactory.createArtworkFromFile(tmpArt);
