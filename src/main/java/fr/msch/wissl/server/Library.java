@@ -87,7 +87,7 @@ public class Library {
 
 	/** indexer thread */
 	private Thread thread = null;
-	private boolean running = true;
+	private boolean stop = false;
 	private boolean kill = false;
 
 	private Queue<File> files = null;
@@ -144,8 +144,8 @@ public class Library {
 		if (instance == null)
 			return;
 
-		instance.running = false;
 		instance.kill = true;
+		instance.stop = true;
 		instance.thread.interrupt();
 	}
 
@@ -155,6 +155,7 @@ public class Library {
 	 * whether it is currently scanning or sleeping.
 	 */
 	public static void interrupt() {
+		instance.stop = true;
 		instance.thread.interrupt();
 	}
 
@@ -191,7 +192,7 @@ public class Library {
 
 			@Override
 			public void run() {
-				while (running && !kill) {
+				while (!kill) {
 					final long t1 = System.currentTimeMillis();
 
 					final List<File> music = new ArrayList<File>();
@@ -217,6 +218,7 @@ public class Library {
 					songsTodo = 0;
 					songsDone = 0;
 					working = true;
+					stop = false;
 					percentDone = 0.0f;
 					secondsLeft = -1;
 
@@ -255,7 +257,7 @@ public class Library {
 					dbCheckDone = false;
 					Thread dbCheck = new Thread(new Runnable() {
 						public void run() {
-							while (!kill && !dbCheckDone) {
+							while (!stop && !dbCheckDone) {
 								long f1 = System.currentTimeMillis();
 								while (!files.isEmpty()) {
 									File f = files.remove();
@@ -294,7 +296,7 @@ public class Library {
 					fileReadDone = false;
 					Thread fileRead = new Thread(new Runnable() {
 						public void run() {
-							while (!kill && !fileReadDone) {
+							while (!stop && !fileReadDone) {
 								long f1 = System.currentTimeMillis();
 
 								Iterator<Entry<String, File>> it = toRead
@@ -329,7 +331,7 @@ public class Library {
 					resizeDone = false;
 					Thread resize = new Thread(new Runnable() {
 						public void run() {
-							while (!kill && !resizeDone) {
+							while (!stop && !resizeDone) {
 								long f1 = System.currentTimeMillis();
 								while (!songs.isEmpty()) {
 									Song s = songs.remove();
@@ -371,7 +373,7 @@ public class Library {
 					// insert Songs in DB
 					Thread dbInsert = new Thread(new Runnable() {
 						public void run() {
-							while (!kill) {
+							while (!stop) {
 								long f1 = System.currentTimeMillis();
 								while (!toInsert.isEmpty()) {
 									Song s = toInsert.remove();
@@ -403,6 +405,16 @@ public class Library {
 						dbInsert.join();
 					} catch (InterruptedException e3) {
 						Logger.warn("Library indexer interrupted", e3);
+						fileSearch.interrupt();
+						dbCheck.interrupt();
+						fileRead.interrupt();
+						resize.interrupt();
+						dbInsert.interrupt();
+					}
+
+					if (Thread.interrupted()) {
+						Logger.warn("Library indexer has been interrupted");
+						continue;
 					}
 
 					// remove files from DB that were not found
@@ -460,15 +472,11 @@ public class Library {
 							+ "remove:" + dbRemoveTime + "," //
 							+ "update:" + dbUpdateTime + ")");
 
-					if (Thread.interrupted()) {
-						Logger.warn("Library indexer has been interrupted");
-					} else {
-						int seconds = Config.getMusicRefreshRate();
-						try {
-							Thread.sleep(seconds * 1000);
-						} catch (InterruptedException e) {
-							Logger.warn("Library indexer interrupted", e);
-						}
+					int seconds = Config.getMusicRefreshRate();
+					try {
+						Thread.sleep(seconds * 1000);
+					} catch (InterruptedException e) {
+						Logger.warn("Library indexer interrupted", e);
 					}
 				}
 			}
@@ -483,7 +491,7 @@ public class Library {
 
 	private void listFiles(File dir, Queue<File> acc) throws IOException,
 			InterruptedException {
-		if (kill)
+		if (stop)
 			throw new InterruptedException();
 
 		if (!dir.isDirectory()) {
@@ -493,6 +501,10 @@ public class Library {
 		File[] children = dir.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
+				if (pathname.getAbsolutePath().length() > 254) {
+					return false;
+				}
+
 				String name = pathname.getName().toLowerCase();
 				for (String format : Config.getMusicFormats()) {
 					if (name.endsWith(format)) {
