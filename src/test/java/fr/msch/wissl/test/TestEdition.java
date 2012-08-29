@@ -210,16 +210,73 @@ public class TestEdition extends TServer {
 		// wait for indexer
 		checkStats(rt);
 
-		// check
+		// check album Pwet
 		get = new GetMethod(URL + "search/Pwet");
 		get.addRequestHeader("sessionId", this.user_sessionId);
 		client.executeMethod(get);
 		assertEquals(200, get.getStatusCode());
 		obj = new JSONObject(get.getResponseBodyAsString());
 		obj = obj.getJSONArray("albums").getJSONObject(0);
+		int pwet_id = obj.getInt("id");
 		assertEquals("Pwet", obj.getString("name"));
 		assertEquals("zouk", obj.getString("genre"));
 		assertEquals("1664", obj.getString("date"));
 
+		// get ids for 'Qux'
+		get = new GetMethod(URL + "search/Qux");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		obj = obj.getJSONArray("albums").getJSONObject(0);
+		int qux_id = obj.getInt("id");
+
+		// change genre of albums Pwet and Qux to 'hardcore testing'
+		post = new PostMethod(URL + "edit/album");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("album_ids[]", "" + pwet_id);
+		post.addParameter("album_ids[]", "" + qux_id);
+		post.addParameter("genre", "hardcore testing");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// wait for indexer
+		checkStats(rt);
+
+		// checking
+		get = new GetMethod(URL + "search/Qux");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		obj = obj.getJSONArray("albums").getJSONObject(0);
+		qux_id = obj.getInt("id");
+		assertEquals("hardcore testing", obj.getString("genre"));
+		get = new GetMethod(URL + "search/Pwet");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		obj = obj.getJSONArray("albums").getJSONObject(0);
+		pwet_id = obj.getInt("id");
+		assertEquals("hardcore testing", obj.getString("genre"));
+
+		// reset album 'Gni'
+		post = new PostMethod(URL + "edit/album");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("album_ids[]", "" + pwet_id);
+		post.addParameter("album_name", "Gni");
+		post.addParameter("genre", "aggressive raggae");
+		post.addParameter("date", "2009");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// reset album 'Qux'
+		post = new PostMethod(URL + "edit/album");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("album_ids[]", "" + qux_id);
+		post.addParameter("genre", "death jazz");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
 	}
 }
