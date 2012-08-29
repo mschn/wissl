@@ -2117,7 +2117,7 @@ public class H2DB extends DB {
 				if (i < song_ids.length - 1)
 					ids += ',';
 			}
-			st = conn.prepareStatement("DELETE from album WHERE " + //
+			st = conn.prepareStatement("DELETE from song WHERE " + //
 					"song_id IN (" + ids + ")");
 			for (int i = 0; i < song_ids.length; i++) {
 				st.setInt(i + 1, song_ids[i]);

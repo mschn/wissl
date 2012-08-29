@@ -771,14 +771,14 @@ public class Library {
 	 * Edit song-related tag records for the given list of songs
 	 * @param files local filesystem path to the songs to edit
 	 */
-	public static void editSong(List<String> files, String song_name,
+	public static void editSong(List<String> files, String song_title,
 			int position, int disc_no, String album_name, String artist_name,
 			int date, String genre, byte[] artwork) {
-		editTags(files, song_name, position, disc_no, album_name, artist_name,
+		editTags(files, song_title, position, disc_no, album_name, artist_name,
 				date, genre, artwork);
 	}
 
-	private static void editTags(List<String> files, String song_name,
+	private static void editTags(List<String> files, String song_title,
 			int position, int disc_no, String album_name, String artist_name,
 			int date, String genre, byte[] artwork) {
 		for (String path : files) {
@@ -787,6 +787,9 @@ public class Library {
 				AudioFile f = AudioFileIO.read(file);
 				Tag tag = f.getTag();
 
+				if (song_title != null && song_title.length() > 0) {
+					tag.setField(FieldKey.TITLE, song_title);
+				}
 				if (position > 0) {
 					tag.setField(FieldKey.TRACK, "" + position);
 				}

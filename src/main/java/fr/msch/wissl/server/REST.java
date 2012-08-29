@@ -1211,7 +1211,7 @@ public class REST {
 	@POST
 	@Path("edit/song")
 	public void editSong(@FormParam("song_ids[]") int[] song_ids,
-			@FormParam("song_name") String song_name,
+			@FormParam("song_title") String song_title,
 			@FormParam("position") int position,
 			@FormParam("disc_no") int disc_no,
 			@FormParam("album_name") String album_name,
@@ -1228,7 +1228,7 @@ public class REST {
 			throw new NotFoundException("No song found ");
 		}
 
-		Library.editSong(files, song_name, position, disc_no, album_name,
+		Library.editSong(files, song_title, position, disc_no, album_name,
 				artist_name, date, genre, artwork);
 		DB.get().removeSongs(song_ids);
 		Library.interrupt();
