@@ -160,7 +160,6 @@ public class TestEdition extends TServer {
 			int id = obj.getInt("id");
 			String n = obj.getString("name");
 			if (n.equals("Gni") || n.equals("Ok") || n.equals("Qux")) {
-				System.out.println(id);
 				post.addParameter("album_ids[]", "" + id);
 			}
 		}
@@ -278,5 +277,125 @@ public class TestEdition extends TServer {
 		post.addParameter("genre", "death jazz");
 		client.executeMethod(post);
 		assertEquals(204, post.getStatusCode());
+
+		// find song 'Thirteen'
+		get = new GetMethod(URL + "search/thirteen");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		obj = obj.getJSONArray("songs").getJSONObject(0);
+		int id_13 = obj.getInt("id");
+
+		// song 'Thirteen' : set position to 14, disc number to 1, name to '13', genre to 'test'
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_13);
+		post.addParameter("song_title", "13");
+		post.addParameter("position", "14");
+		post.addParameter("disc_no", "1");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// wait for indexer
+		checkStats(rt);
+
+		// check song 13
+		get = new GetMethod(URL + "search/13");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		obj = obj.getJSONArray("songs").getJSONObject(0);
+		id_13 = obj.getInt("id");
+		assertEquals("13", obj.getString("title"));
+		assertEquals(14, obj.getInt("position"));
+		assertEquals(1, obj.getInt("disc_no"));
+
+		// restore song 13
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_13);
+		post.addParameter("song_title", "Thirteen");
+		post.addParameter("position", "1");
+		post.addParameter("disc_no", "2");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// find songs 'Four' and 'Fourteen'
+		get = new GetMethod(URL + "search/four");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("songs");
+		assertEquals(2, arr.length());
+		int id_4 = -1, id_14 = -1;
+		for (int i = 0; i < 2; i++) {
+			obj = arr.getJSONObject(i);
+			int id = obj.getInt("id");
+			String title = obj.getString("title");
+			if (title.equals("Four")) {
+				id_4 = id;
+			} else if (title.equals("Fourteen")) {
+				id_14 = id;
+			}
+		}
+
+		// move songs 'Four' and 'Fourteen' to album 'chaleur tournante' by 'bosch'
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_4);
+		post.addParameter("song_ids[]", "" + id_14);
+		post.addParameter("album_name", "chaleur tournante");
+		post.addParameter("artist_name", "bosch");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// wait for indexer
+		rt.artistCount.set(3);
+		rt.albumCount.set(6);
+		checkStats(rt);
+
+		// check songs
+		// find songs 'Four' and 'Fourteen'
+		get = new GetMethod(URL + "search/four");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("songs");
+		assertEquals(2, arr.length());
+		for (int i = 0; i < 2; i++) {
+			obj = arr.getJSONObject(i);
+			int id = obj.getInt("id");
+			String title = obj.getString("title");
+			assertEquals("bosch", obj.getString("artist_name"));
+			assertEquals("chaleur tournante", obj.getString("album_name"));
+			assertTrue(title.equals("Four") || title.equals("Fourteen"));
+			if (title.equals("Four")) {
+				id_4 = id;
+			} else if (title.equals("Fourteen")) {
+				id_14 = id;
+			}
+		}
+
+		// revert both songs
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_4);
+		post.addParameter("album_name", "Bar");
+		post.addParameter("artist_name", "Foo");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_14);
+		post.addParameter("album_name", "Gni");
+		post.addParameter("artist_name", "Bob");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
 	}
 }
