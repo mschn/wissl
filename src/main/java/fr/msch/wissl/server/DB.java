@@ -415,35 +415,51 @@ public abstract class DB {
 			throws SQLException;
 
 	/**
-	 * Permanently remove multiple artists from DB, along with associated
-	 * albums, songs and playlist entries 
-	 * @param artist_id ids of the artists to remove from DB
-	 * @throws SQLException
-	 */
-	public abstract void removeArtists(int[] artist_ids) throws SQLException;
-
-	/**
-	 * Permanently remove multiple albums from DB, along with associated 
-	 * songs and playlist entries
-	 * @param album_id ids of the albums to remove from DB
-	 * @throws SQLException
-	 */
-	public abstract void removeAlbums(int[] album_id) throws SQLException;
-
-	/**
 	 * Permanently remove multiple songs from DB, along with associated playlist entries
 	 * @param song_id ids id the songs to remove from DB
 	 * @throws SQLException
 	 */
 	public abstract void removeSongs(int[] song_id) throws SQLException;
 
+	/**
+	 * Edit artist related info in DB
+	 * Will merge artists when necessary
+	 * @param artist_ids ids of the artists to apply new info to
+	 * @param artist_name new artist name
+	 * @throws SQLException
+	 */
 	public abstract void editArtist(int[] artist_ids, String artist_name)
 			throws SQLException;
 
+	/**
+	 * Edit album related info in DB
+	 * Will merge artists and albums when necessary
+	 * @param album_ids ids of the albums to apply new info
+	 * @param album_name new album name
+	 * @param artist_name new artist name
+	 * @param date new date
+	 * @param genre new genre
+	 * @param artwork new artwork
+	 * @throws SQLException
+	 */
 	public abstract void editAlbum(int[] album_ids, String album_name,
 			String artist_name, int date, String genre, byte[] artwork)
 			throws SQLException;
 
+	/**
+	 * Edit song related info in DB
+	 * Will merge artists and albums when necessary
+	 * @param song_ids ids of the songs to apply new info
+	 * @param song_title new song name
+	 * @param position new position in album
+	 * @param disc_no new disc number
+	 * @param album_name new album name
+	 * @param artist_name new artist name
+	 * @param date new date
+	 * @param genre new genre
+	 * @param artwork new artwork
+	 * @throws SQLException
+	 */
 	public abstract void editSong(int[] song_ids, String song_title,
 			int position, int disc_no, String album_name, String artist_name,
 			int date, String genre, byte[] artwork) throws SQLException;

@@ -15,6 +15,7 @@
  */
 package fr.msch.wissl.server;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
@@ -123,6 +124,15 @@ public class RuntimeStats {
 	@Override
 	public String toString() {
 		return toJSON();
+	}
+
+	public void updateFromDB() throws SQLException {
+		RuntimeStats.get().songCount.set(DB.get().getSongCount());
+		RuntimeStats.get().albumCount.set(DB.get().getAlbumCount());
+		RuntimeStats.get().artistCount.set(DB.get().getArtistCount());
+		RuntimeStats.get().playlistCount.set(DB.get().getPlaylistCount());
+		RuntimeStats.get().userCount.set(DB.get().getUserCount());
+		RuntimeStats.get().playtime.set(DB.get().getTotalSongDuration());
 	}
 
 }

@@ -99,7 +99,7 @@ public class TestEdition extends TServer {
 		// wait for indexer
 		checkStats(rt);
 
-		// list artists: 'Foo' and 'Glouglou'
+		// list artists: 'Bob' and 'Glouglou'
 		get = new GetMethod(URL + "artists");
 		get.addRequestHeader("sessionId", this.user_sessionId);
 		client.executeMethod(get);

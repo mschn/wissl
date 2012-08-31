@@ -1179,6 +1179,7 @@ public class REST {
 
 		Library.editArtist(files, artist_name);
 		DB.get().editArtist(artist_ids, artist_name);
+		RuntimeStats.get().updateFromDB();
 
 		log(s, l1);
 	}
@@ -1201,10 +1202,9 @@ public class REST {
 		}
 
 		Library.editAlbum(files, album_name, artist_name, date, genre, artwork);
-
-		//TODO doit
-		DB.get().removeAlbums(album_ids);
-		Library.interrupt();
+		DB.get().editAlbum(album_ids, album_name, artist_name, date, genre,
+				artwork);
+		RuntimeStats.get().updateFromDB();
 
 		log(s, l1);
 	}

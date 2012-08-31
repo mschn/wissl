@@ -2053,60 +2053,6 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public void removeArtists(int[] artist_ids) throws SQLException {
-		Connection conn = getConnection();
-		PreparedStatement st = null;
-		try {
-			String ids = "";
-			for (int i = 0; i < artist_ids.length; i++) {
-				ids += '?';
-				if (i < artist_ids.length - 1)
-					ids += ',';
-			}
-			st = conn.prepareStatement("DELETE from artist WHERE " + //
-					"artist_id IN (" + ids + ")");
-			for (int i = 0; i < artist_ids.length; i++) {
-				st.setInt(i + 1, artist_ids[i]);
-			}
-
-			st.executeUpdate();
-
-		} finally {
-			if (st != null)
-				st.close();
-			if (conn != null)
-				conn.close();
-		}
-	}
-
-	@Override
-	public void removeAlbums(int[] album_ids) throws SQLException {
-		Connection conn = getConnection();
-		PreparedStatement st = null;
-		try {
-			String ids = "";
-			for (int i = 0; i < album_ids.length; i++) {
-				ids += '?';
-				if (i < album_ids.length - 1)
-					ids += ',';
-			}
-			st = conn.prepareStatement("DELETE from album WHERE " + //
-					"album_id IN (" + ids + ")");
-			for (int i = 0; i < album_ids.length; i++) {
-				st.setInt(i + 1, album_ids[i]);
-			}
-
-			st.executeUpdate();
-
-		} finally {
-			if (st != null)
-				st.close();
-			if (conn != null)
-				conn.close();
-		}
-	}
-
-	@Override
 	public void removeSongs(int[] song_ids) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
@@ -2155,11 +2101,6 @@ public class H2DB extends DB {
 				id = artist_ids[0];
 			}
 
-			int stat_albums = 0;
-			int stat_songs = 0;
-			int stat_playtime = 0;
-			int deleted = 0;
-
 			for (int artist_id : artist_ids) {
 
 				st = conn.prepareStatement("UPDATE album " + //
@@ -2171,7 +2112,7 @@ public class H2DB extends DB {
 				st.executeUpdate();
 
 				st = conn.prepareStatement("UPDATE song " + //
-						"SET album_name=?, artist_id=? " + //
+						"SET artist_name=?, artist_id=? " + //
 						"WHERE artist_id=?");
 				st.setString(1, artist_name);
 				st.setInt(2, id);
@@ -2186,41 +2127,17 @@ public class H2DB extends DB {
 					st.setInt(2, artist_id);
 					st.executeUpdate();
 				} else {
-					// recover artist stats
-					st = conn.prepareStatement("SELECT * FROM artist "
-							+ "WHERE artist_id=?");
-					st.setInt(1, artist_id);
-					rs = st.executeQuery();
-					if (rs.next()) {
-						stat_albums += rs.getInt("albums");
-						stat_songs += rs.getInt("songs");
-						stat_playtime += rs.getInt("playtime");
-					}
-
 					// delete artist at the end to avoid cascade delete to album/song
 					st = conn.prepareStatement("DELETE FROM artist "
 							+ "WHERE artist_id=?");
 					st.setInt(1, artist_id);
 					st.executeUpdate();
-
-					deleted += 1;
 				}
 			}
-
-			// update stats
-			st = conn.prepareStatement("UPDATE artist "
-					+ //
-					"SET songs=songs+?, albums=albums+?, playtime=playtime+? "
-					+ "WHERE artist_id=?");
-			st.setInt(1, stat_songs);
-			st.setInt(2, stat_albums);
-			st.setInt(3, stat_playtime);
-			st.setInt(4, id);
-			st.executeUpdate();
-
-			RuntimeStats.get().artistCount.addAndGet(-deleted);
-
 			conn.commit();
+			conn.setAutoCommit(true);
+
+			this.updateSongCount();
 
 		} catch (SQLException e) {
 			conn.rollback();
@@ -2237,7 +2154,149 @@ public class H2DB extends DB {
 	public void editAlbum(int[] album_ids, String album_name,
 			String artist_name, int date, String genre, byte[] artwork)
 			throws SQLException {
+		Connection conn = getConnection();
+		conn.setAutoCommit(false);
+		PreparedStatement st = null;
 
+		try {
+			String ids = "";
+			for (int i = 0; i < album_ids.length; i++) {
+				ids += '?';
+				if (i < album_ids.length - 1)
+					ids += ',';
+			}
+			// move artist if necessary
+			if (artist_name != null && artist_name.length() > 0) {
+				int artist_id = -1;
+				st = conn.prepareStatement("SELECT artist_id FROM artist "
+						+ "WHERE artist_name=?");
+				st.setString(1, artist_name);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					artist_id = rs.getInt("artist_id");
+				}
+				if (artist_id == -1) {
+					Artist ar = new Artist();
+					ar.name = artist_name;
+					artist_id = insertArtist(ar);
+					RuntimeStats.get().artistCount.addAndGet(1);
+				}
+
+				st = conn.prepareStatement("UPDATE album SET " + //
+						"artist_id=?, artist_name=? " + //
+						"WHERE album_id IN (" + ids + ")");
+				st.setInt(1, artist_id);
+				st.setString(2, artist_name);
+				for (int i = 0; i < album_ids.length; i++) {
+					st.setInt(i + 3, album_ids[i]);
+				}
+				st.executeUpdate();
+
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"artist_id=?, artist_name=? " + //
+						"WHERE album_id IN (" + ids + ")");
+				st.setInt(1, artist_id);
+				st.setString(2, artist_name);
+				for (int i = 0; i < album_ids.length; i++) {
+					st.setInt(i + 3, album_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			// move album if necessary
+			if (album_name != null && album_name.length() > 0) {
+				int album_id = -1;
+				st = conn.prepareStatement("SELECT album_id FROM album "
+						+ "WHERE album_name=?");
+				st.setString(1, album_name);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					album_id = rs.getInt("artist_id");
+				}
+				if (album_id == -1) {
+					album_id = album_ids[0];
+				}
+
+				for (int i = 0; i < album_ids.length; i++) {
+					st = conn.prepareStatement("UPDATE song " + //
+							"SET album_name=?, album_id=? " + //
+							"WHERE artist_id=?");
+					st.setString(1, album_name);
+					st.setInt(2, album_id);
+					st.setInt(3, album_ids[i]);
+					st.executeUpdate();
+
+					if (album_id == album_ids[i]) {
+						st = conn.prepareStatement("UPDATE album " + //
+								"SET album_name=?" + //
+								"WHERE album_id=?");
+						st.setString(1, album_name);
+						st.setInt(2, album_id);
+						st.executeUpdate();
+					} else {
+						st = conn.prepareStatement("DELETE FROM album "
+								+ "WHERE album_id=?");
+						st.setInt(1, album_ids[i]);
+						st.executeUpdate();
+					}
+				}
+
+				if (date > 0) {
+					st = conn.prepareStatement("UPDATE album SET " + //
+							"date=? WHERE album_id=?");
+					st.setInt(1, date);
+					st.setInt(2, album_id);
+					st.executeUpdate();
+				}
+				if (genre != null && genre.length() > 0) {
+					st = conn.prepareStatement("UPDATE album SET " + //
+							"genre=? WHERE album_id=?");
+					st.setString(1, genre);
+					st.setInt(2, album_id);
+					st.executeUpdate();
+				}
+
+			}
+
+			ids = "";
+			for (int i = 0; i < album_ids.length; i++) {
+				ids += '?';
+				if (i < album_ids.length - 1)
+					ids += ',';
+			}
+			if (date > 0) {
+				st = conn.prepareStatement("UPDATE album SET " + //
+						"date=? WHERE album_id IN (" + ids + ")");
+				st.setInt(1, date);
+				for (int i = 0; i < album_ids.length; i++) {
+					st.setInt(i + 2, album_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			if (genre != null && genre.length() > 0) {
+				st = conn.prepareStatement("UPDATE album SET " + //
+						"genre=? WHERE album_id IN (" + ids + ")");
+				st.setString(1, genre);
+				for (int i = 0; i < album_ids.length; i++) {
+					st.setInt(i + 2, album_ids[i]);
+				}
+				st.executeUpdate();
+			}
+			conn.commit();
+			conn.setAutoCommit(true);
+
+			this.updateSongCount();
+
+		} catch (SQLException e) {
+			conn.rollback();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
 	}
 
 	@Override
