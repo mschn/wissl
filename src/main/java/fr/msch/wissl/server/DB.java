@@ -436,4 +436,16 @@ public abstract class DB {
 	 * @throws SQLException
 	 */
 	public abstract void removeSongs(int[] song_id) throws SQLException;
+
+	public abstract void editArtist(int[] artist_ids, String artist_name)
+			throws SQLException;
+
+	public abstract void editAlbum(int[] album_ids, String album_name,
+			String artist_name, int date, String genre, byte[] artwork)
+			throws SQLException;
+
+	public abstract void editSong(int[] song_ids, String song_title,
+			int position, int disc_no, String album_name, String artist_name,
+			int date, String genre, byte[] artwork) throws SQLException;
+
 }

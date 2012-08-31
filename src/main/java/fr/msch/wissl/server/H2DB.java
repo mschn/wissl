@@ -2133,4 +2133,118 @@ public class H2DB extends DB {
 		}
 	}
 
+	@Override
+	public void editArtist(int[] artist_ids, String artist_name)
+			throws SQLException {
+		Connection conn = getConnection();
+		conn.setAutoCommit(false);
+		PreparedStatement st = null;
+
+		try {
+			// find existing artist ?
+			int id = -1;
+			st = conn
+					.prepareStatement("SELECT artist_id FROM artist WHERE artist_name=?");
+			st.setString(1, artist_name);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				id = rs.getInt("artist_id");
+			}
+
+			if (id == -1) {
+				id = artist_ids[0];
+			}
+
+			int stat_albums = 0;
+			int stat_songs = 0;
+			int stat_playtime = 0;
+			int deleted = 0;
+
+			for (int artist_id : artist_ids) {
+
+				st = conn.prepareStatement("UPDATE album " + //
+						"SET artist_name=?, artist_id=? " + // 
+						"WHERE artist_id=?");
+				st.setString(1, artist_name);
+				st.setInt(2, id);
+				st.setInt(3, artist_id);
+				st.executeUpdate();
+
+				st = conn.prepareStatement("UPDATE song " + //
+						"SET album_name=?, artist_id=? " + //
+						"WHERE artist_id=?");
+				st.setString(1, artist_name);
+				st.setInt(2, id);
+				st.setInt(3, artist_id);
+				st.executeUpdate();
+
+				if (id == artist_id) {
+					st = conn.prepareStatement("UPDATE artist " + // 
+							"SET artist_name=?  " + //
+							"WHERE artist_id=?");
+					st.setString(1, artist_name);
+					st.setInt(2, artist_id);
+					st.executeUpdate();
+				} else {
+					// recover artist stats
+					st = conn.prepareStatement("SELECT * FROM artist "
+							+ "WHERE artist_id=?");
+					st.setInt(1, artist_id);
+					rs = st.executeQuery();
+					if (rs.next()) {
+						stat_albums += rs.getInt("albums");
+						stat_songs += rs.getInt("songs");
+						stat_playtime += rs.getInt("playtime");
+					}
+
+					// delete artist at the end to avoid cascade delete to album/song
+					st = conn.prepareStatement("DELETE FROM artist "
+							+ "WHERE artist_id=?");
+					st.setInt(1, artist_id);
+					st.executeUpdate();
+
+					deleted += 1;
+				}
+			}
+
+			// update stats
+			st = conn.prepareStatement("UPDATE artist "
+					+ //
+					"SET songs=songs+?, albums=albums+?, playtime=playtime+? "
+					+ "WHERE artist_id=?");
+			st.setInt(1, stat_songs);
+			st.setInt(2, stat_albums);
+			st.setInt(3, stat_playtime);
+			st.setInt(4, id);
+			st.executeUpdate();
+
+			RuntimeStats.get().artistCount.addAndGet(-deleted);
+
+			conn.commit();
+
+		} catch (SQLException e) {
+			conn.rollback();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public void editAlbum(int[] album_ids, String album_name,
+			String artist_name, int date, String genre, byte[] artwork)
+			throws SQLException {
+
+	}
+
+	@Override
+	public void editSong(int[] song_ids, String song_title, int position,
+			int disc_no, String album_name, String artist_name, int date,
+			String genre, byte[] artwork) throws SQLException {
+
+	}
+
 }

@@ -383,9 +383,10 @@ var wsl = wsl || {};
 				artist_ids : [ id ]
 			},
 			success : function (data) {
+				var scroll = Math.max($('body').scrollTop(), $('html').scrollTop());
 				wsl.unlockUI();
 				wsl.cancelEditArtist();
-				wsl.load('?artists');
+				wsl.displayArtists(scroll);
 			},
 			error : function (xhr) {
 				wsl.ajaxError("Failed to edit artist", xhr);
