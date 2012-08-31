@@ -53,7 +53,12 @@ var wsl = wsl || {};
 
 					content += '<li ' + onclick + ' id="artist-' + artist.id + '" class="' + liclass + '">';
 					content += '<div class="artists-info">';
-					content += '<span class="' + clazz + '">' + name + '</span>';
+					content += '<span class="' + clazz + '"><span id="artist-span-name-' + artist.id + '">' + name + "</span>";
+					if (wsl.admin === true) {
+						content += '<span class="edit-name" onclick="wsl.showEditArtist(';
+						content += artist.id + ',event)">edit</span>';
+					}
+					content += '</span>';
 					content += '<span class="duration">' + wsl.formatSeconds(artist.playtime) + '</span>';
 					content += '<span class="albums">' + artist.albums + '</span>';
 					content += '<span class="songs">' + artist.songs + '</span>';
@@ -344,6 +349,55 @@ var wsl = wsl || {};
 		}
 		wsl.clearSelection();
 		wsl.cancelAddToPlaylist();
+	};
+
+	wsl.showEditArtist = function (artist_id, event) {
+		var artist_name;
+		event.stopPropagation();
+
+		artist_name = $('#artist-span-name-' + artist_id).text();
+		console.log(artist_id, artist_name);
+
+		$('#edit-artist-id').val(artist_id);
+		$('#edit-artist-name').val(artist_name);
+
+		wsl.showDialog('edit-artist-dialog');
+	};
+
+	wsl.editArtist = function () {
+		var id, name;
+
+		id = $('#edit-artist-id').val();
+		name = $('#edit-artist-name').val();
+
+		wsl.lockUI();
+		$.ajax({
+			url : 'wissl/edit/artist',
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			dataType : 'json',
+			type : 'POST',
+			data : {
+				artist_name : name,
+				artist_ids : [ id ]
+			},
+			success : function (data) {
+				wsl.unlockUI();
+				wsl.cancelEditArtist();
+				wsl.load('?artists');
+			},
+			error : function (xhr) {
+				wsl.ajaxError("Failed to edit artist", xhr);
+				wsl.unlockUI();
+				wsl.cancelEditArtist();
+			}
+		});
+	};
+
+	wsl.cancelEditArtist = function () {
+		$('#dialog-mask').hide();
+		$('#edit-artist-dialog').hide();
 	};
 
 }(wsl));

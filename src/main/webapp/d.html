@@ -151,6 +151,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</fieldset>
 			</form>
 		</div>
+        <div class="dialog" id="edit-artist-dialog">
+          <form method="post" onsubmit='wsl.editArtist();return false' name="edit-artist-form">
+            <fieldset>
+              <h2>Edit artist</h2>
+              <p class="dialog-form-input">
+                <input type="hidden" id="edit-artist-id" />
+                <label for="edit-artist-name">Name</label>
+                <input class="dialog-text-input" type="text" name="edit-artist-name"
+                       id="edit-artist-name" required="required" />
+              </p>
+			  <p class='dialog-buttons'>
+				<input class='button button-ok' type="submit" value="Ok" />
+                <input class='button button-cancel' type='button' value='Cancel'
+					   onclick='wsl.cancelEditArtist()' />
+          </form>
+        </div>"
 		<div class="dialog" id="confirm-dialog">
 			<fieldset>
 				<h2 id='confirm-dialog-title'></h2>

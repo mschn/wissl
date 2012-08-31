@@ -208,4 +208,8 @@ var wsl = wsl || {};
 		dialog.show();
 	};
 
+	wsl.escape = function (str) {
+		return (str + '').replace(/([\\"'])/g, "\\$1").replace(/\0/g, "\\0");
+	};
+
 }(wsl));
