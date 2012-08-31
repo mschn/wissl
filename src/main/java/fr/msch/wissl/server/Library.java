@@ -800,7 +800,11 @@ public class Library {
 					tag.setField(FieldKey.ALBUM, album_name);
 				}
 				if (artist_name != null && artist_name.trim().length() > 0) {
-					tag.setField(FieldKey.ALBUM_ARTIST, artist_name);
+					try {
+						tag.setField(FieldKey.ALBUM_ARTIST, artist_name);
+					} catch (Throwable t) {
+						// id3v1 does not have album_artist and this causes a NPE
+					}
 					tag.setField(FieldKey.ARTIST, artist_name);
 				}
 				if (date != 0) {
