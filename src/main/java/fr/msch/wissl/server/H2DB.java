@@ -2053,33 +2053,6 @@ public class H2DB extends DB {
 	}
 
 	@Override
-	public void removeSongs(int[] song_ids) throws SQLException {
-		Connection conn = getConnection();
-		PreparedStatement st = null;
-		try {
-			String ids = "";
-			for (int i = 0; i < song_ids.length; i++) {
-				ids += '?';
-				if (i < song_ids.length - 1)
-					ids += ',';
-			}
-			st = conn.prepareStatement("DELETE from song WHERE " + //
-					"song_id IN (" + ids + ")");
-			for (int i = 0; i < song_ids.length; i++) {
-				st.setInt(i + 1, song_ids[i]);
-			}
-
-			st.executeUpdate();
-
-		} finally {
-			if (st != null)
-				st.close();
-			if (conn != null)
-				conn.close();
-		}
-	}
-
-	@Override
 	public void editArtist(int[] artist_ids, String artist_name)
 			throws SQLException {
 		Connection conn = getConnection();
@@ -2179,7 +2152,6 @@ public class H2DB extends DB {
 					Artist ar = new Artist();
 					ar.name = artist_name;
 					artist_id = insertArtist(ar);
-					RuntimeStats.get().artistCount.addAndGet(1);
 				}
 
 				st = conn.prepareStatement("UPDATE album SET " + //
@@ -2256,32 +2228,33 @@ public class H2DB extends DB {
 					st.executeUpdate();
 				}
 
-			}
+			} else {
 
-			ids = "";
-			for (int i = 0; i < album_ids.length; i++) {
-				ids += '?';
-				if (i < album_ids.length - 1)
-					ids += ',';
-			}
-			if (date > 0) {
-				st = conn.prepareStatement("UPDATE album SET " + //
-						"date=? WHERE album_id IN (" + ids + ")");
-				st.setInt(1, date);
+				ids = "";
 				for (int i = 0; i < album_ids.length; i++) {
-					st.setInt(i + 2, album_ids[i]);
+					ids += '?';
+					if (i < album_ids.length - 1)
+						ids += ',';
 				}
-				st.executeUpdate();
-			}
+				if (date > 0) {
+					st = conn.prepareStatement("UPDATE album SET " + //
+							"date=? WHERE album_id IN (" + ids + ")");
+					st.setInt(1, date);
+					for (int i = 0; i < album_ids.length; i++) {
+						st.setInt(i + 2, album_ids[i]);
+					}
+					st.executeUpdate();
+				}
 
-			if (genre != null && genre.length() > 0) {
-				st = conn.prepareStatement("UPDATE album SET " + //
-						"genre=? WHERE album_id IN (" + ids + ")");
-				st.setString(1, genre);
-				for (int i = 0; i < album_ids.length; i++) {
-					st.setInt(i + 2, album_ids[i]);
+				if (genre != null && genre.length() > 0) {
+					st = conn.prepareStatement("UPDATE album SET " + //
+							"genre=? WHERE album_id IN (" + ids + ")");
+					st.setString(1, genre);
+					for (int i = 0; i < album_ids.length; i++) {
+						st.setInt(i + 2, album_ids[i]);
+					}
+					st.executeUpdate();
 				}
-				st.executeUpdate();
 			}
 			conn.commit();
 			conn.setAutoCommit(true);
@@ -2301,9 +2274,129 @@ public class H2DB extends DB {
 
 	@Override
 	public void editSong(int[] song_ids, String song_title, int position,
-			int disc_no, String album_name, String artist_name, int date,
-			String genre, byte[] artwork) throws SQLException {
+			int disc_no, String album_name, String artist_name, byte[] artwork)
+			throws SQLException {
+		Connection conn = getConnection();
+		conn.setAutoCommit(false);
+		PreparedStatement st = null;
 
+		try {
+
+			String ids = "";
+			for (int i = 0; i < song_ids.length; i++) {
+				ids += '?';
+				if (i < song_ids.length - 1)
+					ids += ',';
+			}
+
+			int artist_id = -1;
+			if (artist_name != null && artist_name.length() > 0) {
+				st = conn.prepareStatement("SELECT artist_id FROM artist "
+						+ "WHERE artist_name=?");
+				st.setString(1, artist_name);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					artist_id = rs.getInt("artist_id");
+				}
+				if (artist_id == -1) {
+					Artist ar = new Artist();
+					ar.name = artist_name;
+					artist_id = insertArtist(ar);
+				}
+
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"artist_id=?, artist_name=? " + //
+						"WHERE song_id IN (" + ids + ")");
+				st.setInt(1, artist_id);
+				st.setString(2, artist_name);
+				for (int i = 0; i < song_ids.length; i++) {
+					st.setInt(i + 3, song_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			if (album_name != null && album_name.length() > 0) {
+				int album_id = -1;
+				st = conn
+						.prepareStatement("SELECT album_id,artist_id,artist_name"
+								+ " FROM album WHERE album_name=?");
+				st.setString(1, album_name);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					album_id = rs.getInt("album_id");
+					if (artist_id == -1) {
+						artist_id = rs.getInt("artist_id");
+						artist_name = rs.getString("artist_name");
+					}
+				}
+				if (album_id == -1) {
+					Album ar = new Album();
+					ar.name = album_name;
+					ar.artist_name = artist_name;
+					album_id = insertAlbum(ar, artist_id);
+				}
+
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"album_id=?, album_name=? " + //
+						"WHERE song_id IN (" + ids + ")");
+				st.setInt(1, album_id);
+				st.setString(2, album_name);
+				for (int i = 0; i < song_ids.length; i++) {
+					st.setInt(i + 3, song_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			ids = "";
+			for (int i = 0; i < song_ids.length; i++) {
+				ids += '?';
+				if (i < song_ids.length - 1)
+					ids += ',';
+			}
+			if (position > 0) {
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"position=? WHERE song_id IN (" + ids + ")");
+				st.setInt(1, position);
+				for (int i = 0; i < song_ids.length; i++) {
+					st.setInt(i + 2, song_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			if (disc_no > 0) {
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"disc_no=? WHERE song_id IN (" + ids + ")");
+				st.setInt(1, disc_no);
+				for (int i = 0; i < song_ids.length; i++) {
+					st.setInt(i + 2, song_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			if (song_title != null) {
+				st = conn.prepareStatement("UPDATE song SET " + //
+						"title=? WHERE song_id IN (" + ids + ")");
+				st.setString(1, song_title);
+				for (int i = 0; i < song_ids.length; i++) {
+					st.setInt(i + 2, song_ids[i]);
+				}
+				st.executeUpdate();
+			}
+
+			conn.commit();
+			conn.setAutoCommit(true);
+
+			this.updateSongCount();
+
+		} catch (SQLException e) {
+			conn.rollback();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
 	}
 
 }

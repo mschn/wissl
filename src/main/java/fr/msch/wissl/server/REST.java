@@ -1217,7 +1217,6 @@ public class REST {
 			@FormParam("disc_no") int disc_no,
 			@FormParam("album_name") String album_name,
 			@FormParam("artist_name") String artist_name,
-			@FormParam("date") int date, @FormParam("genre") String genre,
 			@FormParam("artwork") byte[] artwork) throws SecurityError,
 			SQLException {
 		long l1 = System.nanoTime();
@@ -1230,10 +1229,10 @@ public class REST {
 		}
 
 		Library.editSong(files, song_title, position, disc_no, album_name,
-				artist_name, date, genre, artwork);
-		//TODO doit
-		DB.get().removeSongs(song_ids);
-		Library.interrupt();
+				artist_name, 0, null, artwork);
+		DB.get().editSong(song_ids, song_title, position, disc_no, album_name,
+				artist_name, artwork);
+		RuntimeStats.get().updateFromDB();
 
 		log(s, l1);
 	}

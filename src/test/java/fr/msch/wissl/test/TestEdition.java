@@ -287,7 +287,7 @@ public class TestEdition extends TServer {
 		obj = obj.getJSONArray("songs").getJSONObject(0);
 		int id_13 = obj.getInt("id");
 
-		// song 'Thirteen' : set position to 14, disc number to 1, name to '13', genre to 'test'
+		// song 'Thirteen' : set position to 14, disc number to 1, name to '13'
 		post = new PostMethod(URL + "edit/song");
 		post.addRequestHeader("sessionId", admin_sessionId);
 		post.addParameter("song_ids[]", "" + id_13);
