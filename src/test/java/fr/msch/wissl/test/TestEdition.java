@@ -397,5 +397,99 @@ public class TestEdition extends TServer {
 		client.executeMethod(post);
 		assertEquals(204, post.getStatusCode());
 
+		get = new GetMethod(URL + "search/Bob");
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		bob_id = obj.getJSONArray("artists").getJSONObject(0).getInt("id");
+
+		// find albums 'Ok' and 'Qux'
+		get = new GetMethod(URL + "albums/" + bob_id);
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("albums");
+		assertEquals(3, arr.length());
+		int ok_id = -1;
+		qux_id = -1;
+		for (int i = 0; i < 3; i++) {
+			obj = arr.getJSONObject(i);
+			int id = obj.getInt("id");
+			name = obj.getString("name");
+			if (name.equals("Ok")) {
+				ok_id = id;
+			} else if (name.equals("Qux")) {
+				qux_id = id;
+			}
+		}
+
+		// merge albums 'Ok' and 'Qux' to album 'okux'
+		post = new PostMethod(URL + "edit/album");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("album_ids[]", "" + ok_id);
+		post.addParameter("album_ids[]", "" + qux_id);
+		post.addParameter("album_name", "okux");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+
+		// check new album 'okux'
+		get = new GetMethod(URL + "albums/" + bob_id);
+		get.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("albums");
+
+		assertEquals(2, arr.length());
+		int okux_id = -1;
+		for (int i = 0; i < 2; i++) {
+			obj = arr.getJSONObject(i);
+			int id = obj.getInt("id");
+			name = obj.getString("name");
+			if (name.equals("okux")) {
+				okux_id = id;
+			}
+		}
+
+		get = new GetMethod(URL + "songs/" + okux_id);
+		get.addRequestHeader("sessionId", user_sessionId);
+		client.executeMethod(get);
+		assertEquals(200, get.getStatusCode());
+		obj = new JSONObject(get.getResponseBodyAsString());
+		arr = obj.getJSONArray("songs");
+		obj = obj.getJSONObject("album");
+
+		assertEquals(3, arr.length());
+		assertEquals(3, obj.getInt("songs"));
+		int id_8 = -1, id_9 = -1, id_15 = -1;
+		for (int i = 0; i < 3; i++) {
+			obj = arr.getJSONObject(i);
+			int id = obj.getInt("id");
+			String title = obj.getString("title");
+			if (title.equals("Eight")) {
+				id_8 = id;
+			} else if (title.equals("Nine")) {
+				id_9 = id;
+			} else if (title.equals("Fifteen")) {
+				id_15 = id;
+			}
+		}
+
+		// revert data
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_8);
+		post.addParameter("song_ids[]", "" + id_9);
+		post.addParameter("album_name", "Qux");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
+		post.addParameter("song_ids[]", "" + id_15);
+		post.addParameter("album_name", "Ok");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
 	}
 }

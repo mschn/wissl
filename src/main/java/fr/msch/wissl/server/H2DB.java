@@ -2173,6 +2173,7 @@ public class H2DB extends DB {
 					st.setInt(i + 3, album_ids[i]);
 				}
 				st.executeUpdate();
+				conn.commit();
 			}
 
 			// move album if necessary
@@ -2183,7 +2184,7 @@ public class H2DB extends DB {
 				st.setString(1, album_name);
 				ResultSet rs = st.executeQuery();
 				if (rs.next()) {
-					album_id = rs.getInt("artist_id");
+					album_id = rs.getInt("album_id");
 				}
 				if (album_id == -1) {
 					album_id = album_ids[0];
@@ -2192,7 +2193,7 @@ public class H2DB extends DB {
 				for (int i = 0; i < album_ids.length; i++) {
 					st = conn.prepareStatement("UPDATE song " + //
 							"SET album_name=?, album_id=? " + //
-							"WHERE artist_id=?");
+							"WHERE album_id=?");
 					st.setString(1, album_name);
 					st.setInt(2, album_id);
 					st.setInt(3, album_ids[i]);
