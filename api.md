@@ -749,9 +749,8 @@ Edit metadata for one or more artists.
 
 The only field that can be edited at the artist level is the artist name.
 
-This method will write the new metadata to the actual music file on the filesystem,
-then remove the modified files from DB.
-This will cause the indexer to asychronously add the edited files with the new metadata.
+This method will write the new metadata to the actual music file on the filesystem
+and update the DB synchronously: request might take up to a few minutes to complete.
 
 ### <a id="editalbum"></a>`/edit/album`
 * method: `POST`
@@ -770,9 +769,8 @@ Edit metadata for one or more albums.
 Each parameter is optional; one can call this method and only change the `genre` field for
 a list of albums.
 
-This method will write the new metadata to the actual music file on the filesystem,
-then remove the modified files from DB.
-This will cause the indexer to asychronously add the edited files with the new metadata.
+This method will write the new metadata to the actual music file on the filesystem
+and update the DB synchronously: request might take up to a few minutes to complete.
 
 ### <a id="editsong"></a>`/edit/song`
 * method: `POST`
@@ -782,8 +780,6 @@ This will cause the indexer to asychronously add the edited files with the new m
 * param: `disc_no` new disc number
 * param: `album_name` new album name
 * param: `artist_name` new artist name
-* param: `date` new date
-* param: `genre` new genre
 * param: `artwork` new artwork (raw binary image)
 * requires admin privileges
 * ex: `curl -H "sessionId:UUID" -d "song_ids[]=2&position=4" http://localhost:8080/wissl/edit/song`
@@ -794,9 +790,8 @@ Edit metadata for one or more songs.
 Each parameter is optional; one can call this method and only change the `disc_no` field for
 a list of songs.
 
-This method will write the new metadata to the actual music file on the filesystem,
-then remove the modified files from DB.
-This will cause the indexer to asychronously add the edited files with the new metadata.
+This method will write the new metadata to the actual music file on the filesystem
+and update the DB synchronously: request might take up to a few minutes to complete.
 
 ### <a id="logs"></a>`/logs`
 * method: `POST`
