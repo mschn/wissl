@@ -591,6 +591,10 @@ span#next {
 	background: 8px 8px no-repeat url('img/play_16.png')
 }
 
+.navbar-edit {
+	background: 8px 8px no-repeat url('img/edit_16.png')
+}
+
 #navbar .context-action a {
 	display: inline-table;
 	width: 32px;
@@ -676,19 +680,19 @@ span#next {
 }
 
 #artists li:hover span.edit-name {
-    display: inline;
+	display: inline;
 }
 
 #artists span.edit-name {
-    font-size: .7em;
-    padding: 5px 10px 5px 30px;
-    margin-left: 10px;
-    background: 10px 4px no-repeat url('img/edit_16.png');
-    display: none;
+	font-size: .7em;
+	padding: 5px 10px 5px 30px;
+	margin-left: 10px;
+	background: 10px 4px no-repeat url('img/edit_16.png');
+	display: none;
 }
 
 #artists span.edit-name:hover {
-    background-color: #bcd;
+	background-color: #bcd;
 }
 
 #artists span.name.no-metadata {
@@ -914,7 +918,8 @@ span#next {
 	color: white;
 }
 
-#library span.song-id,#library span.album-id,#library span.playlist-id {
+#library span.song-id,#library span.album-id,#library span.playlist-id,#library span.genre
+	{
 	display: none;
 }
 
@@ -968,7 +973,7 @@ li span.select-box-checked {
 
 #library span.album-count {
 	float: right;
-	width: 20%;
+	width: 19%;
 }
 
 #library span.artist-count {
@@ -1031,21 +1036,32 @@ li span.select-box-checked {
 	color: #444;
 	font-size: 1.2em;
 	margin-right: 5px;
-	text-align: right;
+	text-align: left;
 	display: inline-block;
 	width: 100px;
 }
 
 .dialog label.radio-label {
-	width: 200px;
 	text-align: left;
 	padding-left: 10px;
+	width: 200px;
 }
 
 .dialog-text-input {
-	width: 160px;
+	width: 200px;
 	border: 1px solid #999;
 	font-size: 1.2em;
+	padding: 5px;
+}
+
+.dialog-text-multiple {
+	background-color: #fdd;
+}
+
+#edit-album-warning {
+	font-size: 1.2em;
+	background: #fdd;
+	display: none;
 	padding: 5px;
 }
 
@@ -1054,7 +1070,7 @@ label .dialog-text-input {
 }
 
 .dialog-check-input {
-	margin-right: 160px;
+	margin-right: 200px;
 	text-align: left;
 }
 

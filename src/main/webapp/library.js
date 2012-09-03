@@ -99,7 +99,9 @@ var wsl = wsl || {};
 				var artist, albums, content, album, i, name, clazz, liclass, events, hastag;
 				artist = data.artist;
 				albums = data.albums;
-				content = "<ul>";
+				content = '<span style="display:none" id="album-artist-name">' + artist.name + '</span>';
+				content += '<span style="display:none" id="album-artist-id">' + artist.id + '</span>';
+				content += "<ul>";
 				hastag = true;
 				for (i = 0; i < albums.length; i += 1) {
 					album = albums[i];
@@ -130,6 +132,7 @@ var wsl = wsl || {};
 						}
 					}
 					content += name + '</span>';
+					content += '<span class="genre">' + album.genre + '</span>';
 					content += '<span class="duration">' + wsl.formatSeconds(album.playtime) + '</span>';
 					content += '<span class="album-count">' + album.songs + ' song' + (album.songs > 1 ? 's' : '') + '</span>';
 					content += '</li>';
@@ -356,7 +359,6 @@ var wsl = wsl || {};
 		event.stopPropagation();
 
 		artist_name = $('#artist-span-name-' + artist_id).text();
-		console.log(artist_id, artist_name);
 
 		$('#edit-artist-id').val(artist_id);
 		$('#edit-artist-name').val(artist_name);
@@ -399,6 +401,109 @@ var wsl = wsl || {};
 	wsl.cancelEditArtist = function () {
 		$('#dialog-mask').hide();
 		$('#edit-artist-dialog').hide();
+	};
+
+	wsl.showEditAlbum = function () {
+		var album_ids = [], name, artist, date, genre, i, tmp;
+
+		$('.selected .album-id').each(function (index) {
+			album_ids[index] = parseInt(this.innerHTML, 10);
+		});
+
+		if (album_ids.length === 0) {
+			return;
+		} else {
+			for (i = 0; i < album_ids.length; i++) {
+				tmp = $('#album-' + album_ids[i] + ' .name').text();
+				if (name === undefined || tmp === name) {
+					name = tmp;
+				} else {
+					$('#edit-album-name').addClass('dialog-text-multiple');
+					$('#edit-album-warning').show();
+					name = '';
+				}
+
+				tmp = $('#album-' + album_ids[i] + ' .genre').text();
+				if (genre === undefined || tmp === genre) {
+					genre = tmp;
+				} else {
+					$('#edit-album-genre').addClass('dialog-text-multiple');
+					$('#edit-album-warning').show();
+					genre = '';
+				}
+
+				tmp = $('#album-' + album_ids[i] + ' .before').text();
+				if (date === undefined || tmp === date) {
+					date = tmp;
+				} else {
+					$('#edit-album-date').addClass('dialog-text-multiple');
+					$('#edit-album-warning').show();
+					date = '';
+				}
+
+			}
+		}
+		artist = $('#album-artist-name').text();
+
+		$('#edit-album-name').val(name);
+		$('#edit-album-genre').val(genre);
+		$('#edit-album-artist').val(artist);
+		$('#edit-album-date').val(date);
+
+		wsl.showDialog('edit-album-dialog');
+	};
+
+	wsl.editAlbum = function () {
+		var album_ids = [], name, artist, date, genre;
+
+		$('.selected .album-id').each(function (index) {
+			album_ids[index] = parseInt(this.innerHTML, 10);
+		});
+
+		name = $('#edit-album-name').val() || '';
+		genre = $('#edit-album-genre').val() || '';
+		artist = $('#edit-album-artist').val() || '';
+		date = $('#edit-album-date').val() || 0;
+
+		wsl.lockUI();
+		$.ajax({
+			url : 'wissl/edit/album',
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			dataType : 'json',
+			type : 'POST',
+			data : {
+				album_ids : album_ids,
+				artist_name : artist,
+				album_name : name,
+				genre : genre,
+				date : date
+			},
+			success : function (data) {
+				var scroll = Math.max($('body').scrollTop(), $('html').scrollTop());
+				wsl.unlockUI();
+				wsl.cancelEditAlbum();
+				wsl.clearSelection();
+				wsl.displayAlbums($('#album-artist-id').text(), scroll);
+			},
+			error : function (xhr) {
+				wsl.ajaxError("Failed to edit artist", xhr);
+				wsl.unlockUI();
+				wsl.cancelEditArtist();
+				wsl.clearSelection();
+			}
+		});
+
+	};
+
+	wsl.cancelEditAlbum = function () {
+		$('#dialog-mask').hide();
+		$('#edit-album-dialog').hide();
+		$('#edit-album-warning').hide();
+		$('.dialog-text-multiple').each(function () {
+			$(this).removeClass(' dialog-text-multiple');
+		});
 	};
 
 }(wsl));

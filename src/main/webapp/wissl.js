@@ -209,6 +209,7 @@ var wsl = wsl || {};
 				navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
 				navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
 				navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+				navbar += "<a class='navbar-edit context-action selection-disabled' onclick='wsl.showEditAlbum()' title='Edit album'></a>";
 				navbar += "</div>";
 			}
 		}
