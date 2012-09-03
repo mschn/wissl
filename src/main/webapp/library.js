@@ -413,7 +413,7 @@ var wsl = wsl || {};
 		if (album_ids.length === 0) {
 			return;
 		} else {
-			for (i = 0; i < album_ids.length; i++) {
+			for (i = 0; i < album_ids.length; i += 1) {
 				tmp = $('#album-' + album_ids[i] + ' .name').text();
 				if (name === undefined || tmp === name) {
 					name = tmp;

@@ -87,10 +87,10 @@ var wsl = wsl || {};
 			return;
 		}
 
-		url = '\?search/' + enc;
+		url = '?search/' + enc;
 
 		wsl.load(url);
-	},
+	};
 
 	wsl.displaySearch = function (query) {
 		wsl.lockUI();

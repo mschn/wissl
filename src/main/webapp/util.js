@@ -209,7 +209,7 @@ var wsl = wsl || {};
 	};
 
 	wsl.escape = function (str) {
-		return (str + '').replace(/([\\"'])/g, "\\$1").replace(/\0/g, "\\0");
+		return (String(str)).replace(/([\\"'])/g, "\\$1").replace(/\0/g, "\\0");
 	};
 
 }(wsl));
