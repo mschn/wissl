@@ -98,7 +98,7 @@ var player = {};
 				$('#playing').show();
 
 				if (album.artwork) {
-					art = '<img src="wissl/art/' + album.id + '" />';
+					art = '<img src="wissl/art/' + album.id + '?' + album.artwork_id + '" />';
 				} else {
 					art = '<img src="img/no-artwork.jpg" />';
 				}

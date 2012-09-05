@@ -65,7 +65,7 @@ var wsl = wsl || {};
 					content += '</div>';
 					content += '<div class="artists-artworks">';
 					for (j = 0; j < artworks.length && j < 10; j += 1) {
-						content += '<img src="wissl/art/' + artworks[j] + '" />';
+						content += '<img src="wissl/art/' + artworks[j].album + '?' + artworks[j].id + '" />';
 					}
 					content += '</div>';
 					content += '</li>';
@@ -125,7 +125,7 @@ var wsl = wsl || {};
 					content += '<span class="before">' + album.date + '</span>';
 					content += '<span onclick="wsl.load(\'?songs/' + album.id + '\')" class="' + clazz + '">';
 					if (album.artwork) {
-						content += '<img src="wissl/art/' + album.id + '" />';
+						content += '<img src="wissl/art/' + album.id + '?' + album.artwork_id + '" />';
 					} else {
 						if (hastag) {
 							content += '<img src="img/no-artwork.jpg" />';
@@ -178,7 +178,7 @@ var wsl = wsl || {};
 
 				content = '<div id="library-heading">';
 				if (album.artwork) {
-					content += '<img src="wissl/art/' + album.id + '" />';
+					content += '<img src="wissl/art/' + album.id + '?' + album.artwork_id + '" />';
 				} else {
 					content += '<img src="img/no-artwork.jpg" />';
 				}
@@ -406,6 +406,8 @@ var wsl = wsl || {};
 	wsl.editArtwork = function () {
 		var album_id, data = new FormData();
 
+		$('#edit-album-dialog-error').hide();
+
 		jQuery.each($('input[name^="edit-album-artwork-file"]')[0].files, function (i, file) {
 			data.append('file', file);
 		});
@@ -424,13 +426,12 @@ var wsl = wsl || {};
 			processData : false,
 			success : function (data) {
 				$('#edit-album-artwork-file').val('');
-				$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_id);
+				$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_id + '?' + new Date().getTime());
 				wsl.unlockUI();
 			},
 			error : function (xhr) {
-				wsl.ajaxError("Failed to edit artwork", xhr);
 				wsl.unlockUI();
-				wsl.cancelEditArtist();
+				wsl.ajaxError("Failed to edit artwork", xhr, 'edit-album-dialog-error');
 			}
 		});
 	};
@@ -483,7 +484,7 @@ var wsl = wsl || {};
 			$('#edit-album-artwork-img').hide();
 		} else {
 			$('#edit-album-artwork-form').show();
-			$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_ids[0]).show();
+			$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_ids[0] + '?' + new Date().getTime()).show();
 		}
 
 		$('#edit-album-name').val(name);

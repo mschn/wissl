@@ -44,6 +44,8 @@ public class Album {
 	public int artist_id = 0;
 	/** path to the artwork image on the local FS */
 	public String artwork_path = null;
+	/** uniquely identifies artwork for client caching */
+	public String artwork_id = null;
 
 	public boolean has_art = false;
 
@@ -79,7 +81,8 @@ public class Album {
 		str.append("\"playtime\":" + playtime + ",");
 		str.append("\"artist\":" + artist_id + ",");
 		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
-		str.append("\"artwork\":" + hasArt);
+		str.append("\"artwork\":" + hasArt + ",");
+		str.append("\"artwork_id\":" + JSONObject.quote(artwork_id));
 		str.append('}');
 		return str.toString();
 	}

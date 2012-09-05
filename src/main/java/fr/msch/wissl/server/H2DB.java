@@ -48,7 +48,7 @@ public class H2DB extends DB {
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 
 	 * the DB can be recovered or needs to be erased */
-	private static final long SCHEMA_VERSION = 7L;
+	private static final long SCHEMA_VERSION = 8L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -191,6 +191,7 @@ public class H2DB extends DB {
 					"songs INTEGER NOT NULL," + //
 					"playtime INTEGER NOT NULL," + //
 					"artwork_path VARCHAR(254)," + //
+					"artwork_id VARCHAR(32)," + //
 					"CONSTRAINT pk_album PRIMARY KEY (album_id)," + //
 					"artist_id INTEGER," + //
 					"CONSTRAINT fk_band FOREIGN KEY (artist_id)" + //
@@ -1324,6 +1325,7 @@ public class H2DB extends DB {
 				a.songs = rs.getInt("songs");
 				a.playtime = rs.getInt("playtime");
 				a.artwork_path = rs.getString("artwork_path");
+				a.artwork_id = rs.getString("artwork_id");
 				a.genre = rs.getString("genre");
 				a.artist_name = rs.getString("artist_name");
 				ret.add(a);
@@ -1358,6 +1360,7 @@ public class H2DB extends DB {
 				ret.songs = rs.getInt("songs");
 				ret.playtime = rs.getInt("playtime");
 				ret.artwork_path = rs.getString("artwork_path");
+				ret.artwork_id = rs.getString("artwork_id");
 				ret.artist_name = rs.getString("artist_name");
 				ret.genre = rs.getString("genre");
 			} else {
@@ -1395,24 +1398,26 @@ public class H2DB extends DB {
 		return null;
 	}
 
-	public Map<Integer, List<Integer>> getAlbumArtworks() throws SQLException {
+	public Map<Integer, Map<Integer, String>> getAlbumArtworks()
+			throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
-		Map<Integer, List<Integer>> ret = new HashMap<Integer, List<Integer>>();
+		Map<Integer, Map<Integer, String>> ret = new HashMap<Integer, Map<Integer, String>>();
 
 		try {
-			st = conn.prepareStatement("SELECT album_id,artist_id "
+			st = conn.prepareStatement("SELECT album_id,artist_id,artwork_id "
 					+ "FROM album WHERE artwork_path != 'null'");
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				int album = rs.getInt("album_id");
 				int artist = rs.getInt("artist_id");
-				List<Integer> li = ret.get(artist);
+				String art_id = rs.getString("artwork_id");
+				Map<Integer, String> li = ret.get(artist);
 				if (li == null) {
-					li = new ArrayList<Integer>();
+					li = new HashMap<Integer, String>();
 					ret.put(artist, li);
 				}
-				li.add(album);
+				li.put(album, art_id);
 			}
 		} finally {
 			if (st != null)
@@ -1671,19 +1676,21 @@ public class H2DB extends DB {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement(
-					"INSERT INTO album(album_name,date,songs,playtime,"
-							+ "artist_id,artwork_path,artist_name,genre) "
-							+ "VALUES (?,?,?,?,?,?,?,?)",
-					Statement.RETURN_GENERATED_KEYS);
+			st = conn
+					.prepareStatement(
+							"INSERT INTO album(album_name,date,songs,playtime,"
+									+ "artist_id,artwork_path,artwork_id,artist_name,genre) "
+									+ "VALUES (?,?,?,?,?,?,?,?,?)",
+							Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, alb.name);
 			st.setString(2, alb.date);
 			st.setInt(3, 0);
 			st.setInt(4, 0);
 			st.setInt(5, artistId);
 			st.setString(6, alb.artwork_path);
-			st.setString(7, alb.artist_name);
-			st.setString(8, alb.genre);
+			st.setString(7, alb.artwork_id);
+			st.setString(8, alb.artist_name);
+			st.setString(9, alb.genre);
 			st.executeUpdate();
 
 			ResultSet keys = st.getGeneratedKeys();
@@ -2412,11 +2419,13 @@ public class H2DB extends DB {
 				if (i < album_ids.length - 1)
 					ids += ',';
 			}
-			st = conn.prepareStatement("UPDATE album SET artwork_path=? "
-					+ "WHERE album_id IN (" + ids + ")");
+			st = conn
+					.prepareStatement("UPDATE album SET artwork_path=?, artwork_id=? "
+							+ "WHERE album_id IN (" + ids + ")");
 			st.setString(1, filePath);
+			st.setString(2, "" + System.currentTimeMillis());
 			for (int i = 0; i < album_ids.length; i++) {
-				st.setInt(i + 2, album_ids[i]);
+				st.setInt(i + 3, album_ids[i]);
 			}
 			st.executeUpdate();
 		} finally {

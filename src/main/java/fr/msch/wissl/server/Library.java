@@ -356,6 +356,8 @@ public class Library {
 											}
 										}
 										s.album.artwork_path = path;
+										s.album.artwork_id = ""
+												+ System.currentTimeMillis();
 									}
 									toInsert.add(s);
 								}
@@ -774,6 +776,7 @@ public class Library {
 				Tag tag = f.getTag();
 				Artwork a = ArtworkFactory.createArtworkFromFile(new File(
 						artwork_path));
+				tag.deleteArtworkField();
 				tag.setField(a);
 				f.commit();
 			} catch (Exception e) {

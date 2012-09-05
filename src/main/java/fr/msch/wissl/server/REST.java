@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -680,7 +681,8 @@ public class REST {
 		Session s = Session.check(sid, request.getRemoteAddr());
 
 		List<Artist> artists = DB.get().getArtists();
-		Map<Integer, List<Integer>> artworks = DB.get().getAlbumArtworks();
+		Map<Integer, Map<Integer, String>> artworks = DB.get()
+				.getAlbumArtworks();
 
 		StringBuilder ret = new StringBuilder();
 		ret.append("{\"artists\":[");
@@ -690,11 +692,18 @@ public class REST {
 			ret.append("{\"artist\":");
 			ret.append(ar.toJSON());
 			ret.append(",\"artworks\":[");
-			List<Integer> al = artworks.get(ar.id);
+			Map<Integer, String> al = artworks.get(ar.id);
 			if (al != null) {
-				for (Iterator<Integer> it2 = al.iterator(); it2.hasNext();) {
-					int id = it2.next();
-					ret.append(id);
+
+				Iterator<Entry<Integer, String>> it2 = al.entrySet().iterator();
+				while (it2.hasNext()) {
+					Entry<Integer, String> entry = it2.next();
+					int album_id = entry.getKey();
+					String artwork_id = entry.getValue();
+
+					ret.append("{\"album\":" + album_id + ",");
+					ret.append("\"id\":" + JSONObject.quote(artwork_id));
+					ret.append("}");
 					if (it2.hasNext()) {
 						ret.append(',');
 					}
@@ -1217,36 +1226,31 @@ public class REST {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Path("edit/artwork/{album_id}")
 	public void editArtwork(@PathParam("album_id") int album_id,
-			MultipartFormDataInput multipart) throws SecurityError {
+			MultipartFormDataInput multipart) throws SQLException,
+			SecurityError {
 
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
 		Session s = Session.check(sid, request.getRemoteAddr(), true);
 
+		String path = null;
 		try {
 			InputPart part = multipart.getFormDataMap().get("file").get(0);
 			InputStream is = part.getBody(new GenericType<InputStream>() {
 			});
-
-			String path = null;
-			try {
-				File file = File.createTempFile("image.", ".tmp");
-				FileUtils.copyInputStreamToFile(is, file);
-				path = Library.resizeArtwork(file.getAbsolutePath());
-				file.delete();
-			} catch (IOException e) {
-				Logger.error("Failed to create image file", e);
-				return;
-			}
-
-			int[] ids = new int[] { album_id };
-			List<String> files = DB.get().getAlbumSongPaths(ids);
-			Library.editArtwork(files, path);
-			DB.get().editAlbumArtwork(ids, path);
-
-		} catch (Exception e) {
-			Logger.error("Failed to extract image from form", e);
+			File file = File.createTempFile("image.", ".tmp");
+			FileUtils.copyInputStreamToFile(is, file);
+			path = Library.resizeArtwork(file.getAbsolutePath());
+			file.delete();
+		} catch (IOException e) {
+			Logger.error("Failed to create image file", e);
+			throw new IllegalArgumentException(
+					"Failed to create new artwork image");
 		}
+		int[] ids = new int[] { album_id };
+		List<String> files = DB.get().getAlbumSongPaths(ids);
+		Library.editArtwork(files, path);
+		DB.get().editAlbumArtwork(ids, path);
 
 		log(s, l1);
 	}

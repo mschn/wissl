@@ -83,7 +83,7 @@ public class TestLibrary extends TServer {
 
 				boolean art = false;
 				for (int j = 0; j < artworks.length(); j++) {
-					if (artworks.getInt(j) == album.id) {
+					if (artworks.getJSONObject(j).getInt("album") == album.id) {
 						art = true;
 					}
 				}

@@ -303,10 +303,10 @@ public abstract class DB {
 	public abstract String getAlbumArtwork(int album_id) throws SQLException;
 
 	/**
-	 * @return maps artist_id with a list of album_id for each album that has an artwork
+	 * @return maps artist_id with a par of album_id:artwork_id for each album that has an artwork
 	 * @throws SQLException
 	 */
-	public abstract Map<Integer, List<Integer>> getAlbumArtworks()
+	public abstract Map<Integer, Map<Integer, String>> getAlbumArtworks()
 			throws SQLException;
 
 	/**

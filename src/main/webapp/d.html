@@ -175,6 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<img id="edit-album-artwork-img" src="" alt="album artwork"
 				onerror="this.src='img/no-artwork.jpg'" />
 			<h2>Edit album</h2>
+			<p class="error" id="edit-album-dialog-error"></p>
 			<p id="edit-album-warning">Warning: editing multiple albums with
 				different values</p>
 
@@ -235,14 +236,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</p>
 		</div>
 		<div class="dialog" id="addmusic-dialog">
-				<h2 id='addmusic-dialog-title'>Add music folder</h2>
-				<p id='addmusic-dialog-content'></p>
-				<p class='dialog-buttons'>
-					<input class='button button-ok' id='addmusic-dialog-ok'
-						type="submit" value="OK" onclick='wsl.addMusic()' /> <input
-						class='button button-cancel' id='addmusic-dialog-cancel'
-						type='button' value='Cancel' onclick='wsl.cancelAddMusicFolder()' />
-				</p>
+			<h2 id='addmusic-dialog-title'>Add music folder</h2>
+			<p id='addmusic-dialog-content'></p>
+			<p class='dialog-buttons'>
+				<input class='button button-ok' id='addmusic-dialog-ok'
+					type="submit" value="OK" onclick='wsl.addMusic()' /> <input
+					class='button button-cancel' id='addmusic-dialog-cancel'
+					type='button' value='Cancel' onclick='wsl.cancelAddMusicFolder()' />
+			</p>
 		</div>
 		<div class="dialog" id="adduser-dialog">
 			<form method="post" onsubmit='wsl.addUser();return false'>

@@ -153,6 +153,8 @@ An album contains several songs, and is contained by one artist.
       "playtime": INT,
       // true if the server has an artwork for this album
       "artwork": BOOL
+      // will change if artwork changes, use it for cache control
+      "artwork_id": STRING
     }
 
 ### <a id="song"></a>song
@@ -522,7 +524,11 @@ Get all playlists created by a given user.
           "artist": ARTIST,
           // list of album ids that have artworks
           "artworks": [
-            INT, ...
+            {
+              "album": INT,
+              "id": STRING
+            },
+            ...
           ]
         },
         ...
@@ -534,6 +540,10 @@ Get all artists.
 
 The returned object contains both the artist information and the ids of all albums that
 have an artwork ready to be served by the method `/art/{album_id}`.
+
+In the `artworks` array are described the ids of the albums that have artworks,
+along with the `artwork_id` string that identifies an image and can be used to control
+client cache.
 
 ### <a id="albumsartist_id"></a>`/albums/{artist_id}`
 * method: `GET`
