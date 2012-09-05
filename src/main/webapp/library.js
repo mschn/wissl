@@ -403,8 +403,41 @@ var wsl = wsl || {};
 		$('#edit-artist-dialog').hide();
 	};
 
+	wsl.editArtwork = function () {
+		var album_id, data = new FormData();
+
+		jQuery.each($('input[name^="edit-album-artwork-file"]')[0].files, function (i, file) {
+			data.append('file', file);
+		});
+		album_id = parseInt($('.selected .album-id').html(), 10);
+
+		wsl.lockUI();
+		$.ajax({
+			url : 'wissl/edit/artwork/' + album_id,
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			type : 'POST',
+			data : data,
+			cache : false,
+			contentType : false,
+			processData : false,
+			success : function (data) {
+				$('#edit-album-artwork-file').val('');
+				$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_id);
+				wsl.unlockUI();
+			},
+			error : function (xhr) {
+				wsl.ajaxError("Failed to edit artwork", xhr);
+				wsl.unlockUI();
+				wsl.cancelEditArtist();
+			}
+		});
+	};
+
 	wsl.showEditAlbum = function () {
 		var album_ids = [], name, artist, date, genre, i, tmp;
+		name = artist = date = genre = undefined;
 
 		$('.selected .album-id').each(function (index) {
 			album_ids[index] = parseInt(this.innerHTML, 10);
@@ -444,6 +477,14 @@ var wsl = wsl || {};
 			}
 		}
 		artist = $('#album-artist-name').text();
+
+		if (album_ids.length > 1) {
+			$('#edit-album-artwork-form').hide();
+			$('#edit-album-artwork-img').hide();
+		} else {
+			$('#edit-album-artwork-form').show();
+			$('#edit-album-artwork-img').attr('src', 'wissl/art/' + album_ids[0]).show();
+		}
 
 		$('#edit-album-name').val(name);
 		$('#edit-album-genre').val(genre);

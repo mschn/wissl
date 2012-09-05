@@ -51,6 +51,7 @@ Summary
   * [`/edit/artist`](#editartist)
   * [`/edit/album`](#editalbum)
   * [`/edit/song`](#editsong)
+  * [`/edit/artwork/{album_id}`](#editartworkalbum_id)
   * [`/logs`](#logs)
   * [`/stats`](#stats)
   * [`/info`](#info)
@@ -750,7 +751,8 @@ Edit metadata for one or more artists.
 The only field that can be edited at the artist level is the artist name.
 
 This method will write the new metadata to the actual music file on the filesystem
-and update the DB synchronously: request might take up to a few minutes to complete.
+and update the DB synchronously: request might take up to a few minutes to complete
+depending the number of files and disk performances.
 
 ### <a id="editalbum"></a>`/edit/album`
 * method: `POST`
@@ -759,7 +761,6 @@ and update the DB synchronously: request might take up to a few minutes to compl
 * param: `artist_name` new artist name
 * param: `date` new date
 * param: `genre` new genre
-* param: `artwork` new artwork (raw binary image)
 * requires admin privileges
 * ex: `curl -H "sessionId:UUID" -d "album_ids[]=2&genre=metal" http://localhost:8080/wissl/edit/album`
 * does not return anything
@@ -770,7 +771,8 @@ Each parameter is optional; one can call this method and only change the `genre`
 a list of albums.
 
 This method will write the new metadata to the actual music file on the filesystem
-and update the DB synchronously: request might take up to a few minutes to complete.
+and update the DB synchronously: request might take up to a few minutes to complete
+depending the number of files and disk performances.
 
 ### <a id="editsong"></a>`/edit/song`
 * method: `POST`
@@ -780,7 +782,6 @@ and update the DB synchronously: request might take up to a few minutes to compl
 * param: `disc_no` new disc number
 * param: `album_name` new album name
 * param: `artist_name` new artist name
-* param: `artwork` new artwork (raw binary image)
 * requires admin privileges
 * ex: `curl -H "sessionId:UUID" -d "song_ids[]=2&position=4" http://localhost:8080/wissl/edit/song`
 * does not return anything
@@ -791,7 +792,22 @@ Each parameter is optional; one can call this method and only change the `disc_n
 a list of songs.
 
 This method will write the new metadata to the actual music file on the filesystem
-and update the DB synchronously: request might take up to a few minutes to complete.
+and update the DB synchronously: request might take up to a few minutes to complete
+depending the number of files and disk performances.
+
+### <a id="editartworkalbum_id"></a>`/edit/artwork/artwork_id`
+* method: `POST`
+* param: `album_id` unique album id
+* param: `file` image file sent as part using `multipart/form-data`
+* requires admin privileges
+* ex: `curl -H "sessionId:UUID" -F 'file=@/path/to/image.jpg' http://localhost/wissl/edit/artwork/142`
+* does not return anything
+
+Edit album artwork for a given album.
+
+This method will write the new metadata to the actual music file on the filesystem
+and update the DB synchronously: request might take up to a few minutes to complete
+depending the number of files and disk performances.
 
 ### <a id="logs"></a>`/logs`
 * method: `POST`

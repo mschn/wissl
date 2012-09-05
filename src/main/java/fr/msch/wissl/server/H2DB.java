@@ -2125,8 +2125,7 @@ public class H2DB extends DB {
 
 	@Override
 	public void editAlbum(int[] album_ids, String album_name,
-			String artist_name, int date, String genre, byte[] artwork)
-			throws SQLException {
+			String artist_name, int date, String genre) throws SQLException {
 		Connection conn = getConnection();
 		conn.setAutoCommit(false);
 		PreparedStatement st = null;
@@ -2275,7 +2274,7 @@ public class H2DB extends DB {
 
 	@Override
 	public void editSong(int[] song_ids, String song_title, int position,
-			int disc_no, String album_name, String artist_name, byte[] artwork)
+			int disc_no, String album_name, String artist_name)
 			throws SQLException {
 		Connection conn = getConnection();
 		conn.setAutoCommit(false);
@@ -2400,4 +2399,32 @@ public class H2DB extends DB {
 		}
 	}
 
+	@Override
+	public void editAlbumArtwork(int[] album_ids, String filePath)
+			throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+
+		try {
+			String ids = "";
+			for (int i = 0; i < album_ids.length; i++) {
+				ids += '?';
+				if (i < album_ids.length - 1)
+					ids += ',';
+			}
+			st = conn.prepareStatement("UPDATE album SET artwork_path=? "
+					+ "WHERE album_id IN (" + ids + ")");
+			st.setString(1, filePath);
+			for (int i = 0; i < album_ids.length; i++) {
+				st.setInt(i + 2, album_ids[i]);
+			}
+			st.executeUpdate();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
 }

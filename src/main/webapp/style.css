@@ -1025,6 +1025,7 @@ li span.select-box-checked {
 	border: 0;
 	margin: 0;
 	padding: 0;
+	text-align: left;
 }
 
 .dialog h2 {
@@ -1039,6 +1040,7 @@ li span.select-box-checked {
 	text-align: left;
 	display: inline-block;
 	width: 100px;
+	padding-left: 20px;
 }
 
 .dialog label.radio-label {
@@ -1054,6 +1056,12 @@ li span.select-box-checked {
 	padding: 5px;
 }
 
+.dialog-text-input-file {
+	width: 200px;
+	font-size: 1.2em;
+	padding: 5px;
+}
+
 .dialog-text-multiple {
 	background-color: #fdd;
 }
@@ -1064,6 +1072,25 @@ li span.select-box-checked {
 	display: none;
 	padding: 5px;
 }
+
+#art {
+}
+
+#edit-album-dialog h2 {
+    margin-bottom: 30px;
+}
+
+#edit-album-artwork-img {
+    float: left;
+    position: absolute;
+    left: 40px;
+    top: 10px;
+	width: 50px;
+	height: 50px;
+	background: #c0c0c0;
+	box-shadow: 1px 1px 3px 1px #aaa;
+	border: 1px solid #fff;
+ }
 
 label .dialog-text-input {
 	font-size: 1em;

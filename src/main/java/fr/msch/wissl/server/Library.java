@@ -697,11 +697,11 @@ public class Library {
 		return song;
 	}
 
-	private static String resizeArtwork(String artPath) throws IOException {
+	public static String resizeArtwork(String artPath) throws IOException {
 		BufferedImage orig = ImageIO.read(new File(artPath));
 
 		if (orig == null) {
-			return artPath;
+			throw new IOException("Failed to open image");
 		}
 		Image sc = orig.getScaledInstance(70, 70, Image.SCALE_SMOOTH);
 
@@ -743,7 +743,7 @@ public class Library {
 	 * @param files local filesystem path to the songs to edit
 	 */
 	public static void editArtist(List<String> files, String artist_name) {
-		editTags(files, null, 0, 0, null, artist_name, 0, null, null);
+		editTags(files, null, 0, 0, null, artist_name, 0, null);
 	}
 
 	/**
@@ -751,9 +751,8 @@ public class Library {
 	 * @param files local filesystem path to the songs to edit
 	 */
 	public static void editAlbum(List<String> files, String album_name,
-			String artist_name, int date, String genre, byte[] artwork) {
-		editTags(files, null, 0, 0, album_name, artist_name, date, genre,
-				artwork);
+			String artist_name, int date, String genre) {
+		editTags(files, null, 0, 0, album_name, artist_name, date, genre);
 	}
 
 	/**
@@ -762,14 +761,30 @@ public class Library {
 	 */
 	public static void editSong(List<String> files, String song_title,
 			int position, int disc_no, String album_name, String artist_name,
-			int date, String genre, byte[] artwork) {
+			int date, String genre) {
 		editTags(files, song_title, position, disc_no, album_name, artist_name,
-				date, genre, artwork);
+				date, genre);
+	}
+
+	public static void editArtwork(List<String> files, String artwork_path) {
+		for (String path : files) {
+			File file = new File(path);
+			try {
+				AudioFile f = AudioFileIO.read(file);
+				Tag tag = f.getTag();
+				Artwork a = ArtworkFactory.createArtworkFromFile(new File(
+						artwork_path));
+				tag.setField(a);
+				f.commit();
+			} catch (Exception e) {
+				Logger.error("Failed to edit song artwork " + path, e);
+			}
+		}
 	}
 
 	private static void editTags(List<String> files, String song_title,
 			int position, int disc_no, String album_name, String artist_name,
-			int date, String genre, byte[] artwork) {
+			int date, String genre) {
 		for (String path : files) {
 			File file = new File(path);
 			try {
@@ -801,12 +816,6 @@ public class Library {
 				}
 				if (genre != null && genre.trim().length() > 0) {
 					tag.setField(FieldKey.GENRE, genre);
-				}
-				if (artwork != null && artwork.length > 0) {
-					File tmpArt = File.createTempFile("wsl.artwork.", ".tmp");
-					FileUtils.writeByteArrayToFile(file, artwork);
-					Artwork a = ArtworkFactory.createArtworkFromFile(tmpArt);
-					tag.setField(a);
 				}
 
 				f.commit();

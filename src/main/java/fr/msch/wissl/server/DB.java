@@ -432,12 +432,10 @@ public abstract class DB {
 	 * @param artist_name new artist name
 	 * @param date new date
 	 * @param genre new genre
-	 * @param artwork new artwork
 	 * @throws SQLException
 	 */
 	public abstract void editAlbum(int[] album_ids, String album_name,
-			String artist_name, int date, String genre, byte[] artwork)
-			throws SQLException;
+			String artist_name, int date, String genre) throws SQLException;
 
 	/**
 	 * Edit song related info in DB
@@ -448,11 +446,19 @@ public abstract class DB {
 	 * @param disc_no new disc number
 	 * @param album_name new album name
 	 * @param artist_name new artist name
-	 * @param artwork new artwork
 	 * @throws SQLException
 	 */
 	public abstract void editSong(int[] song_ids, String song_title,
-			int position, int disc_no, String album_name, String artist_name,
-			byte[] artwork) throws SQLException;
+			int position, int disc_no, String album_name, String artist_name)
+			throws SQLException;
+
+	/**
+	 * Edit artwork location for the given albums
+	 * @param album_ids unique album ids
+	 * @param filePath path to the new artwork
+	 * @throws SQLException
+	 */
+	public abstract void editAlbumArtwork(int[] album_ids, String filePath)
+			throws SQLException;
 
 }

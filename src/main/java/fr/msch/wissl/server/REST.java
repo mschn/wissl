@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -43,11 +44,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.jboss.resteasy.spi.NotFoundException;
+import org.jboss.resteasy.util.GenericType;
 
 import fr.msch.wissl.common.Config;
 import fr.msch.wissl.server.exception.ForbiddenException;
@@ -1189,9 +1195,8 @@ public class REST {
 	public void editAlbum(@FormParam("album_ids[]") int[] album_ids,
 			@FormParam("album_name") String album_name,
 			@FormParam("artist_name") String artist_name,
-			@FormParam("date") int date, @FormParam("genre") String genre,
-			@FormParam("artwork") byte[] artwork) throws SecurityError,
-			SQLException {
+			@FormParam("date") int date, @FormParam("genre") String genre)
+			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
 		Session s = Session.check(sid, request.getRemoteAddr(), true);
@@ -1201,10 +1206,47 @@ public class REST {
 			throw new NotFoundException("No album found ");
 		}
 
-		Library.editAlbum(files, album_name, artist_name, date, genre, artwork);
-		DB.get().editAlbum(album_ids, album_name, artist_name, date, genre,
-				artwork);
+		Library.editAlbum(files, album_name, artist_name, date, genre);
+		DB.get().editAlbum(album_ids, album_name, artist_name, date, genre);
 		RuntimeStats.get().updateFromDB();
+
+		log(s, l1);
+	}
+
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Path("edit/artwork/{album_id}")
+	public void editArtwork(@PathParam("album_id") int album_id,
+			MultipartFormDataInput multipart) throws SecurityError {
+
+		long l1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session s = Session.check(sid, request.getRemoteAddr(), true);
+
+		try {
+			InputPart part = multipart.getFormDataMap().get("file").get(0);
+			InputStream is = part.getBody(new GenericType<InputStream>() {
+			});
+
+			String path = null;
+			try {
+				File file = File.createTempFile("image.", ".tmp");
+				FileUtils.copyInputStreamToFile(is, file);
+				path = Library.resizeArtwork(file.getAbsolutePath());
+				file.delete();
+			} catch (IOException e) {
+				Logger.error("Failed to create image file", e);
+				return;
+			}
+
+			int[] ids = new int[] { album_id };
+			List<String> files = DB.get().getAlbumSongPaths(ids);
+			Library.editArtwork(files, path);
+			DB.get().editAlbumArtwork(ids, path);
+
+		} catch (Exception e) {
+			Logger.error("Failed to extract image from form", e);
+		}
 
 		log(s, l1);
 	}
@@ -1216,8 +1258,7 @@ public class REST {
 			@FormParam("position") int position,
 			@FormParam("disc_no") int disc_no,
 			@FormParam("album_name") String album_name,
-			@FormParam("artist_name") String artist_name,
-			@FormParam("artwork") byte[] artwork) throws SecurityError,
+			@FormParam("artist_name") String artist_name) throws SecurityError,
 			SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
@@ -1229,9 +1270,9 @@ public class REST {
 		}
 
 		Library.editSong(files, song_title, position, disc_no, album_name,
-				artist_name, 0, null, artwork);
+				artist_name, 0, null);
 		DB.get().editSong(song_ids, song_title, position, disc_no, album_name,
-				artist_name, artwork);
+				artist_name);
 		RuntimeStats.get().updateFromDB();
 
 		log(s, l1);

@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				name="edit-artist-form">
 				<fieldset>
 					<h2>Edit artist</h2>
-					<p class="dialog-form-input">
+					<p>
 						<input type="hidden" id="edit-artist-id" /> <label
 							for="edit-artist-name">Name</label> <input
 							class="dialog-text-input" type="text" name="edit-artist-name"
@@ -166,18 +166,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<input class='button button-ok' type="submit" value="Ok" /> <input
 							class='button button-cancel' type='button' value='Cancel'
 							onclick='wsl.cancelEditArtist()' />
+					</p>
+				</fieldset>
 			</form>
 		</div>
 		"
 		<div class="dialog" id="edit-album-dialog">
+			<img id="edit-album-artwork-img" src="" alt="album artwork"
+				onerror="this.src='img/no-artwork.jpg'" />
+			<h2>Edit album</h2>
+			<p id="edit-album-warning">Warning: editing multiple albums with
+				different values</p>
+
+			<form method="post" onsubmit='wsl.editArtwork();return false'
+				id="edit-album-artwork-form">
+				<fieldset>
+					<p>
+						<label for="edit-album-artwork-file">Artwork</label> <input
+							name="edit-album-artwork-file" class="dialog-text-input-file"
+							size="14" onchange='wsl.editArtwork()'
+							id="edit-album-artwork-file" type="file" />
+					</p>
+
+				</fieldset>
+			</form>
+
+
 			<form method="post" onsubmit='wsl.editAlbum();return false'
 				name="edit-album-form">
 				<fieldset>
-					<h2>Edit album</h2>
-					<p id="edit-album-warning">Warning: editing multiple albums
-						with different values</p>
-					<p class="dialog-form-input">
-						<input type="hidden" id="edit-album-id" />
+					<input type="hidden" id="edit-album-id" />
 					<p>
 						<label for="edit-album-name">Name</label> <input
 							class="dialog-text-input" type="text" name="edit-album-name"
@@ -198,27 +216,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							class="dialog-text-input" type="text" name="edit-album-genre"
 							id="edit-album-genre" />
 					</p>
-					</p>
 					<p class='dialog-buttons'>
 						<input class='button button-ok' type="submit" value="Ok" /> <input
 							class='button button-cancel' type='button' value='Cancel'
 							onclick='wsl.cancelEditAlbum()' />
+					</p>
+				</fieldset>
 			</form>
 		</div>
 		"
 		<div class="dialog" id="confirm-dialog">
-			<fieldset>
-				<h2 id='confirm-dialog-title'></h2>
-				<p id='confirm-dialog-message'></p>
-				<p class='dialog-buttons'>
-					<input class='button button-ok' id='confirm-dialog-ok'
-						type="submit" value="OK" /> <input class='button button-cancel'
-						id='confirm-dialog-cancel' type='button' value='Cancel' />
-				</p>
-			</fieldset>
+			<h2 id='confirm-dialog-title'></h2>
+			<p id='confirm-dialog-message'></p>
+			<p class='dialog-buttons'>
+				<input class='button button-ok' id='confirm-dialog-ok' type="submit"
+					value="OK" /> <input class='button button-cancel'
+					id='confirm-dialog-cancel' type='button' value='Cancel' />
+			</p>
 		</div>
 		<div class="dialog" id="addmusic-dialog">
-			<fieldset>
 				<h2 id='addmusic-dialog-title'>Add music folder</h2>
 				<p id='addmusic-dialog-content'></p>
 				<p class='dialog-buttons'>
@@ -227,15 +243,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						class='button button-cancel' id='addmusic-dialog-cancel'
 						type='button' value='Cancel' onclick='wsl.cancelAddMusicFolder()' />
 				</p>
-			</fieldset>
 		</div>
 		<div class="dialog" id="adduser-dialog">
 			<form method="post" onsubmit='wsl.addUser();return false'>
+				<h2>Add an User</h2>
 				<fieldset>
-					<h2>Add an User</h2>
 					<p id="adduser-dialog-error" class="error"></p>
 					<p>
-						<label for="adduser-username">Username</label> <input
+						<label for="adduser-username">Username</label><input
 							class="dialog-text-input" type="text" name="adduser-username"
 							id="adduser-username" required="required" />
 					</p>
