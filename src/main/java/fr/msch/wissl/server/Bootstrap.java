@@ -30,7 +30,7 @@ import fr.msch.wissl.common.Config;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Bootstrap extends ResteasyBootstrap {
+public final class Bootstrap extends ResteasyBootstrap {
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {

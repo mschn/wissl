@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
  * @author mathieu.schnoor@gmail.com
  * 
  */
-public class Config {
+public final class Config {
 
 	/** singleton instance */
 	private static Config instance = null;

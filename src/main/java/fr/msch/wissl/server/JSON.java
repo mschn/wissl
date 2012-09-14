@@ -13,24 +13,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.msch.wissl.server.exception;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+package fr.msch.wissl.server;
 
 /**
+ * Defines an object that can be serialized to a JSON representation
  * 
  * 
  * @author mathieu.schnoor@gmail.com
  *
  */
-@Provider
-public final class ThrowableMapper implements ExceptionMapper<Throwable> {
+public interface JSON {
 
-	@Override
-	public Response toResponse(Throwable e) {
-		return JsonMapper.getResponse(e, 500);
-	}
+	/**
+	 * @return a valid JSON external representation of this object, as a string
+	 */
+	public String toJSON();
 
 }

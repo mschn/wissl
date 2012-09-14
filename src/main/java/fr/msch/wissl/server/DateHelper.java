@@ -28,7 +28,7 @@ import fr.msch.wissl.common.Config;
  * @author mathieu.schnoor@gmail.com
  * 
  */
-public class DateHelper {
+final class DateHelper {
 
 	private final static String defaultFormat = "yy-MM-dd hh:mm:ss.SSS";
 	private final static String compactFormat = "yyMMddhhmmss";

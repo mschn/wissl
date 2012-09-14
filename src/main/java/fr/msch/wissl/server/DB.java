@@ -31,7 +31,7 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public abstract class DB {
+abstract class DB {
 
 	/** singleton instance */
 	private static DB instance = null;

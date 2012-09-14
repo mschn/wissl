@@ -63,7 +63,7 @@ import fr.msch.wissl.common.Config;
  * @author mathieu.schnoor@gmail.com
  * 
  */
-public class Library {
+final class Library {
 
 	private static Library instance = null;
 

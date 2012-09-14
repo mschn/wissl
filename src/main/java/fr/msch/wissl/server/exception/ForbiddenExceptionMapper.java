@@ -26,7 +26,7 @@ import javax.ws.rs.ext.Provider;
  *
  */
 @Provider
-public class ForbiddenExceptionMapper implements
+public final class ForbiddenExceptionMapper implements
 		ExceptionMapper<ForbiddenException> {
 
 	@Override

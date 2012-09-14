@@ -34,7 +34,7 @@ import fr.msch.wissl.server.exception.ThrowableMapper;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Application extends javax.ws.rs.core.Application {
+public final class Application extends javax.ws.rs.core.Application {
 
 	@Override
 	public Set<Class<?>> getClasses() {

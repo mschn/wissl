@@ -43,7 +43,7 @@ import fr.msch.wissl.server.exception.ForbiddenException;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class H2DB extends DB {
+final class H2DB extends DB {
 
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 

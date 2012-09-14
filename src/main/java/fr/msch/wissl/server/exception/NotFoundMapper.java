@@ -28,7 +28,7 @@ import org.jboss.resteasy.spi.NotFoundException;
  *
  */
 @Provider
-public class NotFoundMapper implements ExceptionMapper<NotFoundException> {
+public final class NotFoundMapper implements ExceptionMapper<NotFoundException> {
 
 	@Override
 	public Response toResponse(NotFoundException e) {

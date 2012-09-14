@@ -28,7 +28,7 @@ import org.jboss.resteasy.spi.MethodNotAllowedException;
  *
  */
 @Provider
-public class MethodNotAllowedMapper implements
+public final class MethodNotAllowedMapper implements
 		ExceptionMapper<MethodNotAllowedException> {
 
 	@Override

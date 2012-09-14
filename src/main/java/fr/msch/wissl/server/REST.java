@@ -69,7 +69,7 @@ import fr.msch.wissl.server.exception.SecurityError;
  */
 @Path("/")
 @Produces("application/json;charset=UTF-8")
-public class REST {
+public final class REST {
 
 	@Context
 	private HttpServletRequest request;

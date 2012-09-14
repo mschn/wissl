@@ -24,7 +24,7 @@ import org.codehaus.jettison.json.JSONObject;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Album {
+final class Album implements JSON {
 
 	/** DB unique id */
 	public int id = 0;
@@ -69,6 +69,7 @@ public class Album {
 		}
 	}
 
+	@Override
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		boolean hasArt = (artwork_path != null && artwork_path.trim().length() > 0);

@@ -28,7 +28,7 @@ import org.jboss.resteasy.spi.NotAcceptableException;
  *
  */
 @Provider
-public class NotAcceptableMapper implements
+public final class NotAcceptableMapper implements
 		ExceptionMapper<NotAcceptableException> {
 
 	@Override

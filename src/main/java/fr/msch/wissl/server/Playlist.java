@@ -25,7 +25,7 @@ import org.codehaus.jettison.json.JSONObject;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Playlist {
+final class Playlist implements JSON {
 
 	/** DB unique id */
 	public int id = 0;
@@ -55,6 +55,7 @@ public class Playlist {
 		}
 	}
 
+	@Override
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		str.append('{');

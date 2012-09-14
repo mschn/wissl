@@ -38,7 +38,7 @@ import fr.msch.wissl.server.exception.SecurityError;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Session {
+final class Session implements JSON {
 
 	/** active sessions */
 	private static Map<UUID, Session> sessions = null;
@@ -76,6 +76,11 @@ public class Session {
 		this.username = username;
 	}
 
+	@Override
+	public String toJSON () {
+		return this.toJSON(false);
+	}
+	
 	public String toJSON(boolean privileged) {
 		StringBuilder ret = new StringBuilder();
 		ret.append('{');

@@ -21,7 +21,7 @@ package fr.msch.wissl.server.exception;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class ForbiddenException extends Exception {
+public final class ForbiddenException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

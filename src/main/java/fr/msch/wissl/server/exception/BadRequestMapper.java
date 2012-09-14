@@ -26,7 +26,7 @@ import org.jboss.resteasy.spi.BadRequestException;
  * @author mathieu.schnoor@gmail.com
  */
 @Provider
-public class BadRequestMapper implements ExceptionMapper<BadRequestException> {
+public final class BadRequestMapper implements ExceptionMapper<BadRequestException> {
 
 	@Override
 	public Response toResponse(BadRequestException e) {

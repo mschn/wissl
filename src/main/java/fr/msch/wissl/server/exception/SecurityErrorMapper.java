@@ -26,7 +26,7 @@ import javax.ws.rs.ext.Provider;
  *
  */
 @Provider
-public class SecurityErrorMapper implements ExceptionMapper<SecurityError> {
+public final class SecurityErrorMapper implements ExceptionMapper<SecurityError> {
 
 	@Override
 	public Response toResponse(SecurityError e) {

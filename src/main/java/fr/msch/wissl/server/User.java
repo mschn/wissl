@@ -25,7 +25,15 @@ import org.codehaus.jettison.json.JSONObject;
 
 import fr.msch.wissl.server.exception.SecurityError;
 
-public class User {
+/**
+ * 
+ * 
+ * 
+ * 
+ * @author mathieu.schnoor@gmail.com
+ *
+ */
+final class User implements JSON {
 
 	/** unique id in DB */
 	public int id = 0;
@@ -43,6 +51,7 @@ public class User {
 	/** bytes downloaded (music stream only) */
 	public long downloaded = 0;
 
+	@Override
 	public String toJSON() {
 		StringBuilder str = new StringBuilder();
 		str.append('{');

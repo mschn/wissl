@@ -27,7 +27,7 @@ import fr.msch.wissl.server.Logger;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class JsonMapper {
+public final class JsonMapper {
 
 	public static Response getResponse(Throwable t, int status) {
 		Logger.warn("HTTP " + status, t);

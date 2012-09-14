@@ -32,7 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class RuntimeStats {
+final class RuntimeStats implements JSON {
 
 	private static RuntimeStats instance = null;
 
@@ -83,9 +83,7 @@ public class RuntimeStats {
 		}
 	}
 
-	/**
-	 * @return a JSON representation of this object
-	 */
+	@Override
 	public String toJSON() {
 		StringBuilder sb = new StringBuilder();
 

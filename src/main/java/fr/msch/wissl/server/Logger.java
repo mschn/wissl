@@ -31,7 +31,7 @@ import fr.msch.wissl.common.Config;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Logger {
+public final class Logger {
 
 	/** File to which the log is appended */
 	private PrintStream out;

@@ -22,7 +22,7 @@ package fr.msch.wissl.server.exception;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class SecurityError extends Exception {
+public final class SecurityError extends Exception {
 
 	private static final long serialVersionUID = 1L;
 

@@ -26,7 +26,7 @@ import javax.ws.rs.ext.Provider;
  *
  */
 @Provider
-public class IllegalArgumentMapper implements
+public final class IllegalArgumentMapper implements
 		ExceptionMapper<IllegalArgumentException> {
 
 	@Override

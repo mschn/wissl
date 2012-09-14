@@ -44,7 +44,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
  * @author mathieu.schnoor@gmail.com
  *
  */
-public class Launcher {
+final class Launcher {
 
 	public static void main(String[] args) {
 		File configFile = null;
