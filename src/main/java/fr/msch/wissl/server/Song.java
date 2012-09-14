@@ -99,6 +99,8 @@ final class Song implements JSON {
 
 	@Override
 	public boolean equals(Object o) {
+		if (this == o)
+			return true;
 		if (o instanceof Song) {
 			Song s = (Song) o;
 			return (this.title.equals(s.title) && this.position == s.position

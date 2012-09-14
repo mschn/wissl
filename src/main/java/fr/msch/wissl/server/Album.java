@@ -39,7 +39,7 @@ final class Album implements JSON {
 	/** playtime in seconds */
 	public long playtime = 0;
 	/** artist name */
-	public String artist_name = null;
+	public String artist_name = "";
 	/** DB unique artist id */
 	public int artist_id = 0;
 	/** path to the artwork image on the local FS */
@@ -90,6 +90,8 @@ final class Album implements JSON {
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == this)
+			return true;
 		if (o instanceof Album) {
 			Album a = (Album) o;
 			return (this.name.equals(a.name) && this.date.equals(a.date)

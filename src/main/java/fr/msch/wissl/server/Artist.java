@@ -67,6 +67,8 @@ final class Artist implements JSON {
 
 	@Override
 	public boolean equals(Object o) {
+		if (o == this)
+			return true;
 		if (o instanceof Artist) {
 			Artist a = (Artist) o;
 			return (this.name.equals(a.name) && this.albums == a.albums
