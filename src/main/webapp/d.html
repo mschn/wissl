@@ -119,8 +119,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div id="dialog-mask">
 		<div class="dialog" id="playlist-create-dialog">
 			<form method="post" onsubmit='wsl.createPlaylist();return false'>
+				<h2>Create playlist</h2>
 				<fieldset>
-					<h2>Create playlist</h2>
 					<p>
 						<label for="playlist-name">Name</label> <input
 							class="dialog-text-input" type="text" name="playlist-name"
@@ -138,8 +138,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="dialog" id="add-to-playlist-dialog">
 			<form method="post" onsubmit='wsl.addToPlaylist();return false'
 				name='add-to-playlist-form'>
+				<h2>Add to playlist</h2>
 				<fieldset>
-					<h2>Add to playlist</h2>
 					<p class="dialog-form-input"></p>
 					<p class='dialog-buttons'>
 						<input class='button button-ok' type="submit" value="Add" /> <input
@@ -154,8 +154,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="dialog" id="edit-artist-dialog">
 			<form method="post" onsubmit='wsl.editArtist();return false'
 				name="edit-artist-form">
+				<h2>Edit artist</h2>
 				<fieldset>
-					<h2>Edit artist</h2>
 					<p>
 						<input type="hidden" id="edit-artist-id" /> <label
 							for="edit-artist-name">Name</label> <input
@@ -277,28 +277,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="dialog" id="password-dialog">
 			<form method="post" onsubmit='wsl.changePassword();return false'>
 				<h2>Change password</h2>
-				<p id="password-dialog-error" class="error"></p>
-				<p>
-					<label for="password-old">Old</label> <input
-						class="dialog-text-input" type="password" name="password-old"
-						id="password-old" required="required" />
-				</p>
-				<p>
-					<label for="password-new">New</label><input
-						class="dialog-text-input" name="password-new" type="password"
-						id="password-new" required="required" />
-				</p>
-				<p>
-					<label for="password-confirm">Confirm</label><input
-						class="dialog-text-input" name="password-confirm" type="password"
-						id="password-confirm" required="required" />
-				</p>
-				<p class='dialog-buttons'>
-					<input class='button button-ok' id='password-dialog-ok'
-						type="submit" value="OK" /> <input class='button button-cancel'
-						id='adduser-dialog-cancel' type='button' value='Cancel'
-						onclick='wsl.cancelChangePassword()' />
-				</p>
+				<fieldset>
+					<p id="password-dialog-error" class="error"></p>
+					<p>
+						<label for="password-old">Old</label><input
+							class="dialog-text-input" type="password" name="password-old"
+							id="password-old" required="required" />
+					</p>
+					<p>
+						<label for="password-new">New</label><input
+							class="dialog-text-input" name="password-new" type="password"
+							id="password-new" required="required" />
+					</p>
+					<p>
+						<label for="password-confirm">Confirm</label><input
+							class="dialog-text-input" name="password-confirm" type="password"
+							id="password-confirm" required="required" />
+					</p>
+					<p class='dialog-buttons'>
+						<input class='button button-ok' id='password-dialog-ok'
+							type="submit" value="OK" /> <input class='button button-cancel'
+							id='adduser-dialog-cancel' type='button' value='Cancel'
+							onclick='wsl.cancelChangePassword()' />
+					</p>
+				</fieldset>
 			</form>
 		</div>
 		<div class="dialog" id="error-dialog">
