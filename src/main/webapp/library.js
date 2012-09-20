@@ -240,6 +240,7 @@ var wsl = wsl || {};
 	wsl.showAddToPlaylist = function (e) {
 		wsl.showDialog('add-to-playlist-dialog');
 		wsl.lockUI();
+		wsl.hideDialog = wsl.cancelAddToPlaylist;
 		$.ajax({
 			url : "wissl/playlists",
 			headers : {
@@ -364,6 +365,7 @@ var wsl = wsl || {};
 		$('#edit-artist-name').val(artist_name);
 
 		wsl.showDialog('edit-artist-dialog');
+		wsl.hideDialog = wsl.cancelEditArtist;
 	};
 
 	wsl.editArtist = function () {
@@ -493,6 +495,7 @@ var wsl = wsl || {};
 		$('#edit-album-date').val(date);
 
 		wsl.showDialog('edit-album-dialog');
+		wsl.hideDialog = wsl.cancelEditAlbum;
 	};
 
 	wsl.editAlbum = function () {

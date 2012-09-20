@@ -679,6 +679,11 @@ $(document).ready(function () {
 	var h;
 
 	History.Adapter.bind(window, 'statechange', function () {
+		if (wsl.hideDialog) {
+			wsl.hideDialog();
+			wsl.hideDialog = null;
+		}
+
 		var h = wsl.getCurrentHash();
 		if (h === wsl.previousHash) {
 			return;

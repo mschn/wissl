@@ -40,6 +40,7 @@ var wsl = wsl || {};
 
 	wsl.showChangePassword = function () {
 		wsl.showDialog('password-dialog');
+		wsl.hideDialog = wsl.cancelChangePassword;
 	};
 
 	wsl.cancelChangePassword = function () {

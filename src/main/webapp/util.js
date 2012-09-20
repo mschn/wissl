@@ -22,7 +22,7 @@ var wsl = wsl || {};
 	'use strict';
 
 	wsl.confirmDialog = function (title, message, okCallback, cancelCallback) {
-		var dialog, winW, winH, w, h;
+		var dialog, winW, winH, w, h, hideCallback;
 		dialog = $('#confirm-dialog');
 		winW = $(window).width();
 		winH = $(window).height();
@@ -45,13 +45,16 @@ var wsl = wsl || {};
 			$('#confirm-dialog-ok').off();
 			$('#confirm-dialog-cancel').off();
 		}).focus();
-		$('#confirm-dialog-cancel').on('click', function () {
+
+		hideCallback = function () {
 			$('#dialog-mask').hide();
 			$('#confirm-dialog').hide();
 			cancelCallback();
 			$('#confirm-dialog-ok').off();
 			$('#confirm-dialog-cancel').off();
-		});
+		};
+		wsl.hideDialog = hideCallback;
+		$('#confirm-dialog-cancel').on('click', hideCallback);
 	};
 
 	wsl.ajaxError = function (message, xhr, errorElementId) {

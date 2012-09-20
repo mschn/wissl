@@ -150,6 +150,7 @@ var wsl = wsl || {};
 	wsl.showAddUser = function () {
 		wsl.showDialog('adduser-dialog');
 		$('#adduser-username').focus();
+		wsl.hideDialog = wsl.cancelAddUser;
 	};
 
 	wsl.cancelAddUser = function () {
@@ -226,6 +227,7 @@ var wsl = wsl || {};
 	wsl.showAddMusicFolder = function () {
 		wsl.showDialog('addmusic-dialog');
 		wsl.updateAddMusicFolderListing();
+		wsl.hideDialog = wsl.cancelAddMusicFolder;
 	};
 
 	wsl.updateAddMusicFolderListing = function (dir) {
