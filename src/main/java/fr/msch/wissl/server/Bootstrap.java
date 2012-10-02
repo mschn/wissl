@@ -17,6 +17,7 @@ package fr.msch.wissl.server;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletContextEvent;
 
@@ -65,6 +66,19 @@ public final class Bootstrap extends ResteasyBootstrap {
 			Logger.error("Failed to create DB", t);
 			throw new Error("Failed to create DB", t);
 		}
+
+		List<String> folders = null;
+		try {
+			folders = DB.get().getFolders();
+		} catch (SQLException e) {
+			Logger.error("Failed to recover library folders", e);
+			throw new Error("Failed to recover library folders", e);
+		}
+		for (String path : folders) {
+			Config.getMusicPath().add(path);
+			Logger.debug("Recovered music folder path: " + path);
+		}
+
 		Session.start();
 		Library.create();
 	}

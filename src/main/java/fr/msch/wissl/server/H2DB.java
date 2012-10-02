@@ -48,7 +48,7 @@ final class H2DB extends DB {
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 
 	 * the DB can be recovered or needs to be erased */
-	private static final long SCHEMA_VERSION = 8L;
+	private static final long SCHEMA_VERSION = 9L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -143,6 +143,7 @@ final class H2DB extends DB {
 		try {
 			st = conn.createStatement();
 			st.addBatch("DROP TABLE IF EXISTS info");
+			st.addBatch("DROP TABLE IF EXISTS folders");
 			st.addBatch("DROP TABLE IF EXISTS song");
 			st.addBatch("DROP TABLE IF EXISTS album");
 			st.addBatch("DROP TABLE IF EXISTS artist");
@@ -171,6 +172,10 @@ final class H2DB extends DB {
 		try {
 			st.addBatch("CREATE TABLE info (" + //
 					"schema_version LONG NOT NULL" + //
+					")");
+
+			st.addBatch("CREATE TABLE folders (" + //
+					"path VARCHAR(254) NOT NULL" + //
 					")");
 
 			st.addBatch("CREATE TABLE artist (" + //
@@ -2437,4 +2442,62 @@ final class H2DB extends DB {
 				conn.close();
 		}
 	}
+
+	@Override
+	public void addFolder(String folder) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement("INSERT INTO folders (path) VALUES (?)");
+			st.setString(1, folder);
+			st.executeUpdate();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	@Override
+	public void removeFolder(String folder) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement("DELETE FROM folders WHERE path=?");
+			st.setString(1, folder);
+			st.executeUpdate();
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
+	public List<String> getFolders() throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<String> ret = new ArrayList<String>();
+
+		try {
+			st = conn.prepareStatement("SELECT * FROM folders");
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				ret.add(rs.getString("path"));
+			}
+		} finally {
+			conn.setAutoCommit(true);
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
 }

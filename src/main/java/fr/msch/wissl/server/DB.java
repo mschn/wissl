@@ -461,4 +461,23 @@ abstract class DB {
 	public abstract void editAlbumArtwork(int[] album_ids, String filePath)
 			throws SQLException;
 
+	/**
+	 * Add a folder path to the list of folder paths currently indexed by the library
+	 * @param folder path to a local folder
+	 */
+	public abstract void addFolder(String folder) throws SQLException;
+
+	/**
+	 * Remove a folder path from the list of folder paths currently indexed by the library
+	 * @param folder path to a local folder
+	 * @throws SQLException
+	 */
+	public abstract void removeFolder(String folder) throws SQLException;
+
+	/**
+	 * @return a list of folder paths currently indexed by the library
+	 * @throws SQLException
+	 */
+	public abstract List<String> getFolders() throws SQLException;
+
 }

@@ -1114,6 +1114,7 @@ public final class REST {
 		}
 
 		Config.getMusicPath().add(directory);
+		DB.get().addFolder(directory);
 		Library.interrupt();
 
 		nocache();
@@ -1140,9 +1141,11 @@ public final class REST {
 			for (String dir : directory) {
 				File toDelete = new File(dir);
 				for (Iterator<String> it = music.iterator(); it.hasNext();) {
-					File f = new File(it.next());
+					String path = it.next();
+					File f = new File(path);
 					if (f.equals(toDelete)) {
 						it.remove();
+						DB.get().removeFolder(path);
 					}
 				}
 			}
