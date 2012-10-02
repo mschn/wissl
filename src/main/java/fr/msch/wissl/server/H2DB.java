@@ -1136,6 +1136,7 @@ final class H2DB extends DB {
 				ret.album_id = rs.getInt("album_id");
 				ret.artist_id = rs.getInt("artist_id");
 				ret.album_name = rs.getString("album_name");
+				ret.format = rs.getString("format");
 				ret.artist_name = rs.getString("artist_name");
 			}
 
