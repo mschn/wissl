@@ -215,4 +215,15 @@ var wsl = wsl || {};
 		return (String(str)).replace(/([\\"'])/g, "\\$1").replace(/\0/g, "\\0");
 	};
 
+	wsl.baseUrl = function () {
+		if (location.href.indexOf('d.html') !== -1) {
+			return location.href.split('d.html')[0];
+		} else if (location.href.indexOf('#') !== -1) {
+			return location.href.split('#')[0];
+		} else {
+			return location.href.split('?')[0];
+		}
+
+	};
+
 }(wsl));
