@@ -16,13 +16,6 @@
 
 /*global $, wsl, soundManager, document */
 
-soundManager.url = "static/soundmanager-swf";
-soundManager.flashVersion = 9;
-soundManager.preferFlash = true;
-soundManager.autoLoad = true;
-soundManager.useHTML5Audio = true;
-soundManager.multiShot = false;
-
 var player = {};
 
 (function (player) {
@@ -91,9 +84,9 @@ var player = {};
 				$('#player').fadeIn(300);
 				$('#navbar-playing').show();
 
-				$('#playing-title').html('<a title="' + song.title + '">' + song.title + '</a><br>');
-				$('#playing-album').empty().html('<a title="' + album.name + '" onclick="wsl.load(\'?songs/' + album.id + '\')" class="playing-album">' + (album.name || ' ') + '</a><br>');
-				$('#playing-artist').empty().html('<a title="' + artist.name + '" onclick="wsl.load(\'?albums/' + artist.id + '\')" class="playing-artist">' + (artist.name || ' ') + '</a><br>');
+				$('#playing-title').html('<a title="' + song.title + '">' + song.title + '</a>');
+				$('#playing-album').empty().html('on <a title="' + album.name + '" onclick="wsl.load(\'?songs/' + album.id + '\')" class="playing-album">' + (album.name || ' ') + '</a>');
+				$('#playing-artist').empty().html('by <a title="' + artist.name + '" onclick="wsl.load(\'?albums/' + artist.id + '\')" class="playing-artist">' + (artist.name || ' ') + '</a>');
 
 				$('#playing').show();
 
@@ -137,12 +130,19 @@ var player = {};
 	};
 
 	player.createSound = function (data) {
+		var movieStar, baseUrl;
+
+		movieStar = (data.song.format === 'audio/aac');
+		baseUrl = (movieStar ? wsl.baseUrl() : '');
+
 		return soundManager.createSound({
 			id : "song_" + data.song.id,
-			url : "wissl/song/" + data.song.id + "/stream?sessionId=" + wsl.sessionId,
-			type : data.song.format,
+			url : baseUrl + "wissl/song/" + data.song.id + "/stream?sessionId=" + wsl.sessionId,
 			autoPlay : false,
 			autoLoad : true,
+			multiShot : false,
+			isMovieStar : movieStar,
+			type : data.song.format,
 			onfinish : function () {
 				player.next();
 			},
@@ -153,6 +153,7 @@ var player = {};
 			},
 			onload : function () {
 				if (player.nextSound === null) {
+
 					var p = player.playing;
 					$.ajax({
 						url : "wissl/playlist/" + p.playlist_id + "/song/" + (p.position + 1),
@@ -177,6 +178,7 @@ var player = {};
 							}
 						}
 					});
+
 				}
 			},
 			whileplaying : function () {
@@ -257,7 +259,6 @@ var player = {};
 			elt = $('#seek-popup');
 			elt.html(time).show();
 			elt.css('left', event.clientX);
-			elt.css('top', 30);
 		}
 	};
 
@@ -405,11 +406,18 @@ var player = {};
 
 }(player));
 
-soundManager.onready(function () {
-	'use strict';
-	player.hasSound = true;
-});
-soundManager.ontimeout(function () {
-	'use strict';
-	wsl.error("Failed to start soundmanager2");
+soundManager.setup({
+	url : "static/soundmanager-swf",
+	flashVersion : 9,
+	preferFlash : true,
+	useHTML5Audio : true,
+
+	onready : function () {
+		'use strict';
+		player.hasSound = true;
+	},
+	ontimeout : function () {
+		'use strict';
+		wsl.error("Failed to start soundmanager2");
+	}
 });
