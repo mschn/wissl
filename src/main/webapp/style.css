@@ -16,7 +16,7 @@
 html,body {
 	margin: 0;
 	font-size: .9em;
-	font-family: sans-serif;
+	font-family: 'Open Sans', sans-serif;
 	height: 100%;
 }
 
@@ -218,15 +218,15 @@ body {
 	display: none;
 	position: fixed;
 	top: 0px;
-	height: 33px;
+	height: 71px;
 	width: 100%;
-	padding-left: 202px;
+	padding-left: 201px;
 	z-index: 300;
-	background: #ccc;
-	border-bottom: 1px solid #aaa;
+	background: #7A9AC9;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
 }
 
 #player div {
@@ -273,35 +273,31 @@ span#next {
 }
 
 #progress {
-	height: 16px;
-	margin: 7px 0 0 0;
+	height: 12px;
+	margin: 9px 0 0 0;
 	overflow: hidden;
 	cursor: pointer;
-	background: 0 0 repeat-x url('img/shade1.png') #888;
-	border: 1px solid #666;
-	border-radius: 3px;
-	overflow: hidden;
-	height: 16px;
-	box-shadow: 0 0 1px 1px #BBB;
+	background: 0 0 repeat-x url('img/shade1.png') #666;
+	border: 1px solid #555;
+	border-radius: 6px;
 }
 
 #progress-played,#progress-download {
 	display: block;
 	position: absolute;
-	height: 16px;
+	height: 12px;
 	margin-top: 0px;
 	width: 0;
 	overflow: hidden;
-	border-radius: 3px;
-	height: 16px;
+	border-radius: 6px;
 }
 
 #progress-download {
-	background: 0 0 repeat-x url('img/shade1.png') #666;
+	background: 0 0 repeat-x url('img/shade1.png') #888;
 }
 
 #progress-played {
-	background: 0 0 repeat-x url('img/shade2.png') rgb(120, 140, 170);
+	background: 0 0 repeat-x url('img/shade2.png') #B0D0FF;
 	overflow: hidden;
 }
 
@@ -318,16 +314,15 @@ span#next {
 	border: 1px solid #999;
 	box-shadow: 1px 1px 4px 1px #aaa;
 	padding: 5px;
+	top: 68px;
 }
 
 #download-rate {
-	position: relative;
-	color: black;
-	font-size: .8em;
-	line-height: 16px;
 	float: right;
-	margin-right: 8px;
-	color: #bbb;
+	color: black;
+	font-size: .9em;
+	color: #eee;
+	margin-top: 13px;
 	text-shadow: 0 1px 1px #000;
 }
 
@@ -373,7 +368,7 @@ span#next {
 	width: 45px;
 	height: 150px;
 	position: fixed;
-	top: 32px;
+	top: 70px;
 	z-index: 200;
 	background: #ccc;
 	border-radius: 3px;
@@ -405,34 +400,24 @@ span#next {
 
 #position {
 	float: right;
-	color: #444;
+	color: #eee;
 	padding: 0 4px;
 	left: 1px solid #bbb;
-	margin: 8px 0 0 0;
-	text-shadow: 0 1px 1px #ddd;
+	margin: 6px 0 0 0;
+	text-shadow: 0 1px 1px #222;
 }
 
 #playing {
-	position: fixed;
-	left: 2px;
-	top: 2px;
-	width: 200px;
-	height: 90px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	z-index: 400;
-	display: none;
+	white-space: nowrap;
 }
 
 #art {
-	position: absolute;
-	left: 2px;
-	top: 2px;
 	width: 70px;
 	height: 70px;
 	background: #c0c0c0;
-	box-shadow: 1px 1px 3px 1px #555;
-	border: 1px solid #aaa;
+	float: left;
 }
 
 #art img {
@@ -442,17 +427,16 @@ span#next {
 
 #playing span {
 	white-space: nowrap;
-	line-height: 2em;
-	padding-left: 75px;
-	padding-top: 10px;
-	font-size: .8em;
+	font-size: 1em;
+	color: #ddd;
 }
 
 #playing a {
+	font-size: 1.3em;
 	padding: 3px;
 	cursor: pointer;
-	color: #ddd;
-	text-shadow: 0 1px 1px #333;
+	color: #eee;
+	text-shadow: 0 1px 1px #222;
 }
 
 #playing a:hover {
@@ -460,7 +444,8 @@ span#next {
 }
 
 #playing #playing-title {
-	font-size: .9em;
+	line-height: 35px;
+	font-size: 1.4em;
 	font-weight: bold;
 }
 
@@ -470,7 +455,7 @@ span#next {
 	top: 0;
 	left: 0;
 	padding: 0;
-	padding-top: 85px;
+	padding-top: 5px;
 	position: fixed;
 	width: 200px;
 	background: #666;
@@ -485,7 +470,7 @@ span#next {
 	display: block;
 	padding: 5px 22px;
 	margin: 0;
-	font-size: 1.1em;
+	font-size: 1.2em;
 	text-decoration: none;
 	color: #ddd;
 	text-shadow: 0px 1px 1px #234;
@@ -634,7 +619,7 @@ span#next {
 }
 
 #content {
-	padding: 33px 0 0 200px;
+	padding: 71px 0 0 200px;
 	overflow: hidden;
 	text-shadow: 0 1px 0 white;
 	color: #444;
@@ -826,6 +811,7 @@ span#next {
 	font-size: 1.2em;
 	text-decoration: none;
 	padding: 0 5px 0 35px;
+	background-color: #eee;
 }
 
 #library li:hover,#library li.odd:hover {
@@ -845,7 +831,6 @@ span#next {
 }
 
 #library li.odd {
-	background-color: #e7e7e7;
 }
 
 #library li.selected {
@@ -878,7 +863,7 @@ span#next {
 }
 
 #library .playlist-artist {
-	color: rgb(140, 100, 100);
+	color: rgb(100, 100, 140);
 	width: 20%;
 	cursor: pointer;
 }

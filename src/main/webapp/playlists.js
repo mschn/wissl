@@ -126,7 +126,7 @@ var wsl = wsl || {};
 				});
 
 				if (doScroll) {
-					scroll = $("#playlist-" + id + '-' + player.playing.position).offset().top - 60;
+					scroll = $("#playlist-" + id + '-' + player.playing.position).offset().top - 75;
 					$('body, html').scrollTop(scroll);
 				}
 

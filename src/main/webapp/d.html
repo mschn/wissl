@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="X-UA-Compatible" content="IE=9" />
 <link rel="stylesheet" href="style.css" />
 <link rel="shortcut icon" href="favicon.ico" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700'
+	rel='stylesheet' type='text/css'>
 </head>
 <body>
 	<form id="login" class="login" onsubmit='wsl.login();return false'>
@@ -72,10 +74,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</form>
 
 	<div id="player">
+		<div id="art"></div>
+		<div id="download-rate"></div>
+		<div id="playing">
+			<span id="playing-title"></span> <span id="playing-album"></span> <span
+				id="playing-artist"></span>
+		</div>
+
 		<div id="controls">
-			<span id="play" onclick="player.togglePlay()"></span> <span id="stop"
-				onclick="player.stop()"></span> <span id="previous"
-				onclick="player.previous()"></span> <span id="next"
+			<span id="previous" onclick="player.previous()"></span><span
+				id="play" onclick="player.togglePlay()"></span> <span id="next"
 				onclick="player.next()"></span>
 		</div>
 		<div id="position"></div>
@@ -90,14 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			onmousemove="player.showSeek(event)" onmouseout="player.hideSeek()">
 			<span id="progress-download"></span> <span id="progress-played"></span>
 			<div id="seek-popup"></div>
-			<span id="download-rate"></span>
 		</div>
-	</div>
-
-	<div id="playing">
-		<div id="art"></div>
-		<span id="playing-title"></span> <span id="playing-album"></span> <span
-			id="playing-artist"></span>
 	</div>
 
 	<div id="navbar"></div>
