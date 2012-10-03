@@ -226,6 +226,7 @@ body {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+	border-bottom: 1px solid #4B78B9;
 	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
 }
 
@@ -304,15 +305,15 @@ span#next {
 #seek-popup {
 	position: absolute;
 	display: none;
-	color: #444;
-	text-shadow: 0 1px 1px white;
+	color: #eee;
+	text-shadow: 0 1px 1px #222;
 	padding: 5px;
 	font-weight: bold;
 	font-size: 1.3em;
-	background: #ccc;
+	background: #7A9AC9;
 	border-radius: 3px;
-	border: 1px solid #999;
-	box-shadow: 1px 1px 4px 1px #aaa;
+	border: 1px solid #4B78B9;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
 	padding: 5px;
 	top: 68px;
 }
@@ -365,23 +366,23 @@ span#next {
 
 #volume-container {
 	display: none;
-	width: 45px;
+	width: 42px;
 	height: 150px;
 	position: fixed;
 	top: 70px;
 	z-index: 200;
-	background: #ccc;
+	background: #7A9AC9;
 	border-radius: 3px;
-	border: 1px solid #999;
-	box-shadow: 1px 1px 4px 1px #aaa;
+	border: 1px solid #4B78B9;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
 }
 
 #volume-slider {
 	position: absolute;
-	border-radius: 3px;
-	border: 1px solid #666;
-	width: 18px;
-	margin: 15px 12px;
+	border-radius: 6px;
+	border: 1px solid #555;
+	width: 12px;
+	margin: 14px 13px;
 	display: block;
 	background: #666;
 	height: 120px;
@@ -389,11 +390,11 @@ span#next {
 
 #volume-slider-full {
 	position: absolute;
-	border-radius: 3px;
-	width: 18px;
-	margin: 14px 13px;
+	border-radius: 6px;
+	width: 12px;
+	margin: 15px 14px;
 	display: block;
-	background: 0 0 repeat-x url('img/shade2.png') rgb(120, 140, 170);
+	background: 0 0 repeat-x url('img/shade2.png') #B0D0FF;
 	height: 0;
 	bottom: 0px;
 }
