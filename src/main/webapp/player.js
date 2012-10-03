@@ -410,7 +410,7 @@ soundManager.setup({
 	url : "static/soundmanager-swf",
 	flashVersion : 9,
 	preferFlash : true,
-	useHTML5Audio : true,
+	useHTML5Audio : false,
 
 	onready : function () {
 		'use strict';
