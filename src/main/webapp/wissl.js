@@ -696,11 +696,8 @@ $(document).ready(function () {
 	wsl.previousHash = h;
 	wsl.loadContent(h);
 
-	window.onbeforeunload = function (e) {
-		if (player.playing) {
-			var msg = 'You are currently playing music. Leaving this page will stop it.';
-			e.returnValue = msg;
-		}
-	};
+	$(window).on('beforeunload', function () {
+		return 'Music will stop if you continue.';
+	});
 
 });
