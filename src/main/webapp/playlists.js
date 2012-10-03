@@ -195,13 +195,13 @@ var wsl = wsl || {};
 					number : 20
 				},
 				success : function (data) {
+					History.replaceState(null, document.title, '?playlist/' + data.playlist.id);
 					player.play({
 						song_id : data.first_song,
 						playlist_id : data.playlist.id,
 						playlist_name : 'Random',
 						position : 0
 					});
-					History.replaceState(null, document.title, '?playlist/' + data.playlist.id);
 				},
 				error : function (xhr) {
 					wsl.ajaxError("Failed to get playlists", xhr);
