@@ -393,10 +393,11 @@ var player = {};
 	};
 
 	player.adjustVolume = function (event) {
-		var y, h, vol, vs;
+		var y, h, vol, vs, scroll;
 		vs = $("#volume-slider");
 		h = vs.height();
-		y = h - event.clientY + vs.offset().top;
+		scroll = Math.max($('body').scrollTop(), $('html').scrollTop());
+		y = h - event.clientY + vs.offset().top - scroll;
 
 		vol = (y / h) * 100;
 		vol = Math.min(100, vol);
