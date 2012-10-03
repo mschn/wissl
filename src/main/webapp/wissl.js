@@ -697,7 +697,9 @@ $(document).ready(function () {
 	wsl.loadContent(h);
 
 	$(window).on('beforeunload', function () {
-		return 'Music will stop if you continue.';
+		if (player.playing) {
+			return 'Music will stop if you continue.';
+		}
 	});
 
 });

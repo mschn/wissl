@@ -254,23 +254,19 @@ span#next {
 }
 
 #play {
-	background: 4px 4px no-repeat url('img/play_24.png');
+	background: 0 0 no-repeat url('img/play_32.png');
 }
 
 #play.pause {
-	background: 4px 4px no-repeat url('img/pause_24.png');
-}
-
-#stop {
-	background: 4px 4px no-repeat url('img/stop_24.png');
+	background: 0 0 no-repeat url('img/pause_32.png');
 }
 
 #previous {
-	background: 4px 4px no-repeat url('img/previous_24.png');
+	background: 0 0 no-repeat url('img/previous_32.png');
 }
 
 #next {
-	background: 4px 4px no-repeat url('img/next_24.png');
+	background: 0 0 no-repeat url('img/next_32.png');
 }
 
 #progress {
@@ -436,7 +432,7 @@ span#next {
 	font-size: 1.3em;
 	padding: 3px;
 	cursor: pointer;
-	color: #eee;
+	color: #fff;
 	text-shadow: 0 1px 1px #222;
 }
 
@@ -471,34 +467,34 @@ span#next {
 	display: block;
 	padding: 5px 22px;
 	margin: 0;
-	font-size: 1.2em;
+	font-size: 1.1em;
 	text-decoration: none;
 	color: #ddd;
 	text-shadow: 0px 1px 1px #234;
 }
 
 .navbar-playing {
-	background: 2px 6px no-repeat url('img/play_16.png');
+	background: 2px 8px no-repeat url('img/play_16.png');
 }
 
 .navbar-playlists {
-	background: 2px 6px no-repeat url('img/playlists_16.png');
+	background: 2px 8px no-repeat url('img/playlists_16.png');
 }
 
 .navbar-playlist {
-	background: 20px 6px no-repeat url('img/playlist_16.png');
+	background: 20px 8px no-repeat url('img/playlist_16.png');
 }
 
 .navbar-random {
-	background: 2px 6px no-repeat url('img/random_16.png');
+	background: 2px 8px no-repeat url('img/random_16.png');
 }
 
 .navbar-artists {
-	background: 2px 6px no-repeat url('img/library_16.png');
+	background: 2px 8px no-repeat url('img/library_16.png');
 }
 
 .navbar-home {
-	background: 2px 6px no-repeat url('img/home_16.png');
+	background: 2px 8px no-repeat url('img/home_16.png');
 }
 
 .navbar-no-metadata {
@@ -506,39 +502,39 @@ span#next {
 }
 
 .navbar-artist {
-	background: 20px 6px no-repeat url('img/user_16.png');
+	background: 20px 8px no-repeat url('img/user_16.png');
 }
 
 .navbar-album {
-	background: 20px 6px no-repeat url('img/album_16.png');
+	background: 20px 8px no-repeat url('img/album_16.png');
 }
 
 .navbar-users {
-	background: 2px 6px no-repeat url('img/users_16.png');
+	background: 2px 8px no-repeat url('img/users_16.png');
 }
 
 .navbar-user {
-	background: 20px 6px no-repeat url('img/user_16.png');
+	background: 20px 8px no-repeat url('img/user_16.png');
 }
 
 .navbar-settings {
-	background: 2px 6px no-repeat url('img/settings_16.png');
+	background: 2px 8px no-repeat url('img/settings_16.png');
 }
 
 .navbar-admin {
-	background: 2px 6px no-repeat url('img/admin_16.png');
+	background: 2px 8px no-repeat url('img/admin_16.png');
 }
 
 .navbar-about {
-	background: 2px 6px no-repeat url('img/about_16.png');
+	background: 2px 8px no-repeat url('img/about_16.png');
 }
 
 .navbar-search {
-	background: 20px 6px no-repeat url('img/search_16.png');
+	background: 20px 8px no-repeat url('img/search_16.png');
 }
 
 .navbar-logout {
-	background: 2px 6px no-repeat url('img/logout_16.png');
+	background: 2px 8px no-repeat url('img/logout_16.png');
 }
 
 #navbar a.indent {
@@ -613,10 +609,8 @@ span#next {
 #navbar hr {
 	background: #666;
 	border: 0;
-	border-top: 1px solid #555;
-	border-bottom: 1px solid #777;
-	margin: 2px 0;
-	height: 0px;
+	margin: 0;
+	height: 0;
 }
 
 #content {
