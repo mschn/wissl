@@ -222,7 +222,7 @@ body {
 	width: 100%;
 	padding-left: 201px;
 	z-index: 300;
-	background: #7A9AC9;
+	background: #0a5ed9;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -274,7 +274,7 @@ span#next {
 	margin: 9px 0 0 0;
 	overflow: hidden;
 	cursor: pointer;
-	background: 0 0 repeat-x url('img/shade1.png') #666;
+	background: 0 0 repeat-x url('img/shade1.png') #888;
 	border: 1px solid #555;
 	border-radius: 6px;
 }
@@ -290,11 +290,11 @@ span#next {
 }
 
 #progress-download {
-	background: 0 0 repeat-x url('img/shade1.png') #888;
+	background: 0 0 repeat-x url('img/shade1.png') #bbb;
 }
 
 #progress-played {
-	background: 0 0 repeat-x url('img/shade2.png') #B0D0FF;
+	background: 0 0 repeat-x url('img/shade2.png') #fff;
 	overflow: hidden;
 }
 
@@ -306,7 +306,7 @@ span#next {
 	padding: 5px;
 	font-weight: bold;
 	font-size: 1.3em;
-	background: #7A9AC9;
+	background: #0a5ed9;
 	border-radius: 3px;
 	border: 1px solid #4B78B9;
 	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
@@ -367,7 +367,7 @@ span#next {
 	position: fixed;
 	top: 70px;
 	z-index: 200;
-	background: #7A9AC9;
+	background: #0a5ed9;
 	border-radius: 3px;
 	border: 1px solid #4B78B9;
 	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
@@ -380,7 +380,7 @@ span#next {
 	width: 12px;
 	margin: 14px 13px;
 	display: block;
-	background: #666;
+	background: #bbb;
 	height: 120px;
 }
 
@@ -390,7 +390,7 @@ span#next {
 	width: 12px;
 	margin: 15px 14px;
 	display: block;
-	background: 0 0 repeat-x url('img/shade2.png') #B0D0FF;
+	background: #fff;
 	height: 0;
 	bottom: 0px;
 }
@@ -432,6 +432,8 @@ span#next {
 	font-size: 1.3em;
 	padding: 3px;
 	cursor: pointer;
+	padding: 3px;
+	cursor: pointer;
 	color: #fff;
 	text-shadow: 0 1px 1px #222;
 }
@@ -444,6 +446,7 @@ span#next {
 	line-height: 35px;
 	font-size: 1.4em;
 	font-weight: bold;
+	font-size: 1.4em;
 }
 
 #navbar {
@@ -469,7 +472,7 @@ span#next {
 	margin: 0;
 	font-size: 1.1em;
 	text-decoration: none;
-	color: #ddd;
+	color: #eee;
 	text-shadow: 0px 1px 1px #234;
 }
 
@@ -602,8 +605,9 @@ span#next {
 
 #navbar a.selected-nav {
 	color: white;
-	background-color: #6784b0;
-	box-shadow: 0 2px 4px 2px #606060;
+	background-color: #0753c2;
+	box-shadow: 0 2px 4px 2px #597090;
+	text-shadow: 0 1px 1px black;
 }
 
 #navbar hr {
@@ -687,12 +691,12 @@ span#next {
 }
 
 #artists li.playing {
-	background: #7a9ac9;
+	background: #0a5ed9;
 }
 
 #artists li.playing div.artists-info {
-	background: #7a9ac9;
-	box-shadow: 0 0 5px 5px #7a9ac9;
+	background: #0a5ed9;
+	box-shadow: 0 0 5px 5px #0a5ed9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -826,6 +830,7 @@ span#next {
 }
 
 #library li.odd {
+	
 }
 
 #library li.selected {
@@ -890,7 +895,7 @@ span#next {
 }
 
 #library li.playing,#library li.playing:hover {
-	background-color: #7a9ac9;
+	background-color: #0a5ed9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -990,7 +995,7 @@ li span.select-box-checked {
 	display: none;
 	position: fixed;
 	border: 1px solid #999;
-	box-shadow: 0px 2px 5px 2px #aaa;
+	box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.20);
 	background-color: #fafafa;
 	cursor: auto;
 	position: fixed;
@@ -1549,7 +1554,7 @@ span.users-connected {
 }
 
 #search-results li.playing,#search-results li.playing:hover {
-	background-color: #7a9ac9;
+	background-color: #0a5ed9;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -1558,7 +1563,7 @@ span.users-connected {
 }
 
 #search-results li span.search-highlight {
-	background: #7a9ac9;
+	background: #0a5ed9;
 	text-shadow: 0 1px 2px #444;
 	color: white;
 	padding: 0;
