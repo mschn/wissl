@@ -604,10 +604,10 @@ span#next {
 }
 
 #navbar a.selected-nav {
-	color: white;
-	background-color: #0753c2;
-	box-shadow: 0 2px 4px 2px #597090;
-	text-shadow: 0 1px 1px black;
+	color: #222;
+	background-color: #CBDEFF;
+	box-shadow: 0 2px 4px 2px #777;
+	text-shadow: 0 1px 1px #fff;
 }
 
 #navbar hr {
