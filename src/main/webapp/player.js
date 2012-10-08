@@ -100,7 +100,7 @@ var player = {};
 				if (song.title && song.title !== '') {
 					document.title = song.title;
 				} else {
-					document.title = 'wissl';
+					document.title = 'Wissl';
 				}
 
 				if (playing) {

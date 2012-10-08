@@ -541,10 +541,10 @@ var wsl = wsl || {};
 		}
 		History.replaceState({
 			scroll : Math.max($('body').scrollTop(), $('html').scrollTop())
-		}, History.getState().title, History.getState().url);
+		}, '', History.getState().url);
 
 		wsl.pageLoaded = true;
-		History.pushState(null, document.title, hash);
+		History.pushState(null, '', hash);
 	};
 
 	wsl.loadContent = function (hash) {
@@ -590,7 +590,6 @@ var wsl = wsl || {};
 		}
 
 		hist = window.History;
-		title = document.title;
 		if (!hist.enabled) {
 			wsl.error('No history support. What browser is this?');
 			return false;
@@ -623,7 +622,7 @@ var wsl = wsl || {};
 				wsl.displayPlaylist(match[1], scroll);
 			} else if (/playing\/?$/.test(hash)) {
 				if (player.playing) {
-					hist.replaceState(null, title, '?playlist/' + player.playing.playlist_id);
+					hist.replaceState(null, '', '?playlist/' + player.playing.playlist_id);
 				} else {
 					wsl.nothingPlaying();
 				}
@@ -646,17 +645,22 @@ var wsl = wsl || {};
 			} else if (/search\/?$/.test(hash)) {
 				wsl.displayHome();
 			} else if (/logout\/?$/.test(hash)) {
-				hist.replaceState(null, title, '?');
+				hist.replaceState(null, '', '?');
 			} else if (hash === '?') {
 				wsl.displayHome();
 			} else {
 				wsl.error("Page not found: ?" + hash);
-				hist.replaceState(null, title, '?');
+				hist.replaceState(null, '', '?');
 			}
 		} else {
 			wsl.displayHome();
 		}
 
+		if (player.playing && player.song && player.song.title && player.song.title !== '') {
+			document.title = player.song.title;
+		} else {
+			document.title = 'Wissl';
+		}
 		wsl.selCount = 0;
 	};
 
