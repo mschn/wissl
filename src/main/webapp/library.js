@@ -65,7 +65,7 @@ var wsl = wsl || {};
 					content += '</div>';
 					content += '<div class="artists-artworks">';
 					for (j = 0; j < artworks.length && j < 10; j += 1) {
-						content += '<img src="wissl/art/' + artworks[j].album + '?' + artworks[j].id + '" />';
+						content += '<img data-src="wissl/art/' + artworks[j].album + '?' + artworks[j].id + '" src="img/no-artwork.jpg" />';
 					}
 					content += '</div>';
 					content += '</li>';
@@ -78,6 +78,7 @@ var wsl = wsl || {};
 					artists : content,
 					scroll : scroll
 				});
+
 				wsl.unlockUI();
 			},
 			error : function (xhr, textStatus, errorThrown) {

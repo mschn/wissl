@@ -706,4 +706,33 @@ $(document).ready(function () {
 		}
 	});
 
+	$(window).on('scroll', function (e) {
+		var win, height, top;
+		win = $(window);
+		height = win.height();
+		top = win.scrollTop();
+
+		if (Math.abs(wsl.lastScrollTop - top) < 30) {
+			return;
+		}
+		wsl.lastScrollTop = top;
+
+		$('#artists li').each(function (index) {
+			var self, off, h;
+			self = $(this);
+			off = self.offset();
+			h = self.height();
+
+			if (top - h < off.top && off.top < top + height) {
+				self.find('img').each(function (index) {
+					var load = this.getAttribute('data-src');
+					if (this.src !== load) {
+						this.src = load;
+					}
+				});
+			}
+
+		});
+	});
+
 });
