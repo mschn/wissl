@@ -16,12 +16,11 @@
 package fr.msch.wissl.server;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -42,12 +41,20 @@ final class Session implements JSON {
 
 	/** active sessions */
 	private static Map<UUID, Session> sessions = null;
-	/** sessions replaced by a re-login */
-	private static Map<UUID, Session> replaced = null;
 	/** removes expired sessions */
 	private static Thread cleaner;
 
-	private static DateFormat format;
+	private static class Access {
+		long time;
+		String userAgent;
+		String ip;
+
+		Access(long time, String userAgent, String ip) {
+			this.time = time;
+			this.userAgent = userAgent;
+			this.ip = ip;
+		}
+	}
 
 	/** unique session id*/
 	private UUID id;
@@ -55,8 +62,8 @@ final class Session implements JSON {
 	private long lastActivity;
 	/** timestamp, creation time */
 	private long createdAt;
-	/** origin (ip) address */
-	private String origin;
+	/** origin (ip) address, last access time */
+	private Map<String, Access> origins;
 	/** user id */
 	private int userId;
 	/** user name */
@@ -64,34 +71,45 @@ final class Session implements JSON {
 	/** last played song */
 	private Song last_played_song = null;
 
-	/** if disconnected by another session */
-	private Session replacedBy = null;
+	private Session(String origin, int uid, String username, String userAgent) {
+		long t = System.currentTimeMillis();
 
-	private Session(String origin, int uid, String username) {
+		this.origins = new HashMap<String, Access>();
 		this.id = UUID.randomUUID();
-		this.createdAt = System.currentTimeMillis();
+		this.createdAt = t;
 		this.lastActivity = this.createdAt;
-		this.origin = origin;
 		this.userId = uid;
 		this.username = username;
+
+		this.origins.put(origin, new Access(t, userAgent, origin));
 	}
 
 	@Override
-	public String toJSON () {
+	public String toJSON() {
 		return this.toJSON(false);
 	}
-	
+
 	public String toJSON(boolean privileged) {
+		long now = System.currentTimeMillis();
 		StringBuilder ret = new StringBuilder();
 		ret.append('{');
-		ret.append("\"last_activity\":"
-				+ (System.currentTimeMillis() - lastActivity) + ",");
-		ret.append("\"created_at\":" + (System.currentTimeMillis() - createdAt)
-				+ ",");
+		ret.append("\"last_activity\":" + (now - lastActivity) + ",");
+		ret.append("\"created_at\":" + (now - createdAt) + ",");
 		ret.append("\"username\":" + JSONObject.quote(username) + ",");
 		ret.append("\"user_id\":" + userId);
 		if (privileged) {
-			ret.append(",\"origin\":" + JSONObject.quote(origin));
+			ret.append(",\"origins\": [");
+			Iterator<Entry<String, Access>> it = origins.entrySet().iterator();
+			while (it.hasNext()) {
+				Access access = it.next().getValue();
+				ret.append("{\"ip\": " + JSONObject.quote(access.ip));
+				ret.append(",\"user_agent\": "
+						+ JSONObject.quote(access.userAgent));
+				ret.append(",\"time\":" + (now - access.time) + "}");
+				if (it.hasNext())
+					ret.append(",");
+			}
+			ret.append("]");
 		}
 		if (last_played_song != null) {
 			ret.append(",\"last_played_song\":" + last_played_song.toJSON());
@@ -106,8 +124,6 @@ final class Session implements JSON {
 	 */
 	public static void start() {
 		sessions = Collections.synchronizedMap(new HashMap<UUID, Session>());
-		replaced = Collections.synchronizedMap(new HashMap<UUID, Session>());
-		format = new SimpleDateFormat("hh:mm");
 
 		cleaner = new Thread(new Runnable() {
 			@Override
@@ -121,20 +137,11 @@ final class Session implements JSON {
 						if (t - sess.lastActivity > 1000 * Config
 								.getSessionExpirationDelay()) {
 							it.remove();
-							Logger.info("Session expired");
+							Logger.info("Session expired: "
+									+ sess.getSessionId().toString() + " "
+									+ sess.getUserName());
 						}
 					}
-
-					it = replaced.entrySet().iterator();
-					while (it.hasNext()) {
-						Session sess = it.next().getValue();
-						long t = System.currentTimeMillis();
-						if (t - sess.lastActivity > 1000 * Config
-								.getSessionExpirationDelay()) {
-							it.remove();
-						}
-					}
-
 					try {
 						Thread.sleep(30 * 1000);
 					} catch (InterruptedException e) {
@@ -164,10 +171,6 @@ final class Session implements JSON {
 		return this.id;
 	}
 
-	public String getOrigin() {
-		return this.origin;
-	}
-
 	public void setLastPlayedSong(Song last_played) {
 		this.last_played_song = last_played;
 	}
@@ -177,10 +180,12 @@ final class Session implements JSON {
 	 * @param origin client request address to limit session spoofing
 	 * @param uid user id
 	 * @param username user name
+	 * @param userAgent user agent
 	 * @return the created session
 	 */
-	public static Session create(String origin, int uid, String username) {
-		Session s = new Session(origin, uid, username);
+	public static Session create(String origin, int uid, String username,
+			String userAgent) {
+		Session s = new Session(origin, uid, username, userAgent);
 		sessions.put(s.id, s);
 		return s;
 	}
@@ -195,28 +200,17 @@ final class Session implements JSON {
 	}
 
 	/**
-	 * User was still logged, but used login again.
-	 * Previous Session is removed and stored to notify
-	 * the first client of what happened
-	 * @param id
-	 */
-	public static void replace(Session oldSession, Session newSession) {
-		Session s = sessions.remove(oldSession.id);
-		s.replacedBy = newSession;
-		replaced.put(oldSession.id, s);
-	}
-
-	/**
 	 * @param uid unique user id
-	 * @return open Session for this user, or null if not logged
+	 * @return open list of Sessions for this user, or empty list if not logged
 	 */
-	public static Session getSession(int uid) {
+	public static List<Session> getSessions(int uid) {
+		List<Session> ret = new ArrayList<Session>();
 		for (Session s : sessions.values()) {
 			if (s.userId == uid) {
-				return s;
+				ret.add(s);
 			}
 		}
-		return null;
+		return ret;
 	}
 
 	public static Map<UUID, Session> getSessions() {
@@ -224,20 +218,27 @@ final class Session implements JSON {
 	}
 
 	/**
+	 * Check if a session with the given ID exists
 	 * @param id session id to check
+	 * @param origin client IP address
+	 * @param userAgent client user agent
 	 * @throws SecurityError session id is rejected
 	 */
-	public static Session check(String id, String origin) throws SecurityError {
-		return check(id, origin, false);
+	public static Session check(String id, String origin, String userAgent)
+			throws SecurityError {
+		return check(id, origin, userAgent, false);
 	}
 
 	/**
+	 * Check if a session with the given ID exists
 	 * @param id session id to check
+	 * @param origin client IP address
 	 * @param requiredAdmin only authorize administrator users
+	 * @param userAgent client user agent
 	 * @throws SecurityError session id is rejected
 	 */
-	public static Session check(String id, String origin, boolean requireAdmin)
-			throws SecurityError {
+	public static Session check(String id, String origin, String userAgent,
+			boolean requireAdmin) throws SecurityError {
 		if (id == null) {
 			throw new SecurityError("No session id provided");
 		}
@@ -250,21 +251,13 @@ final class Session implements JSON {
 		}
 		Session s = sessions.get(uid);
 		if (s == null) {
-
-			Session r = replaced.get(uid);
-			if (r != null) {
-				Date d = new Date(r.replacedBy.createdAt);
-				throw new SecurityError("You have been disconnected by "
-						+ r.replacedBy.origin + " at " + format.format(d));
-			}
-
+			Logger.debug("Session check failed for sessionId " + id + " from "
+					+ origin);
 			throw new SecurityError("Not logged in");
 		}
-		if (!s.origin.equals(origin)) {
-			sessions.remove(uid);
-			throw new SecurityError("Origin changed, session closed");
-		}
 		s.lastActivity = System.currentTimeMillis();
+		Access a = new Access(s.lastActivity, userAgent, origin);
+		s.origins.put(origin, a);
 
 		if (requireAdmin) {
 			User u = null;

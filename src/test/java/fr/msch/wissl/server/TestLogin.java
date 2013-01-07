@@ -83,11 +83,12 @@ public class TestLogin extends TServer {
 		Assert.assertEquals(200, get.getStatusCode());
 
 		// the previous session that was setup by the test case 
-		// for this user should have been destroyed
+		// for this user should NOT have been destroyed
+		// both sessions are kept for the same user
 		get = new GetMethod(TServer.URL + "stats");
 		get.addRequestHeader("sessionId", this.admin_sessionId);
 		client.executeMethod(get);
-		Assert.assertEquals(401, get.getStatusCode());
+		Assert.assertEquals(200, get.getStatusCode());
 
 		// the other user set up by the test case should still be logged in
 		get = new GetMethod(TServer.URL + "stats");
@@ -95,7 +96,7 @@ public class TestLogin extends TServer {
 		client.executeMethod(get);
 		Assert.assertEquals(200, get.getStatusCode());
 
-		// logout both users
+		// logout all users
 		post = new PostMethod(TServer.URL + "logout");
 		post.addRequestHeader("sessionId", sid_admin);
 		client.executeMethod(post);
@@ -103,6 +104,11 @@ public class TestLogin extends TServer {
 
 		post = new PostMethod(TServer.URL + "logout");
 		post.addRequestHeader("sessionId", this.user_sessionId);
+		client.executeMethod(post);
+		Assert.assertEquals(204, post.getStatusCode());
+
+		post = new PostMethod(TServer.URL + "logout");
+		post.addRequestHeader("sessionId", this.admin_sessionId);
 		client.executeMethod(post);
 		Assert.assertEquals(204, post.getStatusCode());
 

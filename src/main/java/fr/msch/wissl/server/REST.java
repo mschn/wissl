@@ -80,6 +80,9 @@ public final class REST {
 	@HeaderParam("sessionId")
 	private String sessionIdHeader;
 
+	@HeaderParam("User-Agent")
+	private String userAgent;
+
 	@QueryParam("sessionId")
 	private String sessionIdGet;
 
@@ -91,7 +94,7 @@ public final class REST {
 		sb.append(' ');
 		sb.append(session.getUserName());
 		sb.append('@');
-		sb.append(session.getOrigin());
+		sb.append(request.getRemoteAddr());
 		sb.append(' ');
 		int millis = (int) ((System.nanoTime() - nanoStartTime) / 1000000f);
 		sb.append(millis);
@@ -123,13 +126,8 @@ public final class REST {
 			throw new SecurityError("Invalid username or password");
 		}
 
-		Session old = Session.getSession(user.id);
 		Session newSession = Session.create(request.getRemoteAddr(), user.id,
-				username);
-
-		if (old != null) {
-			Session.replace(old, newSession);
-		}
+				username, userAgent);
 
 		StringBuilder ret = new StringBuilder();
 		ret.append("{ \"sessionId\":\"");
@@ -150,7 +148,7 @@ public final class REST {
 	public void logout() throws SecurityError {
 		long t = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		Session.remove(sess);
 
 		nocache();
@@ -162,7 +160,7 @@ public final class REST {
 	public String getUsers() throws SQLException, SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = sess.getUserId();
 
 		List<User> users = DB.get().getUsers();
@@ -209,7 +207,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		StringBuilder ret = new StringBuilder();
 
@@ -217,16 +215,20 @@ public final class REST {
 		if (u == null) {
 			throw new NotFoundException("Unknown user: " + userId);
 		}
-		Session s = Session.getSession(userId);
+
+		List<Session> sessions = Session.getSessions(userId);
 
 		ret.append("{ \"user\":");
 		ret.append(u.toJSON());
-		ret.append(",\"session\":");
-		if (s != null) {
+		ret.append(",\"sessions\":[");
+
+		for (Iterator<Session> it = sessions.iterator(); it.hasNext();) {
+			Session s = it.next();
 			ret.append(s.toJSON(u.auth == 1));
-		} else {
-			ret.append("null");
+			if (it.hasNext())
+				ret.append(",");
 		}
+		ret.append("]");
 
 		List<Playlist> pl = DB.get().getPlaylists(userId);
 		ret.append(",\"playlists\":[");
@@ -281,7 +283,8 @@ public final class REST {
 			}
 		}
 
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		User prev = DB.get().getUser(username);
 		if (prev != null) {
@@ -318,7 +321,7 @@ public final class REST {
 			SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		User user = DB.get().getUser(sess.getUserId());
 		user.password = oldPassword.getBytes();
@@ -340,7 +343,8 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent,
+				true);
 		int uid = sess.getUserId();
 
 		if (user_ids.length == 0) {
@@ -353,8 +357,8 @@ public final class REST {
 						"You cannot remove your own user.");
 			}
 
-			Session s = Session.getSession(user_id);
-			if (s != null) {
+			List<Session> sessions = Session.getSessions(user_id);
+			for (Session s : sessions) {
 				Session.remove(s);
 			}
 			DB.get().removeUser(user_id);
@@ -371,7 +375,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr());
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = s.getUserId();
 
 		if (name == null || name.trim().length() == 0) {
@@ -399,7 +403,7 @@ public final class REST {
 			SecurityError, javassist.NotFoundException, ForbiddenException {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = sess.getUserId();
 
 		if (name == null || name.trim().length() == 0) {
@@ -442,7 +446,7 @@ public final class REST {
 			SecurityError, javassist.NotFoundException, ForbiddenException {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = sess.getUserId();
 
 		if (name == null || name.trim().length() == 0) {
@@ -496,7 +500,7 @@ public final class REST {
 			SecurityError, ForbiddenException, NotFoundException {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = sess.getUserId();
 		int count = 0;
 
@@ -536,7 +540,7 @@ public final class REST {
 			SecurityError, ForbiddenException {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr());
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = s.getUserId();
 
 		if (song_ids == null || song_ids.length == 0)
@@ -554,7 +558,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		Playlist pl = DB.get().getPlaylist(playlist_id);
 		List<Song> songs = DB.get().getPlaylistSongs(playlist_id);
@@ -587,7 +591,7 @@ public final class REST {
 			SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		StringBuilder ret = new StringBuilder();
 		Song s = DB.get().getPlaylistSong(playlist_id, song_pos);
@@ -611,7 +615,7 @@ public final class REST {
 			ForbiddenException {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 		int uid = sess.getUserId();
 
 		if (playlist_ids == null || playlist_ids.length == 0)
@@ -629,7 +633,7 @@ public final class REST {
 	public String getPlaylists() throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr());
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		List<Playlist> pl = DB.get().getPlaylists(s.getUserId());
 		StringBuilder ret = new StringBuilder();
@@ -654,7 +658,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		List<Playlist> pl = DB.get().getPlaylists(userId);
 		StringBuilder ret = new StringBuilder();
@@ -678,7 +682,7 @@ public final class REST {
 	public String getArtists() throws SQLException, SecurityError {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr());
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		List<Artist> artists = DB.get().getArtists();
 		Map<Integer, Map<Integer, String>> artworks = DB.get()
@@ -727,7 +731,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		Artist artist = DB.get().getArtist(artist_id);
 		if (artist == null) {
@@ -759,7 +763,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		List<Song> songs = DB.get().getSongs(album_id);
 		Album album = DB.get().getAlbum(album_id);
@@ -792,7 +796,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		Song song = DB.get().getSong(song_id);
 		if (song == null) {
@@ -817,7 +821,7 @@ public final class REST {
 			throws SQLException, SecurityError {
 		long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr());
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		StringBuilder ret = new StringBuilder();
 
@@ -862,7 +866,8 @@ public final class REST {
 			SecurityError {
 		final long t1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		final Session s = Session.check(sid, request.getRemoteAddr());
+		final Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent);
 
 		s.setLastPlayedSong(DB.get().getSong(song_id));
 
@@ -1007,7 +1012,8 @@ public final class REST {
 	public String getMusicFolders() throws SecurityError, SQLException {
 		long l = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent,
+				true);
 		StringBuilder ret = new StringBuilder();
 
 		ret.append("{\"folders\":[");
@@ -1032,7 +1038,8 @@ public final class REST {
 			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent,
+				true);
 		StringBuilder ret = new StringBuilder();
 
 		File dir = null;
@@ -1104,7 +1111,8 @@ public final class REST {
 			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent,
+				true);
 
 		File dir = new File(directory);
 		if (!dir.exists()) {
@@ -1127,7 +1135,8 @@ public final class REST {
 			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session sess = Session.check(sid, request.getRemoteAddr(), true);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent,
+				true);
 
 		if (directory != null) {
 			List<String> music = Config.getMusicPath();
@@ -1161,7 +1170,8 @@ public final class REST {
 	public String getIndexerStatus() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		String ret = Library.getIndexerStatusAsJSON();
 
@@ -1174,7 +1184,8 @@ public final class REST {
 	public void rescan() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		Library.interrupt();
 
@@ -1188,7 +1199,8 @@ public final class REST {
 			SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		List<String> files = DB.get().getArtistSongPaths(artist_ids);
 		if (files.isEmpty()) {
@@ -1211,7 +1223,8 @@ public final class REST {
 			throws SecurityError, SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		List<String> files = DB.get().getAlbumSongPaths(album_ids);
 		if (files.isEmpty()) {
@@ -1234,7 +1247,8 @@ public final class REST {
 
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		String path = null;
 		try {
@@ -1269,7 +1283,8 @@ public final class REST {
 			SQLException {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		List<String> files = DB.get().getSongPaths(song_ids);
 		if (files.isEmpty()) {
@@ -1290,7 +1305,8 @@ public final class REST {
 	public Response getLogs() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		final File log = new File(Config.getLogFilePath());
 		StreamingOutput stream = new StreamingOutput() {
@@ -1332,7 +1348,8 @@ public final class REST {
 	public void shutdown() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), true);
+		Session s = Session
+				.check(sid, request.getRemoteAddr(), userAgent, true);
 
 		Bootstrap.shutdown();
 		log(s, l1);
@@ -1344,7 +1361,8 @@ public final class REST {
 	public String getStats() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), false);
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent,
+				false);
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("{\"stats\":" + RuntimeStats.get().toJSON() + "}");
@@ -1359,7 +1377,8 @@ public final class REST {
 	public String getInfo() throws SecurityError {
 		long l1 = System.nanoTime();
 		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
-		Session s = Session.check(sid, request.getRemoteAddr(), false);
+		Session s = Session.check(sid, request.getRemoteAddr(), userAgent,
+				false);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('{');

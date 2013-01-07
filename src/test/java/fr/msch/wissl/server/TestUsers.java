@@ -78,8 +78,8 @@ public class TestUsers extends TServer {
 			if (username.equals(this.user_username)) {
 				Assert.assertEquals(this.user_userId, s.getInt("user_id"));
 				Assert.assertTrue(s.getInt("last_activity") >= 0); // might be 0
-				Assert.assertTrue(s.getInt("created_at") > 0);
-				Assert.assertFalse(s.has("origin")); // admin only
+				Assert.assertTrue(s.getInt("created_at") >= 0);
+				Assert.assertFalse(s.has("origins")); // admin only
 				Assert.assertFalse(s.has("last_played_song"));
 			}
 		}
@@ -101,11 +101,14 @@ public class TestUsers extends TServer {
 		Assert.assertEquals(this.admin_username, u.getString("username"));
 		Assert.assertEquals(1, u.getInt("auth"));
 		Assert.assertEquals(0, u.getInt("downloaded"));
-		JSONObject s = obj.getJSONObject("session");
+		sessions = obj.getJSONArray("sessions");
+		Assert.assertEquals(1, sessions.length());
+		JSONObject s = sessions.getJSONObject(0);
+
 		Assert.assertEquals(this.admin_userId, s.getInt("user_id"));
 		Assert.assertTrue(s.getInt("last_activity") >= 0); // might be 0
 		Assert.assertTrue(s.getInt("created_at") > 0);
-		Assert.assertTrue(s.has("origin")); // admin only
+		Assert.assertTrue(s.has("origins")); // admin only
 		Assert.assertFalse(s.has("last_played_song"));
 		Assert.assertTrue(obj.getJSONArray("playlists").length() == 0);
 
@@ -170,7 +173,7 @@ public class TestUsers extends TServer {
 		Assert.assertEquals(200, get.getStatusCode());
 		obj = new JSONObject(get.getResponseBodyAsString());
 		Assert.assertTrue(obj.getJSONArray("playlists").length() == 0);
-		Assert.assertEquals(JSONObject.NULL, obj.get("session"));
+		Assert.assertEquals(0, obj.getJSONArray("sessions").length());
 
 		// login new user
 		obj = new JSONObject(this.login(new_username, new_password));
@@ -204,7 +207,7 @@ public class TestUsers extends TServer {
 				Assert.assertEquals(new_userId, s.getInt("user_id"));
 				Assert.assertTrue(s.getInt("last_activity") >= 0); // might be 0
 				Assert.assertTrue(s.getInt("created_at") > 0);
-				Assert.assertFalse(s.has("origin")); // admin only
+				Assert.assertFalse(s.has("origins")); // admin only
 				Assert.assertFalse(s.has("last_played_song"));
 			} else {
 				Assert.assertTrue(username.equals(user_username)

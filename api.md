@@ -96,7 +96,7 @@ Each registered account is represented by an user.
 ### <a id="session"></a>session
 
 When an user is connected, a Session is bound to it.
-There can be only one session per user at a time.
+An unique user can have multiple active concurrent sessions.
 
     {
       // unique user id
@@ -107,8 +107,14 @@ There can be only one session per user at a time.
       "last_activity": INT,
       // milliseconds since session creation
       "created_at": INT,
-      // ADMIN ONLY: client IP address
-      "origin": STRING,
+      // ADMIN ONLY: milliseconds since last access for each client IP
+      "origins": [
+	     {
+           "ip": STRING,
+           "user_agent": STRING,
+		   "time": INT
+         }, ...
+	  ],
       // last played song, or empty
       "last_played_song": SONG
     }
@@ -228,9 +234,10 @@ Use the session id provided in the response to authenticate for each further cal
 The session id can be used either as an HTTP header or an HTTP query parameter,
 both named `sessionId`.
 
-If a session associated with the same user already exists, the previous session
-will be destroyed and the client will be notified if it tries to reuse the
-destroyed session.
+If a session already exists for this user, a new session will be created.
+Each session is identified by an unique identifier.
+
+When a session is not used for some time, it is removed.
 
 ### <a id="logout"></a>`/logout`
 * method: `POST`
@@ -285,10 +292,12 @@ Allows clients to list users and check which is currently logged in.
 * returns:<pre>
     {
       "user": USER,
-      "session": SESSION,
-      "playlists": {
+      "sessions": [
+         SESSION, ...
+      ]
+      "playlists": [
         PLAYLIST, ...
-      }
+      ]
     }
 </pre>
 

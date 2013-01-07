@@ -85,31 +85,43 @@ var wsl = wsl || {};
 			},
 			dataType : 'json',
 			success : function (data) {
-				var content = '', t1, t2, i, pl, song;
+				var content = '', t1, i, j, pl, song, sess;
 
 				content += '<p><span class="user-name">' + data.user.username + '</span>';
 				if (data.user.auth === 1) {
 					content += '<span class="user-admin">admin</span></p>';
 				}
-				if (data.session) {
-					t1 = new Date(data.session.created_at).getTime() / 1000;
-					t2 = new Date(data.session.last_activity).getTime() / 1000;
-					content += '<p>Connected ' + wsl.formatSeconds(t1, true) + ' ago';
-					if (data.session.origin) {
-						content += ' from ' + data.session.origin;
-					}
-					content += '</p><p>Last activity ' + wsl.formatSeconds(t2, true) + ' ago</p>';
-					if (data.session.last_played_song) {
-						song = data.session.last_played_song;
-						content += '<p>Last played ';
-						content += '<a onclick="">' + song.title + '</a> on ';
-						content += '<a onclick="wsl.load(\'?songs/' + song.album_id + '\')">' + song.album_name + '</a> by ';
-						content += '<a onclick="wsl.load(\'?albums/' + song.artist_id + '\')">' + song.artist_name + '</a></p>';
+				content += '<p>Downloaded ' + (data.user.downloaded / (1024 * 1024)).toFixed(2) + ' MiB</p>';
+
+				if (data.sessions) {
+					content += '<h3>' + data.sessions.length + ' active sessions</h3>';
+					for (i = 0; i < data.sessions.length; i++) {
+						sess = data.sessions[i];
+						t1 = new Date(sess.created_at).getTime() / 1000;
+						content += '<div class="user-session">';
+						content += '<p>Connected ' + wsl.formatSecondsAlt(t1, 2) + ' ago</p>';
+						if (sess.origins) {
+							content += '<table><thead><tr><th>IP</th><th>last activity</th><th>client</th></tr></thead><tdoby>';
+
+							for (j = 0; j < sess.origins.length; j++) {
+								content += '<tr><td>' + sess.origins[j].ip + '</td>';
+								content += '<td>' + wsl.formatSecondsAlt(sess.origins[j].time / 1000, 2) + '</td>';
+								content += '<td>' + sess.origins[j].user_agent + '</td></tr>';
+							}
+						}
+						content += '</table></tdoby>';
+						if (sess.last_played_song) {
+							song = sess.last_played_song;
+							content += '<p>Last played ';
+							content += '<a onclick="">' + song.title + '</a> on ';
+							content += '<a onclick="wsl.load(\'?songs/' + song.album_id + '\')">' + song.album_name + '</a> by ';
+							content += '<a onclick="wsl.load(\'?albums/' + song.artist_id + '\')">' + song.artist_name + '</a></p>';
+						}
+						content += '</div>';
 					}
 				} else {
 					content += '<p>Not connected</p>';
 				}
-				content += '<p>Downloaded ' + (data.user.downloaded / (1024 * 1024)).toFixed(2) + ' MiB</p>';
 
 				if (data.playlists && data.playlists.length > 0) {
 					content += '<p class="user-title">Playlists</p>';

@@ -1183,6 +1183,19 @@ span.users-connected {
 	padding: 2px 4px;
 }
 
+#user .user-session {
+	background: #e8e8e8;
+}
+
+#user .user-session thead {
+	background: #ddd;
+}
+
+#user .user-session th {
+	font-weight: normal;
+	text-align: left;
+}
+
 #user-playlist {
 	padding: 0;
 	margin: 0;
