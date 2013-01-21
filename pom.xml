@@ -6,7 +6,7 @@
 
   <groupId>fr.msch</groupId>
   <artifactId>wissl</artifactId>
-  <version>b7</version>
+  <version>b8</version>
   <packaging>war</packaging>
   <name>wissl</name>
   <url>http://msch.fr/wissl</url>
