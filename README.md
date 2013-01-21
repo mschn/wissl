@@ -45,7 +45,7 @@ Libraries used
  * [SoundManager2](http://www.schillmania.com/projects/soundmanager2/) - Sound playback (BSD)
  * [jQuery](http://jquery.com/) - Javascript framework (MIT)
  * [History.js](https://github.com/balupton/History.js/) - Back button support (BSD)
- * [Fugue Icons](http://p.yusukekamiyamane.com) - (CC BY)
+ * [Fugue Icons](http://p.yusukekamiyamane.com) - Icon set (CC BY)
 
 License
 -------
