@@ -26,7 +26,7 @@ img {
 }
 
 body {
-	background-color: #eee;
+	background-color: white;
 	position: relative;
 }
 
@@ -220,9 +220,8 @@ body {
 	top: 0px;
 	height: 71px;
 	width: 100%;
-	padding-left: 201px;
-	z-index: 300;
-	background: #0a5ed9;
+	z-index: 500;
+	background: #5692ec;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -246,7 +245,7 @@ body {
 }
 
 #controls span:hover {
-	background-color: #eee;
+	background-color: #8fb6f1;
 }
 
 span#next {
@@ -306,7 +305,7 @@ span#next {
 	padding: 5px;
 	font-weight: bold;
 	font-size: 1.3em;
-	background: #0a5ed9;
+	background: #5692ec;
 	border-radius: 3px;
 	border: 1px solid #4B78B9;
 	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
@@ -367,7 +366,7 @@ span#next {
 	position: fixed;
 	top: 70px;
 	z-index: 200;
-	background: #0a5ed9;
+	background: #5692ec;
 	border-radius: 3px;
 	border: 1px solid #4B78B9;
 	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.20);
@@ -455,14 +454,13 @@ span#next {
 	top: 0;
 	left: 0;
 	padding: 0;
-	padding-top: 5px;
+	padding-top: 75px;
 	position: fixed;
-	width: 200px;
-	background: #666;
+	width: 185px;
 	overflow: hidden;
 	height: 100%;
-	border-right: 1px solid #606c7d;
 	z-index: 350;
+	background: #bbc0c7;
 }
 
 #navbar a {
@@ -472,8 +470,8 @@ span#next {
 	margin: 0;
 	font-size: 1.1em;
 	text-decoration: none;
-	color: #eee;
-	text-shadow: 0px 1px 1px #234;
+	color: #000;
+	text-shadow: 1px 1px 1px white;
 }
 
 .navbar-playing {
@@ -599,15 +597,13 @@ span#next {
 }
 
 #navbar a:hover {
-	color: white;
-	background-color: rgb(120, 140, 170);
+	background-color: #ccc;
 }
 
 #navbar a.selected-nav {
-	color: #222;
-	background-color: #CBDEFF;
-	box-shadow: 0 2px 4px 2px #777;
-	text-shadow: 0 1px 1px #fff;
+	color: #fff;
+	text-shadow: 0 1px 1px #222;
+	background-color: #5692ec;
 }
 
 #navbar hr {
@@ -618,7 +614,7 @@ span#next {
 }
 
 #content {
-	padding: 71px 0 0 200px;
+	padding: 75px 0 0 185px;
 	overflow: hidden;
 	text-shadow: 0 1px 0 white;
 	color: #444;
@@ -691,18 +687,13 @@ span#next {
 }
 
 #artists li.playing {
-	background: #0a5ed9;
+	background: #5692ec;
 }
 
 #artists li.playing div.artists-info {
-	background: #0a5ed9;
-	box-shadow: 0 0 5px 5px #0a5ed9;
+	background: #5692ec;
+	box-shadow: 0 0 5px 5px #5692ec;
 	text-shadow: 0 1px 2px #444;
-}
-
-#artists li.playing span.name {
-	background: 0 0 no-repeat url('img/play_24.png');
-	padding-left: 22px;
 }
 
 #artists span.duration,#artists span.albums,#artists span.songs {
@@ -718,9 +709,9 @@ span#next {
 	z-index: 200;
 	display: inline-block;
 	padding: 20px 10px 10px 20px;
-	background: #eee;
+	background: white;
 	height: 100%;
-	box-shadow: 0 0 5px 5px #eee;
+	box-shadow: 0 0 5px 5px white;
 }
 
 #artists div.artists-artworks {
@@ -762,7 +753,7 @@ span#next {
 
 #library-drag-selection {
 	width: 5px;
-	left: 200px;
+	left: 185px;
 	background-color: #6784b0;
 	display: none;
 	position: fixed;
@@ -773,6 +764,7 @@ span#next {
 	padding: 5px;
 	vertical-align: middle;
 	height: 74px;
+	vertical-align: middle
 }
 
 #library-heading span {
@@ -810,7 +802,7 @@ span#next {
 	font-size: 1.2em;
 	text-decoration: none;
 	padding: 0 5px 0 35px;
-	background-color: #eee;
+	background: white;
 }
 
 #library li:hover,#library li.odd:hover {
@@ -895,7 +887,7 @@ span#next {
 }
 
 #library li.playing,#library li.playing:hover {
-	background-color: #0a5ed9;
+	background-color: #5692ec;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -913,7 +905,7 @@ li span.select-box {
 	cursor: pointer;
 	width: 30px;
 	position: absolute;
-	left: 205px;
+	left: 190px;
 	background: 4px 9px no-repeat url('img/box_16.png');
 	user-select: none;
 	-khtml-user-select: none;
@@ -1091,7 +1083,7 @@ label .dialog-text-input {
 	padding: 5px;
 	margin: 10px 0 0 0;
 	text-align: right;
-	background: #ddd;
+	background: #e9e9e9;
 }
 
 #error-dialog-message {
@@ -1184,14 +1176,22 @@ span.users-connected {
 }
 
 #user .user-session {
-	background: #e8e8e8;
+	border: 1px solid #eee;
+	background: #fafafa;
+	margin-bottom: 5px;
 }
 
-#user .user-session thead {
-	background: #ddd;
+#user .user-session table {
+	border-spacing: 0;
+}
+
+#user .user-session td {
+	padding: 0 20px 0 0;
 }
 
 #user .user-session th {
+	background: #eee;
+	padding: 0 20px 0 0;
 	font-weight: normal;
 	text-align: left;
 }
@@ -1199,8 +1199,9 @@ span.users-connected {
 #user-playlist {
 	padding: 0;
 	margin: 0;
-	border-left: 4px solid #bbb;
-	background: #e8e8e8;
+	border: 1px solid #eee;
+	background: #fafafa;
+	border-left: 4px solid #eee;
 }
 
 #user-playlist li {
@@ -1250,8 +1251,8 @@ span.users-connected {
 #admin ul {
 	padding: 0;
 	margin: 0 10px 10px 0;
-	border: 1px solid #ddd;
-	background: #e8e8e8;
+	border: 1px solid #eee;
+	background: #fafafa;
 	width: 400px;
 }
 
@@ -1374,7 +1375,6 @@ span.users-connected {
 
 #about p.subtitle {
 	color: #999;
-	text-shadow: 0 1px 4px #ccc;
 	margin: 0;
 }
 
@@ -1382,39 +1382,38 @@ span.users-connected {
 	
 }
 
-#home-title {
-	width: 203px;
-	height: 96px;
-	margin: 30px auto;
-	background: 0 0 no-repeat url('img/logo_96.png');
-}
-
 #home-search {
-	margin: 0 0 70px 0;
+	margin: 20px 0 70px 0;
 	text-align: center;
 }
 
 #search-input {
 	width: 50%;
 	border-radius: 0px;
-	border: 1px solid #888;
-	font-size: 1.4em;
+	border: 1px solid #aaa;
+	border-right: 0;
+	font-size: 20px;
 	padding: 5px 5px;
-	box-shadow: inset 1px 1px 8px #ddd;
+	height: 40px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 #search-ok {
 	height: 40px;
 	width: 40px;
-	border: 0;
-	background: 4px 4px no-repeat url("img/search_32.png");
-	display: inline-block;
+	padding: 0;
+	margin: 0;
 	color: transparent;
-	display: inline-block;
+	background: 4px 4px no-repeat url("img/search_32.png") #ddd;
+	border: 1px solid #aaa;
+	border-left: 0;
+	position: absolute;
 }
 
 #search-ok:hover {
-	background-color: #a8bfe0;
+	background-color: #d4dbe4;
 }
 
 .home-stats-p {
@@ -1492,7 +1491,7 @@ span.users-connected {
 }
 
 #search-results li.odd {
-	background: #e7e7e7;
+	
 }
 
 #search-results li>span {
@@ -1567,7 +1566,7 @@ span.users-connected {
 }
 
 #search-results li.playing,#search-results li.playing:hover {
-	background-color: #0a5ed9;
+	background-color: #5692ec;
 	text-shadow: 0 1px 2px #444;
 }
 
@@ -1576,7 +1575,7 @@ span.users-connected {
 }
 
 #search-results li span.search-highlight {
-	background: #0a5ed9;
+	background: #5692ec;
 	text-shadow: 0 1px 2px #444;
 	color: white;
 	padding: 0;

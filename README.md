@@ -45,11 +45,11 @@ Libraries used
  * [SoundManager2](http://www.schillmania.com/projects/soundmanager2/) - Sound playback (BSD)
  * [jQuery](http://jquery.com/) - Javascript framework (MIT)
  * [History.js](https://github.com/balupton/History.js/) - Back button support (BSD)
- * [Faenza Icons](http://tiheum.deviantart.com/art/Faenza-Icons-173323228) - (GPL)
+ * [Fugue Icons](http://p.yusukekamiyamane.com) - (CC BY)
 
 License
 -------
-Wissl is Copyright (c) 2012, Mathieu Schnoor.
+Wissl is Copyright (c) 2013, Mathieu Schnoor.
 
 It is licensed under the GNU General Public License (v3),
 a copy of which can be found in the LICENSE file or at

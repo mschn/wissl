@@ -80,6 +80,9 @@ var wsl = wsl || {};
 				});
 
 				wsl.unlockUI();
+				
+				// calling it twice ensures it's run exactly once
+				wsl.refreshArtistImages();
 				wsl.refreshArtistImages();
 			},
 			error : function (xhr, textStatus, errorThrown) {
