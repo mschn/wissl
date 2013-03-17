@@ -171,7 +171,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</fieldset>
 			</form>
 		</div>
-		"
 		<div class="dialog" id="edit-album-dialog">
 			<img id="edit-album-artwork-img" src="" alt="album artwork"
 				onerror="this.src='img/no-artwork.jpg'" />
@@ -226,7 +225,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</fieldset>
 			</form>
 		</div>
-		"
+		<div class="dialog" id="edit-song-dialog">
+			<h2>Edit song</h2>
+			<p class="error" id="edit-song-dialog-error"></p>
+			<p id="edit-song-warning">Warning: editing multiple songs with
+				different values</p>
+
+			<form method="post" onsubmit='wsl.editSong();return false'
+				name="edit-song-form">
+				<fieldset>
+					<input type="hidden" id="edit-song-id" />
+					<p>
+						<label for="edit-song-name">Name</label> <input
+							class="dialog-text-input" type="text" name="edit-song-name"
+							id="edit-song-name" />
+					</p>
+					<p>
+						<label for="edit-song-artist">Artist</label> <input
+							class="dialog-text-input" type="text" name="edit-song-artist"
+							id="edit-song-artist" />
+					</p>
+					<p>
+						<label for="edit-song-album">Album</label> <input
+							class="dialog-text-input" type="text" name="edit-song-album"
+							id="edit-song-album" />
+					</p>
+					<p>
+						<label for="edit-song-position">Position</label> <input
+							class="dialog-text-input" type="text" name="edit-song-position"
+							id="edit-song-position" />
+					</p>
+					<p>
+						<label for="edit-song-disc">Disc Number</label> <input
+							class="dialog-text-input" type="text" name="edit-song-disc"
+							id="edit-song-disc" />
+					</p>
+					<p class='dialog-buttons'>
+						<input class='button button-ok' type="submit" value="Ok" /> <input
+							class='button button-cancel' type='button' value='Cancel'
+							onclick='wsl.cancelEditSong()' />
+					</p>
+				</fieldset>
+			</form>
+		</div>
 		<div class="dialog" id="confirm-dialog">
 			<h2 id='confirm-dialog-title'></h2>
 			<p id='confirm-dialog-message'></p>

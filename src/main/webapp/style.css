@@ -919,7 +919,7 @@ li span.select-box-checked {
 	background: 4px 9px no-repeat url('img/box-checked_16.png');
 }
 
-#library span.before {
+#library span.position,#library span.date {
 	text-align: center;
 	width: 10%;
 }

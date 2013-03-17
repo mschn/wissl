@@ -2386,7 +2386,7 @@ final class H2DB extends DB {
 				st.executeUpdate();
 			}
 
-			if (song_title != null) {
+			if (song_title != null && song_title.trim().length() > 0) {
 				st = conn.prepareStatement("UPDATE song SET " + //
 						"title=? WHERE song_id IN (" + ids + ")");
 				st.setString(1, song_title);

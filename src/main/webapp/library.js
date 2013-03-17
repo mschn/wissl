@@ -80,7 +80,7 @@ var wsl = wsl || {};
 				});
 
 				wsl.unlockUI();
-				
+
 				// calling it twice ensures it's run exactly once
 				wsl.refreshArtistImages();
 				wsl.refreshArtistImages();
@@ -156,7 +156,7 @@ var wsl = wsl || {};
 					content += '<li id="album-' + album.id + '" class="' + liclass + '">';
 					content += '<span class="album-id">' + album.id + '</span>';
 					content += '<span ' + events + ' class="select-box">&nbsp</span>';
-					content += '<span class="before">' + album.date + '</span>';
+					content += '<span class="date">' + album.date + '</span>';
 					content += '<span onclick="wsl.load(\'?songs/' + album.id + '\')" class="' + clazz + '">';
 					if (album.artwork) {
 						content += '<img src="wissl/art/' + album.id + '?' + album.artwork_id + '" />';
@@ -229,7 +229,13 @@ var wsl = wsl || {};
 				}
 				content += '</span></div>';
 
+				content += '<span style="display:none" id="album-artist-name">' + artist.name + '</span>';
+				content += '<span style="display:none" id="album-artist-id">' + artist.id + '</span>';
+				content += '<span style="display:none" id="album-name">' + album.name + '</span>';
+				content += '<span style="display:none" id="album-id">' + album.id + '</span>';
+
 				content += '<ul>';
+
 				for (i = 0; i < songs.length; i += 1) {
 					song = songs[i];
 
@@ -242,7 +248,8 @@ var wsl = wsl || {};
 					content += '<li id="song-' + song.id + '" class="' + liclass + '">';
 					content += '<span ' + events + ' class="select-box">&nbsp</span>';
 					content += '<span class="song-id">' + song.id + '</span>';
-					content += '<span class="before">' + song.position + '</span>';
+					content += '<span class="position">' + song.position + '</span>';
+					content += '<span style="display:none" class="disc">' + song.disc_no + '</span>';
 					content += '<span class="title" onclick="wsl.playAlbum(' + album.id + ',' + song.id + ',' + i + ')">' + song.title + '</span>';
 					content += '<span class="duration">' + wsl.formatSeconds(song.duration) + '</span></li>';
 				}
@@ -502,7 +509,7 @@ var wsl = wsl || {};
 					genre = '';
 				}
 
-				tmp = $('#album-' + album_ids[i] + ' .before').text();
+				tmp = $('#album-' + album_ids[i] + ' .date').text();
 				if (date === undefined || tmp === date) {
 					date = tmp;
 				} else {
@@ -585,4 +592,111 @@ var wsl = wsl || {};
 		});
 	};
 
+	wsl.showEditSong = function () {
+		var song_ids = [], name, artist, album, pos, disc, i, tmp;
+		name = album = artist = pos = disc = tmp = i = undefined;
+
+		$('.selected .song-id').each(function (index) {
+			song_ids[index] = parseInt(this.innerHTML, 10);
+		});
+
+		if (song_ids.length === 0) {
+			return;
+		} else {
+			for (i = 0; i < song_ids.length; i += 1) {
+				tmp = $('#song-' + song_ids[i] + ' .title').text();
+				if (name === undefined || tmp === name) {
+					name = tmp;
+				} else {
+					$('#edit-song-name').addClass('dialog-text-multiple');
+					$('#edit-song-warning').show();
+					name = '';
+				}
+
+				tmp = $('#song-' + song_ids[i] + ' .position').text();
+				if (pos === undefined || tmp === pos) {
+					pos = tmp;
+				} else {
+					$('#edit-song-position').addClass('dialog-text-multiple');
+					$('#edit-song-warning').show();
+					pos = '';
+				}
+
+				tmp = $('#song-' + song_ids[i] + ' .disc').text();
+				if (disc === undefined || tmp === disc) {
+					disc = tmp;
+				} else {
+					$('#edit-song-disc').addClass('dialog-text-multiple');
+					$('#edit-song-warning').show();
+					disc = '';
+				}
+
+			}
+		}
+		artist = $('#album-artist-name').text();
+		album = $('#album-name').text();
+
+		$('#edit-song-name').val(name);
+		$('#edit-song-artist').val(artist);
+		$('#edit-song-album').val(album);
+		$('#edit-song-position').val(pos);
+		$('#edit-song-disc').val(disc);
+
+		wsl.showDialog('edit-song-dialog');
+		wsl.hideDialog = wsl.cancelEditSong;
+	};
+
+	wsl.editSong = function () {
+		var song_ids = [], name, artist, album, pos, disc;
+
+		$('.selected .song-id').each(function (index) {
+			song_ids[index] = parseInt(this.innerHTML, 10);
+		});
+
+		name = $('#edit-song-name').val() || '';
+		album = $('#edit-song-album').val() || '';
+		artist = $('#edit-song-artist').val() || '';
+		pos = $('#edit-song-position').val() || 0;
+		disc = $('#edit-song-disc').val() || 0;
+
+		wsl.lockUI();
+		$.ajax({
+			url : 'wissl/edit/song',
+			headers : {
+				'sessionId' : wsl.sessionId
+			},
+			dataType : 'json',
+			type : 'POST',
+			data : {
+				song_ids : song_ids,
+				song_title : name,
+				artist_name : artist,
+				album_name : album,
+				position : pos,
+				disc_no : disc
+			},
+			success : function (data) {
+				var scroll = Math.max($('body').scrollTop(), $('html').scrollTop());
+				wsl.unlockUI();
+				wsl.cancelEditSong();
+				wsl.clearSelection();
+				wsl.displaySongs($('#album-id').text(), scroll);
+			},
+			error : function (xhr) {
+				wsl.ajaxError("Failed to edit artist", xhr);
+				wsl.unlockUI();
+				wsl.cancelEditArtist();
+				wsl.clearSelection();
+			}
+		});
+	};
+
+	wsl.cancelEditSong = function () {
+		$('#dialog-mask').hide();
+		$('#edit-song-dialog').hide();
+		$('#edit-song-warning').hide();
+		$('.dialog-text-multiple').each(function () {
+			$(this).removeClass(' dialog-text-multiple');
+		});
+	};
 }(wsl));
