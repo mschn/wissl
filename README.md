@@ -31,6 +31,13 @@ Screenshot
 
 ![screenshot](https://raw.github.com/mschn/wissl/master/screen.jpg)
 
+Development
+-----------
+
+You can easily import the sources into eclipse using `Import existing maven project`.
+The maven setup allows starting Wissl in an embedded Jetty container using the command: `mvn jetty:run`.
+Static resources such as CSS and JS files can then be edited while this Jetty server is running.
+
 Libraries used
 --------------
 
