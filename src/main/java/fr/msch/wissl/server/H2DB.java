@@ -1469,30 +1469,39 @@ final class H2DB extends DB {
 	}
 
 	@Override
-	public Song getSong(int song_id) throws SQLException {
+	public List<Song> getSongs(int[] song_ids) throws SQLException {
 		Connection conn = getConnection();
 		PreparedStatement st = null;
-		Song ret = new Song();
+		List<Song> ret = new ArrayList<Song>();
 
 		try {
+			String ids = "";
+			for (int i = 0; i < song_ids.length; i++) {
+				ids += '?';
+				if (i < song_ids.length - 1)
+					ids += ',';
+			}
 			st = conn.prepareStatement("SELECT * "
-					+ "FROM song WHERE song_id=?");
-			st.setInt(1, song_id);
+					+ "FROM song WHERE song_id IN (" + ids + ")");
+			for (int i = 0; i < song_ids.length; i++) {
+				st.setInt(i + 1, song_ids[i]);
+			}
 			ResultSet rs = st.executeQuery();
 
-			if (rs.next()) {
-				ret.id = rs.getInt("song_id");
-				ret.album_id = rs.getInt("album_id");
-				ret.album_name = rs.getString("album_name");
-				ret.artist_id = rs.getInt("artist_id");
-				ret.artist_name = rs.getString("artist_name");
-				ret.title = rs.getString("title");
-				ret.position = rs.getInt("position");
-				ret.disc_no = rs.getInt("disc_no");
-				ret.duration = rs.getInt("duration");
-				ret.format = rs.getString("format");
-			} else {
-				return null;
+			while (rs.next()) {
+				Song s = new Song();
+				s.id = rs.getInt("song_id");
+				s.album_id = rs.getInt("album_id");
+				s.album_name = rs.getString("album_name");
+				s.artist_id = rs.getInt("artist_id");
+				s.artist_name = rs.getString("artist_name");
+				s.title = rs.getString("title");
+				s.position = rs.getInt("position");
+				s.disc_no = rs.getInt("disc_no");
+				s.duration = rs.getInt("duration");
+				s.format = rs.getString("format");
+				s.filepath = rs.getString("filepath");
+				ret.add(s);
 			}
 		} finally {
 			if (st != null)
@@ -1501,6 +1510,16 @@ final class H2DB extends DB {
 				conn.close();
 		}
 		return ret;
+	}
+
+	@Override
+	public Song getSong(int song_id) throws SQLException {
+		List<Song> songs = getSongs(new int[] { song_id });
+		if (songs.isEmpty()) {
+			return null;
+		} else {
+			return songs.get(0);
+		}
 	}
 
 	@Override
@@ -2289,12 +2308,25 @@ final class H2DB extends DB {
 	public void editSong(int[] song_ids, String song_title, int position,
 			int disc_no, String album_name, String artist_name)
 			throws SQLException {
+
+		List<Song> songs = getSongs(song_ids);
+		int unique_album_id = songs.get(0).album_id;
+		for (Song s : songs) {
+			if (unique_album_id != s.album_id) {
+				unique_album_id = -1;
+				break;
+			}
+		}
+		Album unique_album = null;
+		if (unique_album_id != -1) {
+			unique_album = getAlbum(unique_album_id);
+		}
+
 		Connection conn = getConnection();
 		conn.setAutoCommit(false);
 		PreparedStatement st = null;
 
 		try {
-
 			String ids = "";
 			for (int i = 0; i < song_ids.length; i++) {
 				ids += '?';
@@ -2343,10 +2375,16 @@ final class H2DB extends DB {
 					}
 				}
 				if (album_id == -1) {
-					Album ar = new Album();
-					ar.name = album_name;
-					ar.artist_name = artist_name;
-					album_id = insertAlbum(ar, artist_id);
+					Album al = new Album();
+					al.name = album_name;
+					al.artist_name = artist_name;
+					if (unique_album != null) {
+						al.genre = unique_album.genre;
+						al.date = unique_album.date;
+						al.artwork_id = unique_album.artwork_id;
+						al.artwork_path = unique_album.artwork_path;
+					}
+					album_id = insertAlbum(al, artist_id);
 				}
 
 				st = conn.prepareStatement("UPDATE song SET " + //

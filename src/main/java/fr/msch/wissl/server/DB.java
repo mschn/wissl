@@ -289,11 +289,18 @@ abstract class DB {
 	public abstract List<Song> getRandomSongs(int num) throws SQLException;
 
 	/**
-	 * @param song_id valud value for song.song_id in DB
+	 * @param song_id value for song.song_id in DB
 	 * @return the matching song, or null
 	 * @throws SQLException
 	 */
 	public abstract Song getSong(int song_id) throws SQLException;
+
+	/**
+	 * @param song_ids value for song.song_id in DB
+	 * @return the matching songs, or an empty list
+	 * @throws SQLException
+	 */
+	public abstract List<Song> getSongs(int[] song_ids) throws SQLException;
 
 	/**
 	 * @param album_id unique album id in DB
