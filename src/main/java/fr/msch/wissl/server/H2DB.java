@@ -2309,18 +2309,8 @@ final class H2DB extends DB {
 			int disc_no, String album_name, String artist_name)
 			throws SQLException {
 
-		List<Song> songs = getSongs(song_ids);
-		int unique_album_id = songs.get(0).album_id;
-		for (Song s : songs) {
-			if (unique_album_id != s.album_id) {
-				unique_album_id = -1;
-				break;
-			}
-		}
-		Album unique_album = null;
-		if (unique_album_id != -1) {
-			unique_album = getAlbum(unique_album_id);
-		}
+		Song song = getSong(song_ids[0]);
+		Album original_album = getAlbum(song.album_id);
 
 		Connection conn = getConnection();
 		conn.setAutoCommit(false);
@@ -2335,6 +2325,7 @@ final class H2DB extends DB {
 			}
 
 			int artist_id = -1;
+			boolean newartist = false;
 			if (artist_name != null && artist_name.length() > 0) {
 				st = conn.prepareStatement("SELECT artist_id FROM artist "
 						+ "WHERE artist_name=?");
@@ -2344,6 +2335,7 @@ final class H2DB extends DB {
 					artist_id = rs.getInt("artist_id");
 				}
 				if (artist_id == -1) {
+					newartist = true;
 					Artist ar = new Artist();
 					ar.name = artist_name;
 					artist_id = insertArtist(ar);
@@ -2360,8 +2352,9 @@ final class H2DB extends DB {
 				st.executeUpdate();
 			}
 
+			boolean newalbum = false;
+			int album_id = -1;
 			if (album_name != null && album_name.length() > 0) {
-				int album_id = -1;
 				st = conn
 						.prepareStatement("SELECT album_id,artist_id,artist_name"
 								+ " FROM album WHERE album_name=?");
@@ -2375,15 +2368,14 @@ final class H2DB extends DB {
 					}
 				}
 				if (album_id == -1) {
+					newalbum = true;
 					Album al = new Album();
 					al.name = album_name;
 					al.artist_name = artist_name;
-					if (unique_album != null) {
-						al.genre = unique_album.genre;
-						al.date = unique_album.date;
-						al.artwork_id = unique_album.artwork_id;
-						al.artwork_path = unique_album.artwork_path;
-					}
+					al.genre = original_album.genre;
+					al.date = original_album.date;
+					al.artwork_id = original_album.artwork_id;
+					al.artwork_path = original_album.artwork_path;
 					album_id = insertAlbum(al, artist_id);
 				}
 
@@ -2396,6 +2388,18 @@ final class H2DB extends DB {
 					st.setInt(i + 3, song_ids[i]);
 				}
 				st.executeUpdate();
+			}
+
+			if (newartist) {
+				if (album_name == null || album_name.isEmpty() || !newalbum) {
+					st = conn.prepareStatement("UPDATE album SET " + //
+							"artist_name=?, artist_id=? " + //
+							"WHERE album_id=?");
+					st.setString(1, artist_name);
+					st.setInt(2, artist_id);
+					st.setInt(3, album_id);
+					st.executeUpdate();
+				}
 			}
 
 			ids = "";

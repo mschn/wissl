@@ -1291,6 +1291,15 @@ public final class REST {
 			throw new NotFoundException("No song found ");
 		}
 
+		List<Song> songs = DB.get().getSongs(song_ids);
+		int album_id = songs.get(0).album_id;
+		for (Song song : songs) {
+			if (album_id != song.album_id) {
+				throw new IllegalArgumentException(
+						"All edited songs should belong to the same album.");
+			}
+		}
+
 		Library.editSong(files, song_title, position, disc_no, album_name,
 				artist_name, 0, null);
 		DB.get().editSong(song_ids, song_title, position, disc_no, album_name,
