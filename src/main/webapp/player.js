@@ -37,6 +37,37 @@ var player = {};
 
 	player.muted = false;
 
+	player.init = function (useHtml) {
+		var reboot = player.hasSound;
+
+		if (reboot) {
+			player.stop();
+		}
+
+		soundManager.setup({
+			url : "static/soundmanager-swf",
+			flashVersion : 9,
+			preferFlash : true,
+
+			useHTML5Audio : useHtml,
+			debugMode : true,
+			consoleOnly : true,
+
+			onready : function () {
+				'use strict';
+				player.hasSound = true;
+			},
+			ontimeout : function () {
+				'use strict';
+				wsl.errorPopup("Failed to start soundmanager2");
+			}
+		});
+
+		if (reboot) {
+			soundManager.reboot();
+		}
+	};
+
 	player.play = function (playing) {
 		if (!playing) {
 			return;
@@ -111,7 +142,7 @@ var player = {};
 				}
 
 				if (!player.hasSound) {
-					wsl.error("Cannot play " + song.title + ": no sound");
+					wsl.errorPopup("Cannot play " + song.title + ": no sound");
 					return;
 				}
 				if (player.nextSound === null) {
@@ -407,18 +438,4 @@ var player = {};
 
 }(player));
 
-soundManager.setup({
-	url : "static/soundmanager-swf",
-	flashVersion : 9,
-	preferFlash : true,
-	useHTML5Audio : false,
-
-	onready : function () {
-		'use strict';
-		player.hasSound = true;
-	},
-	ontimeout : function () {
-		'use strict';
-		wsl.error("Failed to start soundmanager2");
-	}
-});
+player.init(true);
