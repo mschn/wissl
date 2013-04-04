@@ -461,6 +461,7 @@ span#next {
 	height: 100%;
 	z-index: 350;
 	background: #bbc0c7;
+	border-right: 1px solid #aaa;
 }
 
 #navbar a {
@@ -468,10 +469,11 @@ span#next {
 	display: block;
 	padding: 5px 22px;
 	margin: 0;
-	font-size: 1.1em;
+	font-size: 1.4em;
+	font-weight: bold;
 	text-decoration: none;
-	color: #000;
-	text-shadow: 1px 1px 1px white;
+	color: #627287;
+	text-shadow: 1px 1px 1px #eee;
 }
 
 .navbar-playing {
