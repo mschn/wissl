@@ -342,10 +342,18 @@ public class TestEdition extends TServer {
 			}
 		}
 
-		// move songs 'Four' and 'Fourteen' to album 'chaleur tournante' by 'bosch'
+		// move songs 'Four' to album 'chaleur tournante' by 'bosch'
 		post = new PostMethod(URL + "edit/song");
 		post.addRequestHeader("sessionId", admin_sessionId);
 		post.addParameter("song_ids[]", "" + id_4);
+		post.addParameter("album_name", "chaleur tournante");
+		post.addParameter("artist_name", "bosch");
+		client.executeMethod(post);
+		assertEquals(204, post.getStatusCode());
+		
+		// move songs 'Fourteen' to album 'chaleur tournante' by 'bosch'
+		post = new PostMethod(URL + "edit/song");
+		post.addRequestHeader("sessionId", admin_sessionId);
 		post.addParameter("song_ids[]", "" + id_14);
 		post.addParameter("album_name", "chaleur tournante");
 		post.addParameter("artist_name", "bosch");
