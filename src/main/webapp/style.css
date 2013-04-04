@@ -1583,3 +1583,7 @@ span.users-connected {
 	padding: 0;
 	margin: 0;
 }
+
+#error {
+	margin-left: 5px;
+}

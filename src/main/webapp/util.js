@@ -58,8 +58,9 @@ var wsl = wsl || {};
 	};
 
 	wsl.ajaxError = function (message, xhr, errorElementId) {
-		var errorMsg, status, e = null;
+		var errorMsg, status, e = null, formattedMsg;
 		errorMsg = message;
+
 		status = xhr.status;
 		try {
 			e = $.parseJSON(xhr.responseText);
@@ -69,41 +70,40 @@ var wsl = wsl || {};
 
 		console.log(xhr, xhr.responseText, status);
 		if (e) {
-			errorMsg = "<em>Error " + status + "</em> ";
-			errorMsg += message + ": " + e.message;
+			formattedMsg = "<em>Error " + status + "</em> ";
+			formattedMsg += message + ": " + e.message;
 		} else {
-			errorMsg = "<em>Could not connect to server</em>";
+			formattedMsg = "<em>Could not connect to server</em>";
 		}
-		if (status === 0 || status === 401 || status === 503) {
+
+		if (wsl.loggedIn === false || status === 0 || status === 401 || status === 503) {
 			if (errorElementId) {
-				$('#' + errorElementId).html(errorMsg).show();
+				$('#' + errorElementId).html(formattedMsg).show();
 			} else {
-				wsl.fatalError(errorMsg);
+				wsl.fatalError(formattedMsg);
 			}
 		} else {
 			if (errorElementId) {
-				$('#' + errorElementId).html(errorMsg).show();
+				$('#' + errorElementId).html(formattedMsg).show();
 			} else {
-				wsl.error(errorMsg);
-				if (wsl.pageLoaded === false) {
-					wsl.displayHome();
-				}
+				wsl.displayError(status, errorMsg, e);
 			}
 		}
 	};
 
-	wsl.error = function (message) {
-		wsl.unlockUI();
+	wsl.errorPopup = function (message) {
 		$("#error-dialog-message").html(message);
 		wsl.showDialog('error-dialog');
 		$('#error-dialog-ok').focus();
 	};
 
 	wsl.fatalError = function (message) {
+		debugger;
 		player.stop();
 		wsl.sessionId = null;
 		wsl.userId = null;
 		wsl.admin = false;
+		wsl.loggedIn = false;
 
 		localStorage.removeItem('sessionId');
 		localStorage.removeItem('userId');

@@ -186,7 +186,7 @@ var wsl = wsl || {};
 				wsl.unlockUI();
 			},
 			error : function (xhr, textStatus, errorThrown) {
-				wsl.ajaxError("Failed to get albums for " + id, xhr);
+				wsl.ajaxError("Failed to display albums", xhr);
 				wsl.unlockUI();
 			}
 		});
@@ -272,7 +272,7 @@ var wsl = wsl || {};
 				wsl.unlockUI();
 			},
 			error : function (xhr) {
-				wsl.ajaxError("Failed to get songs for " + id, xhr);
+				wsl.ajaxError("Failed to display songs", xhr);
 				wsl.unlockUI();
 			}
 		});

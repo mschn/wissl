@@ -25,17 +25,13 @@ var wsl = wsl || {};
 	wsl.userId = null;
 	// session id used for all ajax requests
 	wsl.sessionId = null;
+	wsl.loggedIn = false;
 	// true if logged user is administrator
 	wsl.admin = false;
 	// number of currently selected elements
 	wsl.selCount = 0;
 	// used by the admin page to reload the indexer status
 	wsl.indexerStatusInterval = null;
-
-	// true when a page has already been loaded and displayed
-	// allows checking if the client directly opened this URL
-	// or followed a link here
-	wsl.pageLoaded = false;
 
 	// true when a callback is running and UI should be blocked
 	wsl.uiLock = false;
@@ -64,6 +60,7 @@ var wsl = wsl || {};
 				wsl.sessionId = session.sessionId;
 				wsl.userId = uid;
 				wsl.admin = (auth === 1);
+				wsl.loggedIn = true;
 
 				localStorage.setItem('sessionId', session.sessionId);
 				localStorage.setItem('userId', uid);
@@ -92,6 +89,7 @@ var wsl = wsl || {};
 			wsl.sessionId = null;
 			wsl.userId = null;
 			wsl.admin = false;
+			wsl.loggedIn = false;
 
 			wsl.lockUI();
 			$.ajax({
@@ -302,7 +300,7 @@ var wsl = wsl || {};
 	wsl.showContent = function (content) {
 		var pages, i, page;
 
-		pages = [ 'home', 'search', 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about' ];
+		pages = [ 'home', 'search', 'artists', 'library', 'users', 'user', 'settings', 'admin', 'about', 'error' ];
 
 		for (i = 0; i < pages.length; i += 1) {
 			page = pages[i];
@@ -494,6 +492,26 @@ var wsl = wsl || {};
 		});
 	};
 
+	wsl.displayError = function (status, message, trace) {
+		wsl.lockUI();
+		var content = '<h1>Error ' + status + '</h1>';
+		content += '<p>' + message;
+
+		if (trace) {
+			content += '<br>';
+			content += trace.class + ': ' + trace.message;
+		}
+		content += '<p>';
+
+		wsl.showContent({
+			error : content
+		});
+		wsl.refreshNavbar({
+			error : true
+		});
+		wsl.unlockUI();
+	};
+
 	wsl.displayAbout = function (scroll) {
 		wsl.lockUI();
 		$.ajax({
@@ -546,7 +564,6 @@ var wsl = wsl || {};
 			scroll : Math.max($('body').scrollTop(), $('html').scrollTop())
 		}, '', History.getState().url);
 
-		wsl.pageLoaded = true;
 		History.pushState(null, '', hash);
 	};
 
@@ -555,6 +572,7 @@ var wsl = wsl || {};
 		sid = localStorage.getItem('sessionId');
 		if (sid) {
 			wsl.sessionId = sid;
+			wsl.loggedIn = true;
 		}
 		uid = parseInt(localStorage.getItem('userId'), 10);
 		if (uid) {
@@ -594,7 +612,7 @@ var wsl = wsl || {};
 
 		hist = window.History;
 		if (!hist.enabled) {
-			wsl.error('No history support. What browser is this?');
+			wsl.displayError(418, 'No history support. I giver up.');
 			return false;
 		}
 
@@ -652,8 +670,7 @@ var wsl = wsl || {};
 			} else if (hash === '?') {
 				wsl.displayHome();
 			} else {
-				wsl.error("Page not found: ?" + hash);
-				hist.replaceState(null, '', '?');
+				wsl.displayError(404, "Page not found: ?" + hash);
 			}
 		} else {
 			wsl.displayHome();
