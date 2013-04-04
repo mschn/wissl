@@ -98,7 +98,6 @@ var wsl = wsl || {};
 	};
 
 	wsl.fatalError = function (message) {
-		debugger;
 		player.stop();
 		wsl.sessionId = null;
 		wsl.userId = null;

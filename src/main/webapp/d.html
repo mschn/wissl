@@ -119,24 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div id="library-drag-selection"></div>
 
 	<div id="dialog-mask">
-		<div class="dialog" id="playlist-create-dialog">
-			<form method="post" onsubmit='wsl.createPlaylist();return false'>
-				<h2>Create playlist</h2>
-				<fieldset>
-					<p>
-						<label for="playlist-name">Name</label> <input
-							class="dialog-text-input" type="text" name="playlist-name"
-							placeholder="New playlist" id="playlist-name" required="required" />
-					</p>
-					<p class="dialog-buttons">
-						<input id="playlist-create" class='button button-ok' type="submit"
-							value="Create" /> <input id="playlist-cancel"
-							class='button button-cancel' type='button' value='Cancel'
-							onclick='wsl.cancelCreatePlaylist()' />
-					</p>
-				</fieldset>
-			</form>
-		</div>
+
 		<div class="dialog" id="add-to-playlist-dialog">
 			<form method="post" onsubmit='wsl.addToPlaylist();return false'
 				name='add-to-playlist-form'>

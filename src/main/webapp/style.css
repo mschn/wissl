@@ -544,48 +544,43 @@ span#next {
 	padding-left: 40px;
 }
 
-#navbar .context-action {
-	padding-left: 20px;
+#context-action {
+	display: none;
 }
 
 .navbar-new-playlist {
-	background: 8px 8px no-repeat url('img/new-playlist_16.png');
+	background: 2px 8px no-repeat url('img/new-playlist_16.png');
 }
 
 .navbar-delete-playlist {
-	background: 8px 8px no-repeat url('img/remove_16.png');
+	background: 2px 8px no-repeat url('img/remove_16.png');
 }
 
 .navbar-delete-songs-playlist {
-	background: 8px 8px no-repeat url('img/remove_16.png');
+	background: 2px 8px no-repeat url('img/remove_16.png');
 }
 
 .navbar-add-songs {
-	background: 8px 8px no-repeat url('img/add_16.png');
+	background: 2px 8px no-repeat url('img/add_16.png');
 }
 
 .navbar-select-all {
-	background: 8px 8px no-repeat url('img/select-all_16.png');
+	background: 2px 8px no-repeat url('img/select-all_16.png');
 }
 
 .navbar-cancel-select {
-	background: 8px 8px no-repeat url('img/clear_16.png');
+	background: 2px 8px no-repeat url('img/clear_16.png');
 }
 
 .navbar-play {
-	background: 8px 8px no-repeat url('img/play_16.png')
+	background: 2px 8px no-repeat url('img/play_16.png')
 }
 
 .navbar-edit {
-	background: 8px 8px no-repeat url('img/edit_16.png')
+	background: 2px 8px no-repeat url('img/edit_16.png')
 }
 
-#navbar .context-action a {
-	display: inline-table;
-	width: 32px;
-	height: 32px;
-	padding: 0px;
-	margin: 0;
+#context-action a {
 }
 
 #navbar .selection-disabled {

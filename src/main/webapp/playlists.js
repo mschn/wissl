@@ -285,12 +285,6 @@ var wsl = wsl || {};
 		wsl.clearSelection();
 	};
 
-	wsl.showCreatePlaylist = function () {
-		wsl.showDialog('playlist-create-dialog');
-		$('#playlist-name').focus();
-		wsl.hideDialog = wsl.cancelCreatePlaylist;
-	};
-
 	wsl.createPlaylist = function (name) {
 		var playlistName = $('#playlist-name').val();
 

@@ -180,13 +180,12 @@ var wsl = wsl || {};
 		if (arg.search) {
 			clazz = 'navbar-search indent selected-nav';
 			navbar += '<a class="' + clazz + '">Search</a>';
-			navbar += '<div class="context-action">';
-			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all albums'></a>";
-			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
-			navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
-			navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+			navbar += '<div id="context-action">';
+			navbar += "<a class='navbar-select-all' onclick='wsl.selectAll()'>Select all</a>";
+			navbar += "<a class='navbar-cancel-select selection-disabled' onclick='wsl.clearSelection()'>Cancel selection</a>";
+			navbar += "<a class='navbar-add-songs selection-disabled' onclick='wsl.showAddToPlaylist()'>Add selected to playlist</a>";
+			navbar += "<a class='navbar-play selection-disabled' onclick='wsl.playNow()'>Play now</a>";
 			navbar += '</div>';
-
 		}
 
 		clazz = (arg.artists ? 'selected-nav ' : '') + 'navbar-artists';
@@ -202,13 +201,13 @@ var wsl = wsl || {};
 			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?albums/' + arg.artist.id + '\')">';
 			navbar += name + "</a>";
 			if (!arg.album) {
-				navbar += "<div class='context-action'>";
-				navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all albums'></a>";
-				navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
-				navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
-				navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+				navbar += "<div id='context-action'>";
+				navbar += "<a class='navbar-select-all' onclick='wsl.selectAll()'>Select all albums</a>";
+				navbar += "<a class='navbar-cancel-select selection-disabled' onclick='wsl.clearSelection()'>Cancel selection</a>";
+				navbar += "<a class='navbar-add-songs selection-disabled' onclick='wsl.showAddToPlaylist()'>Add selected songs to playlist</a>";
+				navbar += "<a class='navbar-play selection-disabled' onclick='wsl.playNow()'>Play now</a>";
 				if (wsl.admin === true) {
-					navbar += "<a class='navbar-edit context-action selection-disabled' onclick='wsl.showEditAlbum()' title='Edit album'></a>";
+					navbar += "<a class='navbar-edit selection-disabled' onclick='wsl.showEditAlbum()'>Edit album</a>";
 				}
 				navbar += "</div>";
 			}
@@ -223,13 +222,13 @@ var wsl = wsl || {};
 			}
 			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?songs/' + arg.album.id + '\')">';
 			navbar += name + "</a>";
-			navbar += "<div class='context-action'>";
-			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all songs'></a>";
-			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
-			navbar += "<a class='navbar-add-songs context-action selection-disabled' onclick='wsl.showAddToPlaylist()' title='Add selected songs to playlist'></a>";
-			navbar += "<a class='navbar-play context-action selection-disabled' onclick='wsl.playNow()' title='Play now'></a>";
+			navbar += "<div id='context-action'>";
+			navbar += "<a class='navbar-select-all' onclick='wsl.selectAll()'>Select all songs</a>";
+			navbar += "<a class='navbar-cancel-select selection-disabled' onclick='wsl.clearSelection()'>Cancel selection</a>";
+			navbar += "<a class='navbar-add-songs selection-disabled' onclick='wsl.showAddToPlaylist()'>Add selected songs to playlist</a>";
+			navbar += "<a class='navbar-play selection-disabled' onclick='wsl.playNow()'>Play now</a>";
 			if (wsl.admin === true) {
-				navbar += "<a class='navbar-edit context-action selection-disabled' onclick='wsl.showEditSong()' title='Edit song'></a>";
+				navbar += "<a class='navbar-edit selection-disabled' onclick='wsl.showEditSong()'>Edit song</a>";
 			}
 			navbar += "</div>";
 		}
@@ -237,9 +236,8 @@ var wsl = wsl || {};
 		clazz = (arg.playlists ? 'selected-nav ' : '') + 'navbar-playlists';
 		navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlists/\')">Playlists</a>';
 		if (arg.playlists) {
-			navbar += '<div class="context-action">';
-			navbar += '<a class="navbar-new-playlist" onclick="wsl.showCreatePlaylist()" title="Create a new playlist"></a>';
-			navbar += "<a class='selection-disabled navbar-delete-playlist' onclick='wsl.deletePlaylist()' title='Delete selected playlists'></a>";
+			navbar += '<div id="context-action">';
+			navbar += "<a class='selection-disabled navbar-delete-playlist' onclick='wsl.deletePlaylist()'>Delete selected playlists</a>";
 			navbar += "</div>";
 		}
 
@@ -248,11 +246,11 @@ var wsl = wsl || {};
 			navbar += '<a class="' + clazz + '" onclick="wsl.load(\'?playlist/' + arg.playlist.id + '\')">';
 			navbar += arg.playlist.name + "</a>";
 
-			navbar += "<div class='context-action'>";
+			navbar += "<div id='context-action'>";
 			cb = "onclick='wsl.deleteSelectedSongs(" + arg.playlist.id + ")'";
-			navbar += "<a class='navbar-select-all context-action' onclick='wsl.selectAll()' title='Select all songs'></a>";
-			navbar += "<a class='navbar-cancel-select context-action selection-disabled' onclick='wsl.clearSelection()' title='Cancel selection'></a>";
-			navbar += "<a class='selection-disabled context-action navbar-delete-songs-playlist' " + cb + " title='Remove selected songs from playlist'></a>";
+			navbar += "<a class='navbar-select-all' onclick='wsl.selectAll()'>Select all songs</a>";
+			navbar += "<a class='navbar-cancel-select selection-disabled' onclick='wsl.clearSelection()'>Cancel selection</a>";
+			navbar += "<a class='selection-disabled navbar-delete-songs-playlist' " + cb + ">Remove selected songs from playlist</a>";
 			navbar += "</div>";
 		}
 
@@ -401,13 +399,18 @@ var wsl = wsl || {};
 	};
 
 	wsl.select = function (e) {
+		var el = $(e);
+		if (el.hasClass('selected')) {
+			return;
+		}
 		wsl.selCount += 1;
-		$(e).addClass('selected');
-		$(e).find('.select-box').addClass('select-box-checked');
+		el.addClass('selected');
+		el.find('.select-box').addClass('select-box-checked');
 
 		if (wsl.selCount === 1) {
 			$('.selection-disabled').removeClass('selection-disabled').addClass('selection-enabled');
 		}
+		wsl.selectionChanged();
 	};
 
 	wsl.deselect = function (e) {
@@ -418,6 +421,7 @@ var wsl = wsl || {};
 		if (wsl.selCount === 0) {
 			$('.selection-enabled').removeClass('selection-enabled').addClass('selection-disabled');
 		}
+		wsl.selectionChanged();
 	};
 
 	wsl.toggleSelection = function (e) {
@@ -426,7 +430,22 @@ var wsl = wsl || {};
 		} else {
 			wsl.select(e);
 		}
+		wsl.selectionChanged();
 	};
+
+	wsl.selectionChanged = function () {
+		if (wsl.selCount === 0) {
+			$('#context-action').hide();
+			$('#navbar>a').each(function () {
+				$(this).show();
+			});
+		} else {
+			$('#navbar>a').each(function () {
+				$(this).hide();
+			});
+			$('#context-action').show();
+		}
+	}
 
 	wsl.playNow = function () {
 		var song_ids = [], album_ids = [];
