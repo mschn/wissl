@@ -46,7 +46,7 @@ body {
 }
 
 #uilock p {
-	top: 10%;
+	top: 10px;
 	left: 50%;
 	text-align: right;
 	position: fixed;
@@ -59,11 +59,10 @@ body {
 	text-shadow: 0px 1px 2px white;
 	padding: 5px 10px 5px 35px;
 	background: 5px 5px no-repeat url('img/loading_16.gif');
-	border-radius: 3px;
 	color: #777;
 	background-color: #ddd;
 	border: 1px solid #999;
-	box-shadow: 0px 1px 6px 2px #aaa;
+	box-shadow: 0px 1px 3px 1px rgba(0,0,0,.3);
 }
 
 .login {
