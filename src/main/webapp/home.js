@@ -115,83 +115,103 @@ var wsl = wsl || {};
 				content += 'value="Search"/>';
 				content += '</form>';
 
-				content += '<div id="search-results">';
-
-				content += '<span id="search-results-tab-songs"';
-				content += 'onclick="wsl.showSearchResult({songs:true});" ';
-				content += 'class="search-result-tab">Songs (' + songs.length + ')</span>';
-
-				content += '<span id="search-results-tab-albums" ';
-				content += 'onclick="wsl.showSearchResult({albums:true});" ';
-				content += 'class="search-result-tab">Albums (' + albums.length + ')</span>';
-
-				content += '<span id="search-results-tab-artists" ';
-				content += 'onclick="wsl.showSearchResult({artists:true});" ';
-				content += 'class="search-result-tab">Artists (' + artists.length + ')</span>';
-
-				if (artists) {
-					content += '<ul id="search-results-artists">';
-					for (i = 0; i < artists.length; i += 1) {
-						link = 'onclick="wsl.load(\'?albums/' + artists[i].id + '\')"';
-						claz = (i % 2 === 0 ? '' : 'odd');
-						if (player.playing && player.playing.artist_id === artists[i].id) {
-							claz += ' playing';
-						}
-
-						content += '<li id="artist-' + artists[i].id + '" class="' + claz + '">';
-						content += '<span class="artist-name" ' + link + '>' + wsl.highlightSearch(artists[i].name, query) + '</li>';
+				if (artists.length + albums.length + songs.length === 0) {
+					content += '<div id="no-search-results">';
+					content += 'No search results';
+					content += '</div>';
+				} else {
+					if (songs.length > 0) {
+						wsl.searchTab = {
+							songs : true
+						};
+					} else if (albums.length > 0) {
+						wsl.searchTab = {
+							albums : true
+						};
+					} else if (artists.length > 0) {
+						wsl.searchTab = {
+							artists : true
+						};
 					}
-					content += '</ul>';
-				}
-				if (albums) {
-					content += '<ul id="search-results-albums">';
-					for (i = 0; i < albums.length; i += 1) {
-						claz = 'selectable' + (i % 2 ? ' odd' : '');
-						if (player.playing && player.playing.album_id === albums[i].id) {
-							claz += ' playing';
+
+					content += '<div id="search-results">';
+
+					content += '<span id="search-results-tab-songs"';
+					content += 'onclick="wsl.showSearchResult({songs:true});" ';
+					content += 'class="search-result-tab">Songs (' + songs.length + ')</span>';
+
+					content += '<span id="search-results-tab-albums" ';
+					content += 'onclick="wsl.showSearchResult({albums:true});" ';
+					content += 'class="search-result-tab">Albums (' + albums.length + ')</span>';
+
+					content += '<span id="search-results-tab-artists" ';
+					content += 'onclick="wsl.showSearchResult({artists:true});" ';
+					content += 'class="search-result-tab">Artists (' + artists.length + ')</span>';
+
+					if (artists) {
+						content += '<ul id="search-results-artists">';
+						for (i = 0; i < artists.length; i += 1) {
+							link = 'onclick="wsl.load(\'?albums/' + artists[i].id + '\')"';
+							claz = (i % 2 === 0 ? '' : 'odd');
+							if (player.playing && player.playing.artist_id === artists[i].id) {
+								claz += ' playing';
+							}
+
+							content += '<li id="artist-' + artists[i].id + '" class="' + claz + '">';
+							content += '<span class="artist-name" ' + link + '>' + wsl.highlightSearch(artists[i].name, query) + '</li>';
 						}
-						content += '<li id="album-' + albums[i].id + '" class="' + claz + '">';
-
-						cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
-						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
-						content += '<span class="album-id">' + albums[i].id + '</span>';
-						content += '<span class="album-date">' + albums[i].date + '</span>';
-						content += '<span onclick="wsl.load(\'?songs/' + albums[i].id + '\')"';
-						content += 'class="album-name">' + wsl.highlightSearch(albums[i].name, query) + '</span>';
-						content += '<span onclick="wsl.load(\'?albums/' + albums[i].artist + '\')"';
-						content += 'class="album-artist-name">' + albums[i].artist_name + '</span>';
-						content += '<span class="album-songs">' + albums[i].songs + ' songs</span>';
-						content += '<span class="album-playtime">' + wsl.formatSeconds(albums[i].playtime) + '</span>';
-
-						content += '</li>';
+						content += '</ul>';
 					}
-					content += '</ul>';
-				}
-				if (songs) {
-					content += '<ul id="search-results-songs">';
-					for (i = 0; i < songs.length; i += 1) {
-						claz = 'selectable' + (i % 2 ? ' odd' : '');
-						if (player.playing && player.playing.song_id === songs[i].id) {
-							claz += ' playing';
+					if (albums) {
+						content += '<ul id="search-results-albums">';
+						for (i = 0; i < albums.length; i += 1) {
+							claz = 'selectable' + (i % 2 ? ' odd' : '');
+							if (player.playing && player.playing.album_id === albums[i].id) {
+								claz += ' playing';
+							}
+							content += '<li id="album-' + albums[i].id + '" class="' + claz + '">';
+
+							cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
+							content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+							content += '<span class="album-id">' + albums[i].id + '</span>';
+							content += '<span class="album-date">' + albums[i].date + '</span>';
+							content += '<span onclick="wsl.load(\'?songs/' + albums[i].id + '\')"';
+							content += 'class="album-name">' + wsl.highlightSearch(albums[i].name, query) + '</span>';
+							content += '<span onclick="wsl.load(\'?albums/' + albums[i].artist + '\')"';
+							content += 'class="album-artist-name">' + albums[i].artist_name + '</span>';
+							content += '<span class="album-songs">' + albums[i].songs + ' songs</span>';
+							content += '<span class="album-playtime">' + wsl.formatSeconds(albums[i].playtime) + '</span>';
+
+							content += '</li>';
 						}
-						cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
-
-						content += '<li id="song-' + songs[i].id + '" class="' + claz + '">';
-						content += '<span ' + cb + ' class="select-box">&nbsp</span>';
-						content += '<span class="song-id">' + songs[i].id + '</span>';
-						content += '<span onclick="wsl.playAlbum(' + songs[i].album_id + ',' + songs[i].id + ',' + songs[i].position + ')"" ';
-						content += 'class="song-title">' + wsl.highlightSearch(songs[i].title, query) + '</span>';
-						content += '<span onclick="wsl.load(\'?songs/' + songs[i].album_id + '\')" ';
-						content += 'class="song-album">' + songs[i].album_name + '</span>';
-						content += '<span onclick="wsl.load(\'?albums/' + songs[i].artist_id + '\')" ';
-						content += 'class="song-artist">' + songs[i].artist_name + '</span>';
-						content += '<span class="song-duration">' + wsl.formatSeconds(songs[i].duration) + '</span>';
-
-						content += '</li>';
+						content += '</ul>';
 					}
-					content += '</ul>';
+					if (songs) {
+						content += '<ul id="search-results-songs">';
+						for (i = 0; i < songs.length; i += 1) {
+							claz = 'selectable' + (i % 2 ? ' odd' : '');
+							if (player.playing && player.playing.song_id === songs[i].id) {
+								claz += ' playing';
+							}
+							cb = 'onmousedown="wsl.mouseDown(this,event);return false" ';
+
+							content += '<li id="song-' + songs[i].id + '" class="' + claz + '">';
+							content += '<span ' + cb + ' class="select-box">&nbsp</span>';
+							content += '<span class="song-id">' + songs[i].id + '</span>';
+							content += '<span onclick="wsl.playAlbum(' + songs[i].album_id + ',' + songs[i].id + ',' + songs[i].position + ')"" ';
+							content += 'class="song-title">' + wsl.highlightSearch(songs[i].title, query) + '</span>';
+							content += '<span onclick="wsl.load(\'?songs/' + songs[i].album_id + '\')" ';
+							content += 'class="song-album">' + songs[i].album_name + '</span>';
+							content += '<span onclick="wsl.load(\'?albums/' + songs[i].artist_id + '\')" ';
+							content += 'class="song-artist">' + songs[i].artist_name + '</span>';
+							content += '<span class="song-duration">' + wsl.formatSeconds(songs[i].duration) + '</span>';
+
+							content += '</li>';
+						}
+						content += '</ul>';
+					}
+					content += '</div>';
 				}
-				content += '</div>';
 
 				wsl.refreshNavbar({
 					search : true
@@ -213,14 +233,16 @@ var wsl = wsl || {};
 
 	wsl.highlightSearch = function (str, query) {
 		var i, ret;
-		i = str.toLowerCase().indexOf(query);
+		i = str.toLowerCase().indexOf(query.toLowerCase(query));
+		if (i === -1) {
+			return str;
+		}
 
 		ret = str.substring(0, i);
 		ret += '<span class="search-highlight">';
 		ret += str.substring(i, i + query.length);
 		ret += '</span>';
 		ret += str.substring(i + query.length, str.length);
-
 		return ret;
 	};
 
