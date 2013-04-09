@@ -544,7 +544,7 @@ var wsl = wsl || {};
 				content += '<p class="subtitle">Web Interface for Sound Streaming Library</p>';
 
 				content += '<div>';
-				content += '<p>Copyright (c) 2012 Mathieu Schnoor</p>';
+				content += '<p>Copyright (c) 2013 Mathieu Schnoor</p>';
 				content += '<p>Distributed under the terms of the <a target="_blank"';
 				content += 'href="http://www.gnu.org/licenses/gpl.html">GNU GPL v3</a></p>';
 				content += '<p>Website: <a target="_blank" href="http://msch.fr/wissl">http://msch.fr/wissl</a></p>';
