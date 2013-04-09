@@ -41,6 +41,7 @@ Summary
   * [`/song/{song_id}`](#songsong_id)
   * [`/song/{song_id}/stream`](#songsong_idstream)
   * [`/search/{query}`](#searchquery)
+  * [`/recent/{number}`](#recentnumber)
   * [`/art/{album_id}`](#artalbum_id)
   * [`/folders`](#folders)
   * [`/folders/listing`](#folderslisting)
@@ -133,7 +134,9 @@ An artist contains several albums.
       // number of songs
       "songs": INT,
       // playtime for all songs in seconds
-      "playtime": INT
+      "playtime": INT,
+      // time since added in DB in ms
+      "date_added": LONG
     }
 
 ### <a id="album"></a>album
@@ -157,6 +160,8 @@ An album contains several songs, and is contained by one artist.
       "songs": INT,
       // playtime for all songs in seconds
       "playtime": INT,
+      // time since added in DB in ms
+      "date_added": LONG,
       // true if the server has an artwork for this album
       "artwork": BOOL
       // will change if artwork changes, use it for cache control
@@ -636,6 +641,24 @@ and will begin reading at the byte specified by the `range` request header.
 Search for songs, albums and artists with a single string query.
 The search query will be matched against song titles, artist names and album names.
 For example, the query 'bea' will match artist 'The Beatles' and song 'Heartbeat'.
+
+### <a id="recentnumber"></a>`/recent/{number}`
+* method: GET
+* param: `number` number of elements to return
+* ex: `curl -H 'sessionId:UUID' http://localhost/wissl/recent/5
+* returns:<pre>
+    {
+	  "artists": [
+	    ARTIST, ...
+	  ],
+	  "albums": [
+	    ALBUM
+	  ]
+	}
+</pre>
+
+Returns the albums and artists that have been the most recently added into the DB.
+The query parameter sets the maximum number of elements returned for both artists and albums.
 
 ### <a id="artalbum_id"></a>`/art/{album_id}`
 * method: `GET`

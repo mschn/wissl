@@ -38,6 +38,8 @@ final class Album implements JSON {
 	public int songs = 0;
 	/** playtime in seconds */
 	public long playtime = 0;
+	/** timestamp, time added into db */
+	public long date_added = 0;
 	/** artist name */
 	public String artist_name = "";
 	/** DB unique artist id */
@@ -61,6 +63,7 @@ final class Album implements JSON {
 			genre = o.getString("genre");
 			songs = o.getInt("songs");
 			playtime = o.getInt("playtime");
+			date_added = o.getInt("date_added");
 			artist_id = o.getInt("artist");
 			artist_name = o.getString("artist_name");
 			has_art = o.getBoolean("artwork");
@@ -71,6 +74,7 @@ final class Album implements JSON {
 
 	@Override
 	public String toJSON() {
+		long now = System.currentTimeMillis();
 		StringBuilder str = new StringBuilder();
 		boolean hasArt = (artwork_path != null && artwork_path.trim().length() > 0);
 		str.append('{');
@@ -80,6 +84,7 @@ final class Album implements JSON {
 		str.append("\"genre\":" + JSONObject.quote(genre) + ",");
 		str.append("\"songs\":" + songs + ",");
 		str.append("\"playtime\":" + playtime + ",");
+		str.append("\"date_added\":" + (now - date_added) + ",");
 		str.append("\"artist\":" + artist_id + ",");
 		str.append("\"artist_name\":" + JSONObject.quote(artist_name) + ",");
 		str.append("\"artwork\":" + hasArt + ",");

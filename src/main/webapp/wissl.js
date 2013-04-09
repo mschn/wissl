@@ -445,7 +445,7 @@ var wsl = wsl || {};
 			});
 			$('#context-action').show();
 		}
-	}
+	};
 
 	wsl.playNow = function () {
 		var song_ids = [], album_ids = [];

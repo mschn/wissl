@@ -48,26 +48,72 @@ var wsl = wsl || {};
 				content += '</div>';
 
 				if (st) {
-					content += '<p class="home-stats-p">';
-					content += '<span><span>' + st.songs + '</span> songs</span>';
-					content += '<span><span>' + st.albums + '</span> albums</span>';
-					content += '<span><span>' + st.artists + '</span> artists</span>';
-					content += '<span><span>' + st.playlists + '</span> playlist' + (st.playlists > 1 ? 's' : '') + '</span>';
-					content += '<span><span>' + st.users + '</span> user' + (st.users > 1 ? 's' : '') + '</span>';
-					content += '</p><p class="home-stats-p">';
-					content += '<span><span>' + wsl.formatSecondsAlt(st.playtime, 2) + '</span> playtime</span>';
-					content += '<span><span>' + wsl.formatBytes(st.downloaded, 0) + '</span> downloaded</span>';
-					content += '<span><span>' + wsl.formatSecondsAlt(st.uptime / 1000, 2) + '</span> uptime</span>';
-					content += '</p>';
+					content += '<div class="home-section">';
+					content += '<h3>Statistics</h3>';
+					content += '<ul>';
+					content += '<li><span>' + st.songs + '</span> songs</li>';
+					content += '<li><span>' + st.albums + '</span> albums</li>';
+					content += '<li><span>' + st.artists + '</span> artists</li>';
+					content += '<li><span>' + st.playlists + '</span> playlist' + (st.playlists > 1 ? 's' : '') + '</li>';
+					content += '<li><span>' + st.users + '</span> user' + (st.users > 1 ? 's' : '') + '</li>';
+					content += '<li><span>' + wsl.formatSecondsAlt(st.playtime, 2) + '</span> playtime</li>';
+					content += '<li><span>' + wsl.formatBytes(st.downloaded, 0) + '</span> downloaded</li>';
+					content += '<li><span>' + wsl.formatSecondsAlt(st.uptime / 1000, 2) + '</span> uptime</li>';
+					content += '</ul>';
+					content += '</div>';
 				}
 
-				wsl.refreshNavbar({
-					home : true
+				$.ajax({
+					url : 'wissl/recent/6',
+					dataType : 'json',
+					headers : {
+						sessionId : wsl.sessionId
+					},
+					success : function (data) {
+						var albums = data.albums, artists = data.artists, i;
+						if (albums) {
+							content += '<div class="home-section">';
+							content += '<h3>Recent albums</h3>';
+							content += '<ul>';
+							for (i = 0; i < albums.length; i += 1) {
+								var al = albums[i];
+								content += '<li>';
+								content += '<strong>' + al.name + '</strong> by ';
+								content += '<strong>' + al.artist_name + '</strong> ';
+								content += wsl.formatSecondsAlt(al.date_added / 1000, 2) + ' ago' + '</li>';
+							}
+							content += '</ul>';
+							content += '</div>';
+						}
+
+						if (artists) {
+							content += '<div class="home-section">';
+							content += '<h3>Recent artists</h3>';
+							content += '<ul>';
+							for (i = 0; i < artists.length; i += 1) {
+								var ar = artists[i];
+								content += '<li>';
+								content += '<strong>' + ar.name + '</strong> by ';
+								content += wsl.formatSecondsAlt(ar.date_added / 1000, 2) + ' ago' + '</li>';
+							}
+							content += '</ul>';
+							content += '</div>';
+						}
+
+						wsl.refreshNavbar({
+							home : true
+						});
+						wsl.showContent({
+							home : content
+						});
+						wsl.unlockUI();
+					},
+					error : function (xhr, textStatus, errorThrown) {
+						wsl.ajaxError("Failed to get latest albums and artists", xhr);
+						wsl.unlockUI();
+					}
 				});
-				wsl.showContent({
-					home : content
-				});
-				wsl.unlockUI();
+
 			},
 			error : function (xhr, textStatus, errorThrown) {
 				wsl.ajaxError("Failed to get runtime stats", xhr);

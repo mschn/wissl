@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -750,6 +751,42 @@ public final class REST {
 				ret.append(',');
 			}
 		}
+		ret.append("]}");
+
+		nocache();
+		log(sess, t1);
+		return ret.toString();
+	}
+
+	@GET
+	@Path("recent/{number}")
+	public String getRecent(@PathParam("number") int number)
+			throws SQLException, SecurityError {
+		long t1 = System.nanoTime();
+		String sid = (sessionIdHeader == null ? sessionIdGet : sessionIdHeader);
+		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
+
+		List<Album> albums = DB.get().getLatestAlbums(number);
+		List<Artist> artists = new ArrayList<Artist>();//TODO
+
+		StringBuilder ret = new StringBuilder();
+		ret.append("{\"albums\":[");
+		for (Iterator<Album> it = albums.iterator(); it.hasNext();) {
+			Album al = it.next();
+			ret.append(al.toJSON());
+			if (it.hasNext()) {
+				ret.append(',');
+			}
+		}
+		ret.append("],\"artists\":[");
+		for (Iterator<Artist> it = artists.iterator(); it.hasNext();) {
+			Artist al = it.next();
+			ret.append(al.toJSON());
+			if (it.hasNext()) {
+				ret.append(',');
+			}
+		}
+
 		ret.append("]}");
 
 		nocache();
