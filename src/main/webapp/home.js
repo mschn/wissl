@@ -47,58 +47,55 @@ var wsl = wsl || {};
 				content += '</form>';
 				content += '</div>';
 
-				if (st) {
-					content += '<div class="home-section">';
-					content += '<h3>Statistics</h3>';
-					content += '<ul>';
-					content += '<li><span>' + st.songs + '</span> songs</li>';
-					content += '<li><span>' + st.albums + '</span> albums</li>';
-					content += '<li><span>' + st.artists + '</span> artists</li>';
-					content += '<li><span>' + st.playlists + '</span> playlist' + (st.playlists > 1 ? 's' : '') + '</li>';
-					content += '<li><span>' + st.users + '</span> user' + (st.users > 1 ? 's' : '') + '</li>';
-					content += '<li><span>' + wsl.formatSecondsAlt(st.playtime, 2) + '</span> playtime</li>';
-					content += '<li><span>' + wsl.formatBytes(st.downloaded, 0) + '</span> downloaded</li>';
-					content += '<li><span>' + wsl.formatSecondsAlt(st.uptime / 1000, 2) + '</span> uptime</li>';
-					content += '</ul>';
-					content += '</div>';
-				}
+				content += '<div id="home-sections">';
+				content += '<div class="home-section">';
+				content += '<h3>Statistics</h3>';
+				content += '<ul>';
+				content += '<li><span class="left">' + st.songs + '</span><span class="right">songs</span></li>';
+				content += '<li><span class="left">' + st.albums + '</span><span class="right">albums</span></li>';
+				content += '<li><span class="left">' + st.artists + '</span><span class="right">artists</span></li>';
+				content += '<li><span class="left">' + st.playlists + '</span><span class="right">playlist' + (st.playlists > 1 ? 's' : '') + '</span></li>';
+				content += '<li><span class="left">' + st.users + '</span><span class="right">user' + (st.users > 1 ? 's' : '') + '</span></li>';
+				content += '<li><span class="left">' + wsl.formatSecondsAlt(st.playtime, 2) + '</span><span class="right">playtime</span></li>';
+				content += '<li><span class="left">' + wsl.formatBytes(st.downloaded, 0) + '</span><span class="right">downloaded</span></li>';
+				content += '<li><span class="left">' + wsl.formatSecondsAlt(st.uptime / 1000, 2) + '</span><span class="right">uptime</span></li>';
+				content += '</ul>';
+				content += '</div>';
 
 				$.ajax({
-					url : 'wissl/recent/6',
+					url : 'wissl/recent/8',
 					dataType : 'json',
 					headers : {
 						sessionId : wsl.sessionId
 					},
 					success : function (data) {
-						var albums = data.albums, artists = data.artists, i;
-						if (albums) {
-							content += '<div class="home-section">';
-							content += '<h3>Recent albums</h3>';
-							content += '<ul>';
-							for (i = 0; i < albums.length; i += 1) {
-								var al = albums[i];
-								content += '<li>';
-								content += '<strong>' + al.name + '</strong> by ';
-								content += '<strong>' + al.artist_name + '</strong> ';
-								content += wsl.formatSecondsAlt(al.date_added / 1000, 2) + ' ago' + '</li>';
-							}
-							content += '</ul>';
-							content += '</div>';
+						var albums = data.albums, artists = data.artists, i, cb, al, ar;
+						content += '<div class="home-section">';
+						content += '<h3>Recent albums</h3>';
+						content += '<ul>';
+						for (i = 0; i < albums.length; i += 1) {
+							al = albums[i];
+							cb = 'onclick="wsl.load(\'?songs/' + al.id + '\')"';
+							content += '<li>';
+							content += '<span class="name" ' + cb + '>' + al.name + '</span> ';
+							content += '<span class="date">' + wsl.formatSecondsAlt(al.date_added / 1000, 1) + '</span>' + '</li>';
 						}
+						content += '</ul>';
+						content += '</div>';
 
-						if (artists) {
-							content += '<div class="home-section">';
-							content += '<h3>Recent artists</h3>';
-							content += '<ul>';
-							for (i = 0; i < artists.length; i += 1) {
-								var ar = artists[i];
-								content += '<li>';
-								content += '<strong>' + ar.name + '</strong> by ';
-								content += wsl.formatSecondsAlt(ar.date_added / 1000, 2) + ' ago' + '</li>';
-							}
-							content += '</ul>';
-							content += '</div>';
+						content += '<div class="home-section">';
+						content += '<h3>Recent artists</h3>';
+						content += '<ul>';
+						for (i = 0; i < artists.length; i += 1) {
+							ar = artists[i];
+							cb = 'onclick="wsl.load(\'?albums/' + ar.id + '\')"';
+							content += '<li>';
+							content += '<span class="name" ' + cb + '>' + ar.name + '</span> ';
+							content += '<span class="date">' + wsl.formatSecondsAlt(ar.date_added / 1000, 1) + '</span>' + '</li>';
 						}
+						content += '</ul>';
+						content += '</div>';
+						content += '</div>';
 
 						wsl.refreshNavbar({
 							home : true

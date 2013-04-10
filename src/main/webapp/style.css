@@ -139,7 +139,6 @@ body {
 	color: #666;
 	font-size: 1.1em;
 	border: 1px solid #aaa;
-	border-radius: 3px;
 	padding: 5px 20px 5px 35px;
 	cursor: pointer;
 	background-repeat: no-repeat;
@@ -204,7 +203,7 @@ body {
 .button-ok:hover {
 	color: rgb(0, 140, 0);
 	background-color: rgb(200, 240, 200);
-	border: 1px solid rgb(120, 200, 120);
+	border: 1px solid #aaa;
 }
 
 .button-cancel:hover,.button-shutdown:hover {
@@ -472,7 +471,7 @@ span#next {
 	font-weight: bold;
 	text-decoration: none;
 	color: #627287;
-	text-shadow: 1px 1px 1px #eee;
+	text-shadow: 0px 1px 0px #ddd;
 }
 
 .navbar-playing {
@@ -1173,7 +1172,7 @@ span.users-connected {
 }
 
 #user .user-session {
-	border: 1px solid #ccc;
+	border: 2px solid #ccc;
 	background: #fafafa;
 	margin-bottom: 5px;
 }
@@ -1196,7 +1195,7 @@ span.users-connected {
 #user-playlist {
 	padding: 0;
 	margin: 0;
-	border: 1px solid #ccc;
+	border: 2px solid #ccc;
 	background: #fafafa;
 }
 
@@ -1247,7 +1246,7 @@ span.users-connected {
 #admin ul {
 	padding: 0;
 	margin: 0 10px 10px 0;
-	border: 1px solid #ccc;
+	border: 2px solid #ccc;
 	background: #fafafa;
 }
 
@@ -1383,9 +1382,9 @@ span.users-connected {
 }
 
 #search-input {
-	width: 50%;
+	width: 40%;
 	border-radius: 0px;
-	border: 1px solid #aaa;
+	border: 2px solid #bbb;
 	border-right: 0;
 	font-size: 20px;
 	padding: 5px 5px;
@@ -1402,7 +1401,7 @@ span.users-connected {
 	margin: 0;
 	color: transparent;
 	background: 4px 4px no-repeat url("img/search_32.png") #ddd;
-	border: 1px solid #aaa;
+	border: 2px solid #bbb;
 	border-left: 0;
 	position: absolute;
 }
@@ -1429,6 +1428,10 @@ span.users-connected {
 	display: none;
 }
 
+#search-results-tab-songs {
+	margin-left: 5px;
+}
+
 .search-result-tab {
 	display: inline-block;
 	margin: 5px 5px 0 0;
@@ -1436,7 +1439,7 @@ span.users-connected {
 	font-size: 1.1em;
 	color: #999;
 	cursor: pointer;
-	border: 1px solid transparent;
+	border: 2px solid transparent;
 	border-bottom: 0;
 }
 
@@ -1448,7 +1451,7 @@ span.users-connected {
 	color: #444;
 	background: #e0e0e0;
 	font-weight: bold;
-	border: 1px solid #aaa;
+	border: 2px solid #bbb;
 	border-bottom: 0;
 }
 
@@ -1568,6 +1571,72 @@ span.users-connected {
 	color: white;
 	padding: 0;
 	margin: 0;
+}
+
+#home-sections {
+	width: 100%;
+}
+
+.home-section {
+	display: inline-block;
+	width: 33%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	vertical-align: top;
+	height: 100%;
+	padding-left: 10px;
+	font-size: 1.3em;
+}
+
+.home-section h3 {
+	margin: 0;
+	color: #627287;
+}
+
+.home-section ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.home-section li {
+	width: 100%;
+}
+
+.home-section ul span {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	text-overflow: ellipsis;
+}
+
+.home-section .name {
+	width: 75%;
+	cursor: pointer;
+}
+
+.home-section .name:hover {
+	text-decoration: underline;
+}
+
+.home-section .date {
+	width: 20%;
+	color: #888;
+}
+
+.home-section .left {
+	width: 40%;
+	text-align: left;
+}
+
+.home-section .right {
+	width: 40%;
+	text-align: left;
+	color: #888;
 }
 
 #error {
