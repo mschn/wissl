@@ -1,4 +1,4 @@
-/* This file is part of Wissl - Copyright (C) 2012 Mathieu Schnoor
+/* This file is part of Wissl - Copyright (C) 2013 Mathieu Schnoor
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
