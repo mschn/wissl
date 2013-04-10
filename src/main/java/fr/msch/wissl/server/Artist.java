@@ -35,6 +35,8 @@ final class Artist implements JSON {
 	public int songs = 0;
 	/** playtime in seconds */
 	public long playtime = 0;
+	/** timestamp, time added into db */
+	public long date_added = 0;
 
 	public Artist() {
 	}
@@ -47,6 +49,7 @@ final class Artist implements JSON {
 			albums = o.getInt("albums");
 			songs = o.getInt("songs");
 			playtime = o.getLong("playtime");
+			date_added = o.getInt("date_added");
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Invalid JSON", e);
 		}
@@ -54,12 +57,14 @@ final class Artist implements JSON {
 
 	@Override
 	public String toJSON() {
+		long now = System.currentTimeMillis();
 		StringBuilder str = new StringBuilder();
 		str.append('{');
 		str.append("\"id\":" + id + ",");
 		str.append("\"name\":" + JSONObject.quote(name) + ",");
 		str.append("\"albums\":" + albums + ",");
 		str.append("\"songs\":" + songs + ",");
+		str.append("\"date_added\":" + (now - date_added) + ",");
 		str.append("\"playtime\":" + playtime);
 		str.append('}');
 		return str.toString();

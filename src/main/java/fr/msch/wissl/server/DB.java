@@ -260,10 +260,18 @@ abstract class DB {
 
 	/**
 	 * @param number maximum number of albums to return
-	 * @return the latest albums to be added in the DB
+	 * @return the latest albums to have been added in the DB
 	 * @throws SQLException
 	 */
 	public abstract List<Album> getLatestAlbums(int number) throws SQLException;
+
+	/**
+	 * @param number maximum number of albums to return
+	 * @return the latest artists to have been added in the DB
+	 * @throws SQLException
+	 */
+	public abstract List<Artist> getLatestArtists(int number)
+			throws SQLException;
 
 	/**
 	 * @param id id of an album in DB

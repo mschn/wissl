@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -767,7 +766,7 @@ public final class REST {
 		Session sess = Session.check(sid, request.getRemoteAddr(), userAgent);
 
 		List<Album> albums = DB.get().getLatestAlbums(number);
-		List<Artist> artists = new ArrayList<Artist>();//TODO
+		List<Artist> artists = DB.get().getLatestArtists(number);
 
 		StringBuilder ret = new StringBuilder();
 		ret.append("{\"albums\":[");

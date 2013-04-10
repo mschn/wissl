@@ -48,7 +48,7 @@ final class H2DB extends DB {
 	/* This number should be incremented each time the DB Schema changes.
 	 * It is written in the DB so that we decide on startup whether 
 	 * the DB can be recovered or needs to be erased */
-	private static final long SCHEMA_VERSION = 10L;
+	private static final long SCHEMA_VERSION = 11L;
 
 	private static final String driver = "org.h2.Driver";
 	private static final String protocol = "jdbc:h2:";
@@ -182,6 +182,7 @@ final class H2DB extends DB {
 					"artist_id IDENTITY," + //
 					"artist_name VARCHAR(64) NOT NULL," + //
 					"albums INTEGER NOT NULL," + //
+					"date_added BIGINT NOT NULL," + //
 					"songs INTEGER NOT NULL," + //
 					"playtime INTEGER NOT NULL," + //
 					"CONSTRAINT pk_artist PRIMARY KEY (artist_id)" + //
@@ -1173,6 +1174,39 @@ final class H2DB extends DB {
 				a.albums = rs.getInt("albums");
 				a.songs = rs.getInt("songs");
 				a.playtime = rs.getInt("playtime");
+				a.date_added = rs.getLong("date_added");
+				ret.add(a);
+			}
+
+		} finally {
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+		return ret;
+	}
+
+	@Override
+	public List<Artist> getLatestArtists(int number) throws SQLException {
+		Connection conn = getConnection();
+		PreparedStatement st = null;
+		List<Artist> ret = new ArrayList<Artist>();
+
+		try {
+			st = conn.prepareStatement("SELECT * " //
+					+ "FROM artist ORDER BY date_added DESC LIMIT ?");
+			st.setInt(1, number);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Artist a = new Artist();
+				a.id = rs.getInt("artist_id");
+				a.name = rs.getString("artist_name");
+				a.albums = rs.getInt("albums");
+				a.songs = rs.getInt("songs");
+				a.date_added = rs.getLong("date_added");
+				a.playtime = rs.getInt("playtime");
 				ret.add(a);
 			}
 
@@ -1203,6 +1237,7 @@ final class H2DB extends DB {
 				ret.albums = rs.getInt("albums");
 				ret.songs = rs.getInt("songs");
 				ret.playtime = rs.getInt("playtime");
+				ret.date_added = rs.getLong("date_added");
 			} else {
 				return null;
 			}
@@ -1679,9 +1714,10 @@ final class H2DB extends DB {
 		try {
 			st = conn
 					.prepareStatement(
-							"INSERT INTO artist(artist_name,songs,playtime,albums) VALUES (?,0,0,0)",
+							"INSERT INTO artist(artist_name,songs,playtime,albums,date_added) VALUES (?,0,0,0,?)",
 							Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, art.name);
+			st.setLong(2, System.currentTimeMillis());
 			st.executeUpdate();
 
 			ResultSet keys = st.getGeneratedKeys();
@@ -2039,6 +2075,7 @@ final class H2DB extends DB {
 				ar.albums = rs.getInt("albums");
 				ar.songs = rs.getInt("songs");
 				ar.playtime = rs.getInt("playtime");
+				ar.date_added = rs.getLong("date_added");
 				ret.add(ar);
 			}
 
