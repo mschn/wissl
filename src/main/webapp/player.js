@@ -438,4 +438,4 @@ var player = {};
 
 }(player));
 
-player.init(true);
+player.init(false);
