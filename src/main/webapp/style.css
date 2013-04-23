@@ -1575,23 +1575,41 @@ span.users-connected {
 
 #home-sections {
 	width: 100%;
+	text-align: center;
 }
 
 .home-section {
+	text-align: left;
 	display: inline-block;
-	width: 33%;
+	margin: 5px;
+	padding: 5px;
+	font-size: 1.3em;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	vertical-align: top;
-	height: 100%;
-	padding-left: 10px;
-	font-size: 1.3em;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.home-section-albums {
+	width: 600px;
+}
+
+.home-section-artists {
+	width: 330px;
+}
+
+.home-section-stats {
+	width: 260px;
 }
 
 .home-section h3 {
+	border-bottom: 2px solid #ddd;
+	text-align: left;
 	margin: 0;
 	color: #627287;
+	width: 100%;
 }
 
 .home-section ul {
@@ -1602,39 +1620,89 @@ span.users-connected {
 
 .home-section li {
 	width: 100%;
-}
-
-.home-section ul span {
-	display: inline-block;
-	white-space: nowrap;
-	overflow: hidden;
+	display: block;
+	font-size: 1.1em;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	text-overflow: ellipsis;
+	-webkit-box-sizing: border-box;
 }
 
-.home-section .name {
-	width: 75%;
+.home-section-albums li:hover,.home-section-artists li:hover {
+	background: #d4dbe4;
+}
+
+.home-section ul li>span {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 3px 0;
+}
+
+.home-section span.lighter {
+	color: #aaa;
+	font-size: .9em;
+}
+
+.home-section .artist-name {
+	width: 130px;
 	cursor: pointer;
 }
 
-.home-section .name:hover {
+.home-section .meta {
+	font-size: .8em;
+	color: #aaa;
+	padding-left: 14px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.home-section .duration {
+	width: 80px;
+	background: 0 7px no-repeat url('img/time_12.png');
+}
+
+.home-section .albums {
+	width: 50px;
+	background: 0 7px no-repeat url('img/album_12.png');
+}
+
+.home-section .songs {
+	width: 50px;
+	background: 0 7px no-repeat url('img/song_12.png');
+}
+
+.home-section .artist-name:hover {
 	text-decoration: underline;
 }
 
-.home-section .date {
-	width: 20%;
-	color: #888;
+.home-section .album-name {
+	padding-left: 10px;
+	width: 430px;
+	border-left: 2px solid #ddd;
+	cursor: pointer;
 }
 
-.home-section .left {
+.home-section .album-single {
+	width: 440px;
+	cursor: pointer;
+}
+
+.home-section .album-name:hover {
+	text-decoration: underline;
+}
+
+.home-section .stat-left {
+	font-weight: bold;
+	color: #666;
 	width: 40%;
 	text-align: left;
 }
 
-.home-section .right {
-	width: 40%;
+.home-section .stat-right {
+	width: 60%;
 	text-align: left;
 	color: #888;
 }
